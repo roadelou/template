@@ -39,12 +39,10 @@ int template_makefile(const char *path, const char *author,
   fprintf(file_handle, "%s", "\n");
 
   /* Printing the metadata of the document. */
-  fprintf(file_handle, "%s\n", "/*");
   fprintf(file_handle, "# Contributors: %s\n", author);
   fprintf(file_handle, "# Contacts: %s\n", contact);
   fprintf(file_handle, "# Creation Date: %s\n", current_date);
   fprintf(file_handle, "# Language: %s\n", "Makefile");
-  fprintf(file_handle, "%s\n", "*/");
   /* Empty line. */
   fprintf(file_handle, "%s", "\n");
 

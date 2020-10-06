@@ -94,7 +94,7 @@ int template_header(const char *path, const char *author, const char *contact) {
   fprintf(file_handle, "%s", "\n");
 
   /* We build a title for the prototypes. */
-  title(title_line, "BODY", symbol, 78);
+  title(title_line, "PROTOTYPES", symbol, 78);
   /* We print that line to the target file. */
   fprintf(file_handle, "/%s/\n", title_line);
   /* Empty line. */

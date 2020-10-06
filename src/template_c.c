@@ -73,7 +73,7 @@ int template_c(const char *path, const char *author, const char *contact) {
   fprintf(file_handle, "%s", "\n");
 
   /* We build a title for the main. */
-  title(title_line, "BODY", symbol, 78);
+  title(title_line, "MAIN", symbol, 78);
   /* We print that line to the target file. */
   fprintf(file_handle, "/%s/\n", title_line);
   /* Empty line. */
