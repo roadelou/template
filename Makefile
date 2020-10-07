@@ -14,7 +14,12 @@ warn = -Wall -pedantic
 outdir = build
 out = $(outdir)/template.elf
 
-.PHONY: clean install
+# All the preset template files.
+templates = ./etc/*.template
+# The location where the configuration format files will be stored.
+config = ~/.config/roadelou_template/
+
+.PHONY: clean install uninstall
 
 # The compilation flow here is rather straight forward.
 $(out): $(src)
@@ -24,5 +29,12 @@ $(out): $(src)
 clean:
 	rm -f $(out)
 
-install: $(out)
+install: $(out) $(templates)
 	cp $(out) ~/.local/bin/template
+	# Also copying the format files to the expected location.
+	mkdir -p $(config)
+	cp $(templates) $(config)
+
+uninstall:
+	rm -f ~/.local/bin/template
+	rm -rf $(config)
