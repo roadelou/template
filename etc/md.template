@@ -1,0 +1,14 @@
+# BODY OF THE DOCUMENT
+
+__The body of your document goes here__
+
+### METADATA
+
+Field | Value
+--- | ---
+:pencil: Contributors | %1$s
+:email: Contacts | %2$s
+:date: Creation Date | %3$s
+:bulb: Language | Markdown Document
+
+### EOF
