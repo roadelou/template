@@ -69,75 +69,57 @@ SUCCESS if the call succeeded, ERROR otherwise.
 */
 int date_now(char *buffer);
 
+
 /*
 Description
 ===========
-Creates a templated text file at the given path. Thi is the default template
-used when the file type is not recognized.
+Returns the extension part of the given path, excluding the dot. If there is no
+dot in the filename, then the complete filename will be returned instead.
 
 Arguments
 =========
- - path: The path where the file should be written. If the file already exists,
-it will be overwritten.
- - author: The name of the author of this file, will be used as the first
-contributor.
- - contact: The contact to use to reach the original author, if needs be.
+ - path: The path in which we are searching an extension.
 
 Returns
 =======
-SUCCESS if the call was a success, ERROR otherwise.
+The pointer to the extension part of the provided path.
+
+Note
+====
+This function does not allocate memory for the returned pointer, instead it
+returns the initial pointer shifted by some bytes.
+
+Examples
+========
+get_extension("example.txt") -> "txt"
+get_extension("foo/bar/example.txt") -> "txt"
+get_extension("Makefile") -> "Makefile"
+get_extension("foo/bar/Makefile") -> "Makefile"
+get_extension("example.foo.bar") -> "foo.bar"
 */
-int template_blank(const char *path, const char *author, const char *contact);
+const char *get_extension(const char *path);
 
 /*
 Description
 ===========
-Same as template_blank, but for C source files.
-*/
-int template_c(const char *path, const char *author, const char *contact);
+Looks in the filesystem for the appropriate format string to use for the given
+extension. The template file for the extension <ext> should be
+$(HOME)/.config/roadelou_template/<ext>.template. The template files are in fact
+printf format strings.
 
-/*
-Description
-===========
-Same as template_blank, but for C header files.
-*/
-int template_header(const char *path, const char *author, const char *contact);
+Arguments
+=========
+ - extension: The file extension for which we are trying to find the format
+	string.
 
-/*
-Description
-===========
-Same as template_blank, but for Makefiles.
-*/
-int template_makefile(const char *path, const char *author,
-                      const char *contact);
+Returns
+=======
+The allocated format string if it was found, NULL otherwise.
 
-/*
-Description
-===========
-Same as template_blank, but for python files.
+Note
+====
+The pointer returned by this function has to be freed later on.
 */
-int template_python(const char *path, const char *author, const char *contact);
-
-/*
-Description
-===========
-Same as template_blank, but for perl scripts.
-*/
-int template_perl(const char *path, const char *author, const char *contact);
-
-/*
-Description
-===========
-Same as template_blank, but for bash scripts.
-*/
-int template_bash(const char *path, const char *author, const char *contact);
-
-/*
-Description
-===========
-Same as template_blank, but for markdown documents.
-*/
-int template_markdown(const char *path, const char *author,
-                      const char *contact);
+char *format_extension(const char *extension);
 
 #endif /* end of include guard: TEMPLATE_LIBRARY_INCLUDED */

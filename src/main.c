@@ -14,15 +14,32 @@ int print_help(void);
 
 int main(int argc, const char **argv) {
   /* A cursor used to loop. */
-  int cursor = 0;
+  int cursor = 1;
   /* The current path on which we are working. */
   const char *path;
-  /* A variable used to store the length of the string of the path */
-  size_t length;
+  /* The buffer used to hold the current date. */
+  char current_date[11];
   /* We get the user name from, the environment. */
   const char *author;
   /* Sme for the contact, we will also get it from the environment. */
   const char *contact;
+  /* Used to store the extension of the file we will be creating. */
+  const char *extension;
+  /* A pointer used to store the format string for the given extension. */
+  char *buffer;
+  /* The file handle used to create the template files. */
+  FILE *created_file;
+  /* The return code of the process, will rise by 1 each time we fail to build a
+   * file. */
+  int status = 0;
+
+  /* We get the current date and check for an error at the same time. */
+  if (date_now((char *)current_date) == ERROR) {
+    /* Something went wrong when getting the current date, we use a default
+     * errored one.
+     */
+    strncpy((char *)current_date, "ERROR", 11);
+  }
 
   /* We get the user name, we see if the dedicated variable is set. */
   author = getenv("TEMPLATE_USER");
@@ -45,42 +62,51 @@ int main(int argc, const char **argv) {
   for (; cursor < argc; cursor++) {
     /* We get the new file to create. */
     path = *(argv + cursor);
-    /* We compute the length pf the given string. */
-    length = strlen(path);
 
-    /* We branch to the desired template based on the file extension. */
-    if (strncmp(path + length - 2, ".c", 2) == 0) {
-      template_c(path, author, contact);
-    } else if (strncmp(path + length - 2, ".h", 2) == 0) {
-      template_header(path, author, contact);
-    } else if (strncmp(path, "Makefile", 8) == 0) {
-      template_makefile(path, author, contact);
-    } else if (strncmp(path + length - 3, ".pl", 3) == 0) {
-      template_perl(path, author, contact);
-    } else if (strncmp(path + length - 3, ".py", 3) == 0) {
-      template_python(path, author, contact);
-    } else if (strncmp(path + length - 3, ".md", 3) == 0) {
-      template_markdown(path, author, contact);
-    } else if (strncmp(path, "-h", 2) == 0 || strncmp(path, "--help", 6) == 0) {
-      /* We treat -h or --help differently, it prints some help for the user. */
-      print_help();
-    } else {
-      /* If the file type is not recognized, we default to the blank template.
-       */
-      template_blank(path, author, contact);
+    /* We first get the extension of our file. */
+    extension = get_extension(path);
+
+    /* We get the format string for our extension type. */
+    buffer = format_extension(extension);
+    /* If we can't grab a format for this extension, we try again with the
+     * default txt format. */
+    if (buffer == NULL) {
+      buffer = format_extension("txt");
+	  /* If our buffer is still NULL, then we just skip creating this ffile and move on to the next one. */
+	  if (buffer == NULL) {
+		status +=1;
+		continue;
+	  }
     }
-  }
 
-  /* Execution was successfull. */
-  return 0;
+    /* We open the file we are going to create. */
+    created_file = fopen(path, "w");
+    if (created_file == NULL) {
+      /* We could not open this file for some reason, we skip it and raise the
+       * error code. */
+      status += 1;
+	  free(buffer);
+      continue;
+    }
+
+    /* We print our formatted content to the file. */
+    fprintf(created_file, buffer, author, contact, current_date);
+
+    /* We flush the file by closing it. */
+    fclose(created_file);
+
+    /* We free the buffer used for our format string. */
+    free(buffer);
+  }
+  /* We exit and end the process. */
+  return status;
 }
 
 int print_help(void) {
-  return printf("%s\n",
-                "Usage: template [-h|--help] [filenames...]\n"
-                "\n"
-                "Description\n"
-                "===========\n"
-                "Creates the given files from templates based on their "
-                "extensions.");
+  return printf("%s\n", "Usage: template [-h|--help] [filenames...]\n"
+                        "\n"
+                        "Description\n"
+                        "===========\n"
+                        "Creates the given files from templates based on their "
+                        "extensions.");
 }
