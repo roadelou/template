@@ -6,9 +6,9 @@ __The body of your document goes here__
 
 Field | Value
 --- | ---
-:pencil: Contributors | %1$s
-:email: Contacts | %2$s
-:date: Creation Date | %3$s
+:pencil: Contributors | %1
+:email: Contacts | %2
+:date: Creation Date | %3
 :bulb: Language | Markdown Document
 
 ### EOF
