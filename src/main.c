@@ -90,7 +90,7 @@ int main(int argc, const char **argv) {
     }
 
     /* We print our formatted content to the file. */
-    fprintf(created_file, buffer, author, contact, current_date);
+    safe_format(created_file, buffer, author, contact, current_date);
 
     /* We flush the file by closing it. */
     fclose(created_file);
