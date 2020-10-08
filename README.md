@@ -23,15 +23,16 @@ Information | Where it comes from
 Contributor | Can be set via the environment variable __TEMPLATE\_USER__, else defaults to the __USER__ variable.
 Contact | Can be set via the environment variable __TEMPLATE\_CONTACT__, else defaults to an empty string.
 Date | Reported by the OS.
-Language | Based on the file extension recognized by __template__.
+
+It is also common to find a __Language__ field in the created files, but it is in fact part of the template file and not dynamically deduced by __template__.
 
 ## Template files
 
 __template__ uses printf-style format files to build the templated files. For a file with the extension _bar_, template will try to find the template file `$HOME/.config/roadelou_template/bar.template`. If this file cannot be found, then `$HOME/.config/roadelou_template/txt.template` will be used instead.
 
-When writing the template files, __%1$s__ will refer to the author metadata, __%2$s__ will be the contact and __%3$s__ will be the date of creation.
-
-> User-defined printf format are dangerous and prone to breaking, in the future I will reimplment a safer wrapper to avoid such issues.
+ - When writing the template files, __%1__ will refer to the author metadata, __%2__ will be the contact and __%3__ will be the date of creation.
+ - __%%__ can be used as an escape and will print a single character '%'.
+ - Any other occurence of '%' which doesn't fit any of the previous definitions will simply be pasted litteraly to the created file, without formatting.
 
 ### METADATA
 
