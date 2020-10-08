@@ -72,11 +72,12 @@ int main(int argc, const char **argv) {
      * default txt format. */
     if (buffer == NULL) {
       buffer = format_extension("txt");
-	  /* If our buffer is still NULL, then we just skip creating this ffile and move on to the next one. */
-	  if (buffer == NULL) {
-		status +=1;
-		continue;
-	  }
+      /* If our buffer is still NULL, then we just skip creating this ffile and
+       * move on to the next one. */
+      if (buffer == NULL) {
+        status += 1;
+        continue;
+      }
     }
 
     /* We open the file we are going to create. */
@@ -85,7 +86,7 @@ int main(int argc, const char **argv) {
       /* We could not open this file for some reason, we skip it and raise the
        * error code. */
       status += 1;
-	  free(buffer);
+      free(buffer);
       continue;
     }
 

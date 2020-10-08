@@ -60,8 +60,9 @@ char *format_extension(const char *extension) {
    * are going to try to read. This will be reused later on to hold the format
    * string we will return. */
   char format_path[length + 37];
-	/* This is the buffer that we will dynamically allocate to hold the format string. */
-	char *format_string;
+  /* This is the buffer that we will dynamically allocate to hold the format
+   * string. */
+  char *format_string;
   /* The handle to the format file, once we will have opened it. */
   FILE *format_file;
   /* We create the name of the format file. This should never fail because our
