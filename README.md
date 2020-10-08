@@ -7,10 +7,9 @@ __template__ is a small C executable to build templated files from the command l
 The syntax of __template__ is
 
 ```
-template [-h|--help] [filenames ...]
+template [filenames ...]
 ```
 
-- To print the (short) help of template, use `template -h` or `template --help`.
 - To create a template file called foo.bar, use `template foo.bar`. Several files can be provided at once and they will all be created.
 
 __template__ will use the extension of the provided file to determine which template should be applied.
@@ -26,9 +25,13 @@ Contact | Can be set via the environment variable __TEMPLATE\_CONTACT__, else de
 Date | Reported by the OS.
 Language | Based on the file extension recognized by __template__.
 
-## Bugs
+## Template files
 
-__template__ does not use getopt inside because it wasn't worth it. This means that __template__ will print its help for all occurrences of `-h` or `--help` in its arguments. For instance, `template -h -h --help` would print the help three times.
+__template__ uses printf-style format files to build the templated files. For a file with the extension _bar_, template will try to find the template file `$HOME/.config/roadelou_template/bar.template`. If this file cannot be found, then `$HOME/.config/roadelou_template/txt.template` will be used instead.
+
+When writing the template files, __%1$s__ will refer to the author metadata, __%2$s__ will be the contact and __%3$s__ will be the date of creation.
+
+> User-defined printf format are dangerous and prone to breaking, in the future I will reimplment a safer wrapper to avoid such issues.
 
 ### METADATA
 
