@@ -1,3 +1,7 @@
+/* Include once header guard */
+#ifndef YOUR_HEADER_GUARD
+#define YOUR_HEADER_GUARD
+
 /********************************** METADATA **********************************/
 
 /*
@@ -28,5 +32,8 @@
 /************************************ BODY ************************************/
 
 /* The prototypes for your header go here */
+
+/* End of include once header guard */
+#endif
 
 /************************************ EOF *************************************/
