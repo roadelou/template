@@ -69,7 +69,6 @@ SUCCESS if the call succeeded, ERROR otherwise.
 */
 int date_now(char *buffer);
 
-
 /*
 Description
 ===========
@@ -110,7 +109,7 @@ printf format strings.
 Arguments
 =========
  - extension: The file extension for which we are trying to find the format
-	string.
+        string.
 
 Returns
 =======
@@ -121,5 +120,36 @@ Note
 The pointer returned by this function has to be freed later on.
 */
 char *format_extension(const char *extension);
+
+/*
+Description
+===========
+Safe implementation of a format function for the template files.
+
+Arguments
+=========
+ - stream: The file stream to which the content of the string should be written
+        to.
+ - format: The format string to use to create the templated file.
+ - author: The name of the author to use for the template.
+ - contact: The name of the contact to use for the template.
+ - date_now: The date string to use for the template.
+
+Returns
+=======
+SUCCESS if the file could be written, ERROR otherwise.
+
+Note
+====
+About the format string, the special character used is '%' like in printf, but
+for the sake of safety the formatting is much simpler:
+ - %1 will be replaced by the author value,
+ - %2 will be replaced by the contact value,
+ - %3 will be replaced by the current date,
+ - %% will be replaced by a single %,
+ - any other occurence of '%' will be left as is.
+*/
+int safe_format(FILE *stream, const char *format, const char *author,
+                const char *contact, const char *date_now);
 
 #endif /* end of include guard: TEMPLATE_LIBRARY_INCLUDED */
