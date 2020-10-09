@@ -7,12 +7,20 @@ __template__ is a small C executable to build templated files from the command l
 The syntax of __template__ is
 
 ```
-template [filenames ...]
+template [options] [filenames ...]
 ```
 
 - To create a template file called foo.bar, use `template foo.bar`. Several files can be provided at once and they will all be created.
 
 __template__ will use the extension of the provided file to determine which template should be applied.
+
+### Options
+
+__template__ uses [getopt](https://www.gnu.org/software/libc/manual/html_node/Getopt.html) to parse its command line options. The recognized options are:
+
+- `-a author` to override the environment "author" value with the provided one (see the [Metadata](README.md#Metadata) for details about the author value).
+- `-c contact` to override the environment "contact" value with the provided one (see the [Metadata](README.md#Metadata) for details about the contact value).
+- `-h` to print help and exit.
 
 ## Metadata
 
