@@ -65,6 +65,7 @@ char *format_extension(const char *extension) {
   char *format_string;
   /* The handle to the format file, once we will have opened it. */
   FILE *format_file;
+  /* First location tried: in ~/.config/roadelou_template. */
   /* We create the name of the format file. This should never fail because our
    * buffer is big enough to hold the path. */
   snprintf((char *)format_path, sizeof(format_path),
@@ -73,7 +74,19 @@ char *format_extension(const char *extension) {
   format_file = fopen((char *)format_path, "r");
   /* We fail if the file could not be opened. */
   if (format_file == NULL) {
-    return NULL;
+    /* Second location tried: in /etc/roadelou_template. */
+    /* Note that /etc is always shorter than /home/..., hence this will fit in
+     * our buffer. */
+    snprintf((char *)format_path, sizeof(format_path),
+             "/etc/roadelou_template/%s.template", extension);
+
+    /* We try to open the file. */
+    format_file = fopen((char *)format_path, "r");
+    /* We fail if the file could not be opened. */
+    if (format_file == NULL) {
+      /* If this also fails, then we return NULL. */
+      return NULL;
+    }
   }
   /* Else we grab the size of the file. Notice that we reuse the variable length
    * from the beginning. */

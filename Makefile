@@ -1,3 +1,12 @@
+################################### METADATA ###################################
+
+# Contributors: roadelou
+# Contacts: 
+# Creation Date: 2020-10-09
+# Language: Makefile
+
+################################### ALIASES ####################################
+
 # Root directory of the git repository
 top = $(CURDIR)
 
@@ -13,29 +22,37 @@ warn = -Wall -pedantic
 # The name of the compiled executable
 outdir = build
 out = $(outdir)/template.elf
+# The location where the executable will be installed.
+bindir = $(DESTDIR)/usr/bin
 
 # All the preset template files.
 templates = ./etc/*.template
 # The location where the configuration format files will be stored.
-config = ~/.config/roadelou_template/
+config = /etc/roadelou_template/
+
+################################### SPECIAL ####################################
 
 .PHONY: clean install uninstall
+
+#################################### RULES #####################################
 
 # The compilation flow here is rather straight forward.
 $(out): $(src)
 	mkdir -p $(outdir)
-	clang $(warn) $(include) $(src) -o $(out)
+	$(CC) $(warn) $(include) $(src) -o $(out)
 
 clean:
 	rm -f $(out)
 
 install: $(out) $(templates)
-	mkdir -p ~/.local/bin
-	cp $(out) ~/.local/bin/template
+	mkdir -p $(bindir)
+	cp $(out) $(bindir)/template
 	# Also copying the format files to the expected location.
 	mkdir -p $(config)
 	cp $(templates) $(config)
 
 uninstall:
-	rm -f ~/.local/bin/template
+	rm -f $(bindir)/template
 	rm -rf $(config)
+
+##################################### EOF ######################################

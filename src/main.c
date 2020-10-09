@@ -142,7 +142,7 @@ int print_help(void) {
                         "Options\n"
                         "=======\n"
                         " -a author : Overrides the environment supplied "
-						"author value.\n"
+                        "author value.\n"
                         " -c contact : Overrides the contact "
                         "value.\n"
                         " -h : Prints this help message and exits.");
