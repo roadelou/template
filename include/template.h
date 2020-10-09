@@ -26,34 +26,6 @@
 /*
 Description
 ===========
-Creates a styled title line (excluding the EOL character) and puts it in the
-given buffer.
-
-Arguments
-=========
- - buffer: The buffer where the build line should be written. The size of this
-buffer should be at least length + 1 (for the null termination).
- - word: The word to put in the middle of the line, should be a null-terminated
-string.
- - symbol: The symbol used to fill the line.
- - length: The visible length of the line.
-
-Returns
-=======
-SUCCESS if the call was a success, ERROR otherwise.
-
-Example
-=======
-The call title(buffer, "WORD", '*', 80) would build the line:
-
-************************************* WORD *************************************
-*/
-int title(char *buffer, const char *word, const char symbol,
-          const size_t length);
-
-/*
-Description
-===========
 Stores a string representation of the current date in the provided buffer. The
 date is provided according to the ISO 8601 format (YYYY-MM-DD).
 

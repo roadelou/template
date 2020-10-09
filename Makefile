@@ -30,6 +30,7 @@ clean:
 	rm -f $(out)
 
 install: $(out) $(templates)
+	mkdir -p ~/.local/bin
 	cp $(out) ~/.local/bin/template
 	# Also copying the format files to the expected location.
 	mkdir -p $(config)
