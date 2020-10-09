@@ -1,6 +1,9 @@
 /* The header of the library we are using. */
 #include "template.h"
 
+/* Used for getopt. */
+#include <unistd.h>
+
 /*
 Description
 ===========
@@ -14,7 +17,9 @@ int print_help(void);
 
 int main(int argc, const char **argv) {
   /* A cursor used to loop. */
-  int cursor = 1;
+  int cursor;
+  /* A variable used to hold the getopt option. */
+  int getopt_option;
   /* The current path on which we are working. */
   const char *path;
   /* The buffer used to hold the current date. */
@@ -58,8 +63,32 @@ int main(int argc, const char **argv) {
     contact = "";
   }
 
+  /* Handling getopt arguments. */
+  while ((getopt_option = getopt(argc, (char *const *)argv, "+a:c:h")) != -1) {
+    switch (getopt_option) {
+    case 'a':
+      /* A new value for the author was supplied, it overwrites the environment
+       * one. */
+      author = optarg;
+      break;
+    case 'c':
+      /* A new value for the contact was supplied, it overwrites the
+         environment one. */
+      contact = optarg;
+      break;
+    case 'h':
+      /* Printing help for the user and exiting. */
+      print_help();
+      return SUCCESS;
+    default:
+      /* getopt encountered and invalid character and already printed an error
+       * message, we may just leave. */
+      return ERROR;
+    }
+  }
+
   /* We simply loop over the given paths and create them all. */
-  for (; cursor < argc; cursor++) {
+  for (cursor = optind; cursor < argc; cursor++) {
     /* We get the new file to create. */
     path = *(argv + cursor);
 
@@ -104,10 +133,17 @@ int main(int argc, const char **argv) {
 }
 
 int print_help(void) {
-  return printf("%s\n", "Usage: template [-h|--help] [filenames...]\n"
+  return printf("%s\n", "Usage: template [options] [filenames...]\n"
                         "\n"
                         "Description\n"
                         "===========\n"
                         "Creates the given files from templates based on their "
-                        "extensions.");
+                        "extensions.\n\n"
+                        "Options\n"
+                        "=======\n"
+                        " -a author : Overrides the environment supplied "
+						"author value.\n"
+                        " -c contact : Overrides the contact "
+                        "value.\n"
+                        " -h : Prints this help message and exits.");
 }
