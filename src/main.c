@@ -2,7 +2,7 @@
 #include "template.h"
 
 /* Used for getopt. */
-#include <unistd.h>
+#include <getopt.h>
 
 /*
 Description
@@ -37,6 +37,12 @@ int main(int argc, const char **argv) {
   /* The return code of the process, will rise by 1 each time we fail to build a
    * file. */
   int status = 0;
+  /* Description of the long command line options for getopt. See man 3 getopt.
+   */
+  static struct option long_options[] = {
+      {"author", required_argument, NULL, 'a'},
+      {"contact", required_argument, NULL, 'c'},
+      {"help", no_argument, NULL, 'h'}};
 
   /* We get the current date and check for an error at the same time. */
   if (date_now((char *)current_date) == ERROR) {
@@ -64,7 +70,8 @@ int main(int argc, const char **argv) {
   }
 
   /* Handling getopt arguments. */
-  while ((getopt_option = getopt(argc, (char *const *)argv, "+a:c:h")) != -1) {
+  while ((getopt_option = getopt_long(argc, (char *const *)argv, "+a:c:h",
+                                      long_options, NULL)) != -1) {
     switch (getopt_option) {
     case 'a':
       /* A new value for the author was supplied, it overwrites the environment
@@ -141,9 +148,12 @@ int print_help(void) {
                         "extensions.\n\n"
                         "Options\n"
                         "=======\n"
-                        " -a author : Overrides the environment supplied "
-                        "author value.\n"
-                        " -c contact : Overrides the contact "
-                        "value.\n"
-                        " -h : Prints this help message and exits.");
+                        " -a, --author <author>\n"
+                        "    Overrides the environment supplied author value.\n"
+                        "\n"
+                        " -c, --contact <contact>\n"
+                        "    Overrides the contact value.\n"
+                        "\n"
+                        " -h, --help\n"
+                        "    Prints this help message and exits.");
 }

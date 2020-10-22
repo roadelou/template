@@ -18,9 +18,9 @@ template [options] [filenames ...]
 
 __template__ uses [getopt](https://www.gnu.org/software/libc/manual/html_node/Getopt.html) to parse its command line options. The recognized options are:
 
-- `-a author` to override the environment "author" value with the provided one (see the [Metadata](README.md#Metadata) for details about the author value).
-- `-c contact` to override the environment "contact" value with the provided one (see the [Metadata](README.md#Metadata) for details about the contact value).
-- `-h` to print help and exit.
+- `-a, --author <author>` to override the environment "author" value with the provided one (see the [Metadata](README.md#Metadata) for details about the author value).
+- `-c, --contact <contact>` to override the environment "contact" value with the provided one (see the [Metadata](README.md#Metadata) for details about the contact value).
+- `-h, --help` to print help and exit.
 
 ## Metadata
 
@@ -40,7 +40,7 @@ __template__ uses printf-style format files to build the templated files. For a 
 
  - When writing the template files, __%1__ will refer to the author metadata, __%2__ will be the contact and __%3__ will be the date of creation.
  - __%%__ can be used as an escape and will print a single character '%'.
- - Any other occurence of '%' which doesn't fit any of the previous definitions will simply be pasted litteraly to the created file, without formatting.
+ - Any other occurence of '%' which doesn't fit into the previous definitions will simply be pasted litteraly to the created file, without formatting.
 
 ### METADATA
 
