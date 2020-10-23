@@ -36,7 +36,7 @@ config = /etc/roadelou_template/
 
 #################################### RULES #####################################
 
-# The compilation flow here is rather straight forward.
+# The compilation flow here is rather straightforward.
 $(out): $(src)
 	mkdir -p $(outdir)
 	$(CC) $(warn) $(include) $(src) -o $(out)
