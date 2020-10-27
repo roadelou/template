@@ -15,6 +15,17 @@ The return value of the printf call.
 */
 int print_help(void);
 
+/*
+Description
+===========
+Prints the GPL license message.
+
+Returns
+=======
+The return value of the printf call.
+*/
+int print_license(void);
+
 int main(int argc, const char **argv) {
   /* A cursor used to loop. */
   int cursor;
@@ -42,6 +53,7 @@ int main(int argc, const char **argv) {
   static struct option long_options[] = {
       {"author", required_argument, NULL, 'a'},
       {"contact", required_argument, NULL, 'c'},
+      {"license", no_argument, NULL, 'l'},
       {"help", no_argument, NULL, 'h'}};
 
   /* We get the current date and check for an error at the same time. */
@@ -86,6 +98,10 @@ int main(int argc, const char **argv) {
     case 'h':
       /* Printing help for the user and exiting. */
       print_help();
+      return SUCCESS;
+    case 'l':
+      /* Printing the license and then exiting. */
+      print_license();
       return SUCCESS;
     default:
       /* getopt encountered and invalid character and already printed an error
@@ -154,6 +170,20 @@ int print_help(void) {
                         " -c, --contact <contact>\n"
                         "    Overrides the contact value.\n"
                         "\n"
+                        " --license\n"
+                        "    Prints the license message and exits.\n"
+                        "\n"
                         " -h, --help\n"
                         "    Prints this help message and exits.");
+}
+
+int print_license(void) {
+  return printf(
+      "%s\n",
+      "template Copyright (C) 2020 roadelou\n"
+      "This program comes with ABSOLUTELY NO WARRANTY.\n"
+      "This is free software, and you are welcome to redistribute it\n"
+      "under certain conditions.\n"
+      "\n"
+      "See the GPL-3.0 on https://www.gnu.org/licenses/gpl-3.0.en.html");
 }

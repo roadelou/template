@@ -20,6 +20,7 @@ __template__ uses [getopt](https://www.gnu.org/software/libc/manual/html_node/Ge
 
 - `-a, --author <author>` to override the environment "author" value with the provided one (see the [Metadata](README.md#Metadata) for details about the author value).
 - `-c, --contact <contact>` to override the environment "contact" value with the provided one (see the [Metadata](README.md#Metadata) for details about the contact value).
+- `--license` to print license information and exit.
 - `-h, --help` to print help and exit.
 
 ## Metadata
