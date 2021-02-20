@@ -1,0 +1,22 @@
+################################### METADATA ###################################
+
+# Contributors: %1
+# Contacts: %2
+# Creation Date: %3
+# Language: Tox ini configuration file
+
+##################################### BODY #####################################
+
+[tox]
+# Testing for python 3.9
+envlist=py39
+isolate_build=True
+
+[testenv]
+# The tests are performed with pytest. This is a dependancy normally not
+# required to use the python package.
+deps = pytest
+# The commands to run to test the package.
+commands = pytest
+
+##################################### EOF ######################################
