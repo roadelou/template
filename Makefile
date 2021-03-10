@@ -39,7 +39,7 @@ config = $(DESTDIR)/etc/roadelou_template/
 # The compilation flow here is rather straightforward.
 $(out): $(src)
 	mkdir -p $(outdir)
-	$(CC) $(warn) $(include) $(src) -o $(out)
+	$(CC) $(CFLAGS) $(warn) $(include) $(src) -o $(out)
 
 clean:
 	rm -f $(out)
