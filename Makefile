@@ -19,6 +19,9 @@ include = -I$(top)/include/
 # Flag to trigger compiler warnings
 warn = -Wall -pedantic
 
+# Adding RPM distro C flags if they are provided.
+CFLAGS = $(RPM_OPT_FLAGS)
+
 # The name of the compiled executable
 outdir = build
 out = $(outdir)/template.elf
