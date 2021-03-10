@@ -28,7 +28,7 @@ bindir = $(DESTDIR)/usr/bin
 # All the preset template files.
 templates = ./etc/*.template
 # The location where the configuration format files will be stored.
-config = /etc/roadelou_template/
+config = $(DESTDIR)/etc/roadelou_template/
 
 ################################### SPECIAL ####################################
 
