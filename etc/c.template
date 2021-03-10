@@ -11,6 +11,10 @@
 
 /* The includes for your code go here. */
 
+/********************************* SINGLETONS *********************************/
+
+/* The static global variables for your code goe here. */
+
 /********************************* PROTOYPES **********************************/
 
 /* The prototypes of your functions go here. */
