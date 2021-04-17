@@ -31,7 +31,7 @@ EXEC = $(BUILDDIR)/template.elf
 BINDIR = $(DESTDIR)/usr/bin
 
 # All the preset template files.
-TEMPLATES = $(TOP)/etc
+TEMPLATES = $(wildcard $(TOP)/etc/*.template)
 # The location where the configuration format files will be stored.
 CONFIG = $(DESTDIR)/etc/roadelou_template
 
@@ -53,12 +53,14 @@ $(BUILDDIR):
 clean:
 	rm -f $(EXEC)
 
-install: $(EXEC) $(TEMPLATES)
-	mkdir -p $(bindir)
+install: $(EXEC) $(TEMPLATES) $(BINDIR)
 	install -m 755 $(EXEC) $(BINDIR)/template
 	# Also copying the format files to the expected location.
 	mkdir -p $(CONFIG)
-	install -m 644 -d $(TEMPLATES) $(CONFIG)
+	install -m 664 -t $(CONFIG) $(TEMPLATES) 
+
+$(BINDIR):
+	mkdir -p $(BINDIR)
 
 uninstall:
 	rm -f $(BINDIR)/template
