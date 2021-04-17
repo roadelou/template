@@ -196,11 +196,19 @@ char *get_format_extension(const char *path) {
             /* We score the new entry. */
             size_t current_score =
                 extension_match_size(path, directory_entry->d_name);
-            if (current_score > best_score) {
+            if ((best_fit != NULL) && (current_score == best_score) &&
+                (strlen(directory_entry->d_name) < strlen(best_fit))) {
+                /* If the current score is equal to the best scroe and not 0, we
+                 * favor the template with the shortest name. This ensures that
+                 * the hierachical resolution of extensions is performed
+                 * correctly. */
+                best_fit = directory_entry->d_name;
+            } else if (current_score > best_score) {
                 /* We update our best match. */
                 best_score = current_score;
                 best_fit = directory_entry->d_name;
             }
+            /* Else the previous fit is better. */
         }
     }
 
@@ -215,11 +223,19 @@ char *get_format_extension(const char *path) {
             /* We score the new entry. */
             size_t current_score =
                 extension_match_size(path, directory_entry->d_name);
-            if (current_score > best_score) {
+            if ((best_fit != NULL) && (current_score == best_score) &&
+                (strlen(directory_entry->d_name) < strlen(best_fit))) {
+                /* If the current score is equal to the best scroe and not 0, we
+                 * favor the template with the shortest name. This ensures that
+                 * the hierachical resolution of extensions is performed
+                 * correctly. */
+                best_fit = directory_entry->d_name;
+            } else if (current_score > best_score) {
                 /* We update our best match. */
                 best_score = current_score;
                 best_fit = directory_entry->d_name;
             }
+            /* Else the previous fit is better. */
         }
     }
 
@@ -272,27 +288,35 @@ static size_t next_extension_part(const char *path, size_t *cursor,
 }
 
 static size_t next_extension_part_backwards(const char *path, size_t *cursor) {
+    /* The initial position to use for the cursor. */
+    size_t initial_cursor;
     /* The value we are going to return. */
     size_t next_cursor;
 
     /* First thing, if *cursor-1 lands on a dot, we skip the dot. */
     if (*(path + (*cursor) - 1) == '.') {
         /* We use the brackets to have an lvalue for the decrement operator. */
-        cursor[0]--;
+        initial_cursor = *cursor - 1;
     } else if (*(path + (*cursor) - 1) == '/') {
         /* We have encountered a '/' already, we cannot go any further. */
         return *cursor;
+    } else {
+        /* In any other cases, the initial simply takes the provided value. */
+        initial_cursor = *cursor;
     }
 
     /* Setting the initial value for our next_cursor. We skip after the NULL
      * byte or the '.' itself. */
-    next_cursor = *cursor - 1;
+    next_cursor = initial_cursor - 1;
 
     /* We decrement our new cursor until we find a '.' or a '/' or 0. */
     while ((next_cursor >= 0) && (*(path + next_cursor) != '.') &&
            (*(path + next_cursor) != '/')) {
         next_cursor--;
     }
+
+    /* We update the cursor variable. */
+    *cursor = initial_cursor;
 
     /*
     By this point, one of those holds true:
@@ -328,7 +352,7 @@ static size_t next_extension_part_forwards(const char *path, size_t *cursor) {
     next_cursor = initial_cursor;
 
     /* We iterate through the string until we find either a '.' or a '\0'. */
-    while ((*(path + next_cursor) != '.') || (*(path + next_cursor) != '.')) {
+    while ((*(path + next_cursor) != '.') && (*(path + next_cursor) != '\0')) {
         next_cursor++;
     }
 
@@ -345,16 +369,21 @@ static size_t extension_match_size(const char *path,
     size_t extension_match_size = 0;
     /* We set the initial conditions for the path (read from the end) and the
      * template_path (read from the end of the directory part). */
-    size_t path_old = strlen(path);
+    size_t path_next = strlen(path);
     size_t template_old = directory_part_size(template_path);
-    /* We also need variables to hold the value returned by next_extension_part.
-     */
-    size_t path_next;
+    /* We also need a variable for the other bound of each string slice. */
+    size_t path_old;
     size_t template_next;
 
     do {
+        /* We move the path_old value for the next iteration, otherwise the
+         * backwards propagation is stuck in a loop. The cursor for the next
+         * call must be the smallest of path_next and path_old, i.e. path_next,
+         * hence the swap. */
+        path_old = path_next;
         /* We get the next extension part for the path, reading bacwards. */
         path_next = next_extension_part(path, &path_old, BACKWARDS);
+
         /* We get the next extension part for the template, reading forwards. */
         template_next =
             next_extension_part(template_path, &template_old, FORWARDS);
