@@ -8,54 +8,60 @@
 ################################### ALIASES ####################################
 
 # Root directory of the git repository
-top = $(CURDIR)
+TOP = $(CURDIR)
 
 # All source files
-src = src/*.c
+SRC = $(wildcard src/*.c)
+# All the headers, used for recompilation.
+HEAD = $(wildcard include/*.h)
 
 # Flag to include all headers
-include = -I$(top)/include/
+INCLUDE = -I $(TOP)/include/
 
 # Flag to trigger compiler warnings
-warn = -Wall -pedantic
+WARN = -Wall -pedantic
 
 # Adding RPM distro C flags if they are provided.
-CFLAGS = $(RPM_OPT_FLAGS)
+CFLAGS = $(RPM_OPT_FLAGS) $(WARN) $(INCLUDE)
 
 # The name of the compiled executable
-outdir = build
-out = $(outdir)/template.elf
+BUILDDIR = $(TOP)/build
+EXEC = $(BUILDDIR)/template.elf
 # The location where the executable will be installed.
-bindir = $(DESTDIR)/usr/bin
+BINDIR = $(DESTDIR)/usr/bin
 
 # All the preset template files.
-templates = ./etc/*.template
+TEMPLATES = $(TOP)/etc
 # The location where the configuration format files will be stored.
-config = $(DESTDIR)/etc/roadelou_template/
+CONFIG = $(DESTDIR)/etc/roadelou_template
 
 ################################### SPECIAL ####################################
 
-.PHONY: clean install uninstall
+.PHONY: all clean install uninstall
 
 #################################### RULES #####################################
 
 # The compilation flow here is rather straightforward.
-$(out): $(src)
-	mkdir -p $(outdir)
-	$(CC) $(CFLAGS) $(warn) $(include) $(src) -o $(out)
+all: $(EXEC)
+
+$(EXEC): $(SRC) $(HEAD) $(BUILDDIR)
+	$(CC) $(CFLAGS) $(SRC) -o $(EXEC)
+
+$(BUILDDIR):
+	mkdir -p $(BUILDDIR)
 
 clean:
-	rm -f $(out)
+	rm -f $(EXEC)
 
-install: $(out) $(templates)
+install: $(EXEC) $(TEMPLATES)
 	mkdir -p $(bindir)
-	cp $(out) $(bindir)/template
+	install -m 755 $(EXEC) $(BINDIR)/template
 	# Also copying the format files to the expected location.
-	mkdir -p $(config)
-	cp $(templates) $(config)
+	mkdir -p $(CONFIG)
+	install -m 644 -d $(TEMPLATES) $(CONFIG)
 
 uninstall:
-	rm -f $(bindir)/template
-	rm -rf $(config)
+	rm -f $(BINDIR)/template
+	rm -rf $(CONFIG)
 
 ##################################### EOF ######################################
