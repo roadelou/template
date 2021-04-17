@@ -27,6 +27,8 @@ CFLAGS = $(RPM_OPT_FLAGS) $(WARN) $(INCLUDE)
 # The name of the compiled executable
 BUILDDIR = $(TOP)/build
 EXEC = $(BUILDDIR)/template.elf
+# Target used for debugging
+DEBUG = $(BUILDDIR)/template.debug.elf
 # The location where the executable will be installed.
 BINDIR = $(DESTDIR)/usr/bin
 
@@ -37,7 +39,7 @@ CONFIG = $(DESTDIR)/etc/roadelou_template
 
 ################################### SPECIAL ####################################
 
-.PHONY: all clean install uninstall
+.PHONY: debug all clean install uninstall
 
 #################################### RULES #####################################
 
@@ -47,11 +49,16 @@ all: $(EXEC)
 $(EXEC): $(SRC) $(HEAD) $(BUILDDIR)
 	$(CC) $(CFLAGS) $(SRC) -o $(EXEC)
 
+debug: $(DEBUG)
+
+$(DEBUG): $(SRC) $(HEAD) $(BUILDDIR)
+	$(CC) $(CFLAGS) -g -O0 $(SRC) -o $(DEBUG)
+
 $(BUILDDIR):
 	mkdir -p $(BUILDDIR)
 
 clean:
-	rm -f $(EXEC)
+	rm -f $(EXEC) $(DEBUG)
 
 install: $(EXEC) $(TEMPLATES) $(BINDIR)
 	install -m 755 $(EXEC) $(BINDIR)/template
