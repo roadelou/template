@@ -10,7 +10,7 @@
 /********************************** INCLUDES **********************************/
 
 /* The header with the function we are trying to implement. */
-#include "template.h"
+#include <template.h>
 
 /********************************* PROTOYPES **********************************/
 
@@ -39,37 +39,37 @@ static int occurence(const char *string, int letter, int first);
 /********************************* FUNCTIONS **********************************/
 
 int occurence(const char *string, int letter, int first) {
-  /* The length of the string, we shouldn't try to look any further. */
-  int length = strlen(string);
-  /* The result we will return, it will be set once we find a match. */
-  int result = -1;
-  /* The cursor that we use to go through the string. */
-  int cursor;
+    /* The length of the string, we shouldn't try to look any further. */
+    int length = strlen(string);
+    /* The result we will return, it will be set once we find a match. */
+    int result = -1;
+    /* The cursor that we use to go through the string. */
+    int cursor;
 
-  /* We look for a match. */
-  for (cursor = 0; cursor < length; cursor++) {
-    if (*(string + cursor) == letter) {
-      result = cursor;
-      if (first) {
-        break;
-      }
+    /* We look for a match. */
+    for (cursor = 0; cursor < length; cursor++) {
+        if (*(string + cursor) == letter) {
+            result = cursor;
+            if (first) {
+                break;
+            }
+        }
     }
-  }
-  return result;
+    return result;
 }
 
 const char *get_extension(const char *path) {
-  /* The integer we will use to build the returned pointer. */
-  int cursor;
-  /* We try to get the position of the first dot in the path. */
-  cursor = occurence(path, '.', 1);
-  if (cursor == -1) {
-    /* There is no dot in this path, we look for the last slash for the path
-     * separator. */
-    cursor = occurence(path, '/', 0);
-  }
-  /* We return everything after the cursor, cursor excluded. */
-  return path + cursor + 1;
+    /* The integer we will use to build the returned pointer. */
+    int cursor;
+    /* We try to get the position of the first dot in the path. */
+    cursor = occurence(path, '.', 1);
+    if (cursor == -1) {
+        /* There is no dot in this path, we look for the last slash for the path
+         * separator. */
+        cursor = occurence(path, '/', 0);
+    }
+    /* We return everything after the cursor, cursor excluded. */
+    return path + cursor + 1;
 }
 
 /************************************ EOF *************************************/
