@@ -310,7 +310,7 @@ static size_t next_extension_part_backwards(const char *path, size_t *cursor) {
     next_cursor = initial_cursor - 1;
 
     /* We decrement our new cursor until we find a '.' or a '/' or 0. */
-    while ((next_cursor >= 0) && (*(path + next_cursor) != '.') &&
+    while ((next_cursor > 0) && (*(path + next_cursor) != '.') &&
            (*(path + next_cursor) != '/')) {
         next_cursor--;
     }
@@ -320,12 +320,12 @@ static size_t next_extension_part_backwards(const char *path, size_t *cursor) {
 
     /*
     By this point, one of those holds true:
-     - next_cursor = -1;
+     - next_cursor = 0;
      - next_cursor >= 0 and next_cursor points to a '.';
      - next_cursor >= 0 and next_cursor points to a '/';
-    In any case, the right value to return is next_cursor + 1;
+    The right value to return is next_cursor + (next_cursor > 0);
     */
-    return next_cursor + 1;
+    return next_cursor + (next_cursor > 0);
 }
 
 static size_t next_extension_part_forwards(const char *path, size_t *cursor) {
