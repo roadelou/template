@@ -32,8 +32,8 @@ date is provided according to the ISO 8601 format (YYYY-MM-DD).
 Arguments
 =========
  - buffer: The buffer in which the string representation of the current date
-	will be stored. The buffer should be at least 11 bytes wide to fit the
-	entire date and the null terminating byte.
+        will be stored. The buffer should be at least 11 bytes wide to fit the
+        entire date and the null terminating byte.
 
 Returns
 =======
@@ -42,6 +42,10 @@ SUCCESS if the call succeeded, ERROR otherwise.
 int date_now(char *buffer);
 
 /*
+Deprecated
+==========
+Use get_format_extension instead.
+
 Description
 ===========
 Returns the extension part of the given path, excluding the dot. If there is no
@@ -73,6 +77,42 @@ const char *get_extension(const char *path);
 /*
 Description
 ===========
+Returns the extension of the template file which has the largest common suffix
+with the provided path. This is used to find the template file which should be
+used for a given file and replaces the use of th older "get_extension". Note
+that only whole chunk matches are counted, where a whole chunk is a part of a
+string between two '.'. This is clarified in the examples.
+
+Arguments
+=========
+ - path: The path of the file for which we want the template file extension.
+
+Returns
+=======
+The part of the argument string corresponding to the identified extension. If
+not template file is found, NULL is returned instead. The returned string is
+dynamically allocated and needs to be freed by the caller.
+
+Examples
+========
+Lets assume that in the search path of the tool one can find three template
+files:
+ - txt.template: For txt files.
+ - c.template: For C source files.
+ - c.gplv3.template: For C source files with a gplv3 header.
+
+Then the behavior for this function will be:
+get_format_extension("example.foo") -> NULL
+get_format_extension("txt") -> "txt"
+get_format_extension("foo.gplv3.c") -> "gplv3.c"
+get_format_extension("foo_v3.c") -> ".c"	// Because "gplv3" isn't a whole
+match.
+*/
+char *get_format_extension(const char *path);
+
+/*
+Description
+===========
 Looks in the filesystem for the appropriate format string to use for the given
 extension. The template file for the extension <ext> will be searched first in
 the user speicfic location $(HOME)/.config/roadelou_template/<ext>.template, and
@@ -85,7 +125,7 @@ safe_format for more details.
 Arguments
 =========
  - extension: The file extension for which we are trying to find the format
-	string.
+        string.
 
 Returns
 =======
@@ -105,7 +145,7 @@ Safe implementation of a format function for the template files.
 Arguments
 =========
  - stream: The file stream to which the content of the string should be written
-	to.
+        to.
  - format: The format string to use to create the templated file.
  - author: The name of the author to use for the template.
  - contact: The name of the contact to use for the template.
