@@ -37,6 +37,8 @@ It is also common to find a __Language__ field in the created files, but it is i
 
 __template__ uses printf-style format files to build the templated files. For a file with the extension _bar_, template will try to find the template file `$HOME/.config/roadelou_template/bar.template`. If this file cannot be found, then `$HOME/.config/roadelou_template/txt.template` will be used instead.
 
+The way **template** searches the extension file is non-trivial, but allows recognition of hierachies of extension. So a file like `foo.bar.txt` can use the template `txt.bar.template` even if the more generic `txt.template` also exists. This is usefull for templates with a license specific headers.
+
 ### Formatting syntax
 
  - When writing the template files, __%1__ will refer to the author metadata, __%2__ will be the contact and __%3__ will be the date of creation.
