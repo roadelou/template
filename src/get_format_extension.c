@@ -162,6 +162,17 @@ directory_part_size("foo.bar.baz") -> 0
 */
 static size_t directory_part_size(const char *path);
 
+/*
+Description
+===========
+Returns 1 if the path ends with ".template", 0 otherwise.
+
+Arguments
+=========
+ - path: Null-terminated path to analyse.
+*/
+static int correct_ending(const char *path);
+
 /************************************ MAIN ************************************/
 
 /* The main function of your code goes here. */
@@ -193,6 +204,10 @@ char *get_format_extension(const char *path) {
     if (search_dir != NULL) {
         /* We read the entry for all the files in the directory. */
         while ((directory_entry = readdir(search_dir)) != NULL) {
+            /* We skip the entry if it doesn't end in ".template". */
+            if (!correct_ending(directory_entry->d_name)) {
+                continue;
+            }
             /* We score the new entry. */
             size_t current_score =
                 extension_match_size(path, directory_entry->d_name);
@@ -220,6 +235,10 @@ char *get_format_extension(const char *path) {
     if (search_dir != NULL) {
         /* We read the entry for all the files in the directory. */
         while ((directory_entry = readdir(search_dir)) != NULL) {
+            /* We skip the entry if it doesn't end in ".template". */
+            if (!correct_ending(directory_entry->d_name)) {
+                continue;
+            }
             /* We score the new entry. */
             size_t current_score =
                 extension_match_size(path, directory_entry->d_name);
@@ -410,6 +429,26 @@ static size_t extension_match_size(const char *path,
 
     /* We return the expected value. */
     return extension_match_size;
+}
+
+static int correct_ending(const char *path) {
+    /* We first get the length of the path. */
+    size_t path_length = strlen(path);
+    /* The size of the string ".template" */
+    const size_t SIZE = 9;
+    /*
+    Edge-case
+    =========
+    The entire path is shorter than the template string. There are 9 characters
+    in ".template".
+    */
+    if (path_length < SIZE) {
+        /* The path is too short, it cannot have the right extension. */
+        return 0;
+    } else {
+        /* The end of the path should match the expected ".template" */
+        return strncmp(path + path_length - SIZE, ".template", SIZE) == 0;
+    }
 }
 
 /************************************ EOF *************************************/
