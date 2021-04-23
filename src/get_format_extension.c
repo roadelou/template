@@ -47,7 +47,7 @@ Description
 ===========
 Returns the number of characters of the longest matching whole extension
 between the provided path and template path. Note that the extension is reversed
-in the template path.
+in the template path. See "next_extension_part" for more details.
 
 Arguments
 =========
