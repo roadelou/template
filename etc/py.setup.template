@@ -1,0 +1,104 @@
+#!/usr/bin/env python3
+
+################################### METADATA ###################################
+
+# Contributors: %1
+# Contacts: %2
+# Creation Date: %3
+# Language: Python3
+
+################################### IMPORTS ####################################
+
+# Standard library 
+from setuptools import setup    # Used to describe the package.
+import os                       # Used for file manipulations.
+
+################################## FUNCTIONS ###################################
+
+def main():
+    """
+    Uses setuptools to create a python package.
+
+    The documentation for setuptools, as well as newer packaging methods, is
+    available at https://setuptools.readthedocs.io/en/latest/index.html
+    """
+########################## MANDATORY PACKAGE METADATA ##########################
+    #
+    # The name of your package.
+    ###########################
+    name = "hello-world"
+    #
+    # The version of your package.
+    ##############################
+    version = "0.0.1"
+    #
+    # The list directories in which the python code can be found.
+    #############################################################
+    packages = []
+    #
+############################## PACKAGE REQUIREMENTS ############################
+    #
+    # The list of packages required in order for your code to work.
+    ###############################################################
+    install_requires = []
+    #
+    # The minimum python version required for your code to work.
+    ############################################################
+    python_requires=">=1"
+    #
+########################### OPTIONAL PACKAGE METADATA ##########################
+    #
+    # The author of the package, used by PyPi.
+    ##########################################
+    author = "Anonymous Author"
+    #
+    # The mail address of the author, also used by PyPi.
+    ####################################################
+    author_email = ""
+    #
+    # The license under which the source code is available.
+    #######################################################
+    license_string = ""
+    #
+    # A short description of the package.
+    #####################################
+    description = "A new python package"
+    #
+    # Long description, automatically tries to get the README.md file. If
+    # impossible, defaults to the short description.
+    ################################################
+    if os.path.exists("README.md"):
+        with open("README.md", "r") as readme_file:
+            long_description = readme_file.read()
+    else:
+        long_description = description
+    #
+    # The type of content used for the long description.
+    ####################################################
+    long_description_content_type = "text/markdown"
+    #
+################################## SETUP CALL ##################################
+    #
+    # Calling setup with the provided arguments.
+    ############################################
+    setup(
+        name=name,
+        version=version,
+        author=author,
+        author_email=author_email,
+        packages=packages,
+        license=license_string,
+        install_requires=install_requires,
+        python_requires=python_requires,
+        description=description,
+        long_description=long_description,
+        long_description_content_type=long_description_content_type
+    )
+
+##################################### MAIN #####################################
+
+if __name__ == "__main__":
+    # Calling this script from the command line will build the package.
+    main()
+
+##################################### EOF ######################################
