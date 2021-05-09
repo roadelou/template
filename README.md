@@ -20,7 +20,9 @@ __template__ uses [getopt](https://www.gnu.org/software/libc/manual/html_node/Ge
 
 - `-a, --author <author>` to override the environment "author" value with the provided one (see the [Metadata](README.md#Metadata) for details about the author value).
 - `-c, --contact <contact>` to override the environment "contact" value with the provided one (see the [Metadata](README.md#Metadata) for details about the contact value).
-- `--license` to print license information and exit.
+- `-v, --verbose` to raise the verbosity of the tool and see all the messages.
+- `-q, --quiet` to lower the verbosity of the tool and only see error messages.
+- `-l, --license` to print license information and exit.
 - `-h, --help` to print help and exit.
 
 ## Metadata
@@ -44,6 +46,18 @@ The way **template** searches the extension file is non-trivial, but allows reco
  - When writing the template files, __%1__ will refer to the author metadata, __%2__ will be the contact and __%3__ will be the date of creation.
  - __%%__ can be used as an escape and will print a single character '%'.
  - Any other occurence of '%' which doesn't fit into the previous definitions will simply be pasted litteraly to the created file, without formatting.
+
+## Verbosity
+
+**template** prints messages with three levels of importance. Whether a message os printed or not depends on the log level (i.e. the verbosity of the tool) during the execution. The three importance levels are explained in the table below.
+
+Importance Level | Printed If | Color | Meaning
+-----------------|------------|-------|--------
+INFO\_MSG | `-v` or `--verbose` is used | White | No problem occured, no user intervention is needed
+WARNING\_MSG | `-q` or `--quiet` is **not`** used | Yellow | A recoverable problem occured, no user intervention is needed
+ERROR\_MSG | *Always* | Red | A irrecoverable problem has occured, some user intervention is needed
+
+Note that template isn't meant to crash even when an **ERROR\_MSG** is printed, in most cases **template** will just not create the expected file and move on.
 
 ### METADATA
 
