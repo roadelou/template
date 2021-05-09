@@ -19,7 +19,7 @@
 /********************************* SINGLETONS *********************************/
 
 // The current log level. Default value is WARNING.
-static enum LOG_LEVEL LEVEL = WARNING;
+static enum LOG_LEVEL LEVEL = WARNING_MSG;
 
 /********************************* PROTOYPES **********************************/
 
@@ -60,15 +60,15 @@ void set_log_level(enum LOG_LEVEL level) {
     // We assign a value based on the provided level. We need a switch to handle
     // garbage values correctly.
     switch (level) {
-    case INFO:
-    case WARNING:
-    case ERROR: {
+    case INFO_MSG:
+    case WARNING_MSG:
+    case ERROR_MSG: {
         LEVEL = level;
         break;
     }
     default: {
         // If we received a garbage input, we set the log level to WARNING.
-        LEVEL = WARNING;
+        LEVEL = WARNING_MSG;
         break;
     }
     }
@@ -89,34 +89,36 @@ int log_message(enum LOG_LEVEL importance, const char *format, ...) {
     // We initialize our variadic list.
     va_start(variadic_list, format);
     //
-    // We emit the ASCII color sequence for our message based on its type. Not
-    // all message types are colored.
+    // We emit the ASCII color sequence for our message based on its type.
     switch (importance) {
-    case WARNING:
+    case WARNING_MSG:
         // Warning goes in orange.
         printf("%s", "\033[33m");
-    case ERROR:
+        break;
+    case ERROR_MSG:
         // Error goes in red.
         printf("%s", "\033[31m");
+        break;
+    default:
+        // INFO and garbage are printed in white.
+        printf("%s", "\033[37m");
+        break;
     }
     // We print the logged message itself. The output stream used depends on the
     // importance.
     switch (importance) {
-    case ERROR: {
+    case ERROR_MSG: {
         // ERROR goes to STDERR.
         return_value = vfprintf(stderr, format, variadic_list);
+        break;
     }
     default:
         // Everyone else goes to stdout.
         return_value = vfprintf(stdout, format, variadic_list);
+        break;
     }
     // Finally we end the ASCII color sequence.
-    switch (importance) {
-    case WARNING:
-    case ERROR:
-        // Only WARNING and ERROR need a console reset.
-        printf("%s", "\033[m");
-    }
+    printf("%s", "\033[m");
     // We return the expected value.
     return return_value;
 }
@@ -125,18 +127,18 @@ int log_message(enum LOG_LEVEL importance, const char *format, ...) {
 int should_log(enum LOG_LEVEL importance) {
     // We switch based on the importance value to handle garbage correctly.
     switch (importance) {
-    case INFO: {
-        return LEVEL == INFO;
+    case INFO_MSG: {
+        return LEVEL == INFO_MSG;
     }
-    case WARNING: {
-        return LEVEL != ERROR;
+    case WARNING_MSG: {
+        return LEVEL != ERROR_MSG;
     }
-    case ERROR: {
+    case ERROR_MSG: {
         return 1;
     }
     default: {
         // Garbage importance is treated like INFO.
-        return LEVEL == INFO;
+        return LEVEL == INFO_MSG;
     }
     }
 }
