@@ -39,9 +39,9 @@ int main(int argc, const char **argv) {
     /* The buffer used to hold the current date. */
     char current_date[11];
     /* We get the user name from, the environment. */
-    const char *author;
+    const char *author = NULL;
     /* Sme for the contact, we will also get it from the environment. */
-    const char *contact;
+    const char *contact = NULL;
     /* Used to store the extension of the file we will be creating. */
     char *extension;
     /* A pointer used to store the format string for the given extension. */
@@ -57,45 +57,17 @@ int main(int argc, const char **argv) {
     static struct option long_options[] = {
         {"author", required_argument, NULL, 'a'},
         {"contact", required_argument, NULL, 'c'},
+        {"verbose", no_argument, NULL, 'v'},
+        {"quiet", no_argument, NULL, 'q'},
         {"license", no_argument, NULL, 'l'},
         {"help", no_argument, NULL, 'h'}};
 
-    /* We get the current date and check for an error at the same time. */
-    if (date_now((char *)current_date) == ERROR) {
-        /* Something went wrong when getting the current date, we use a default
-         * errored one.
-         */
-        strncpy((char *)current_date, "ERROR", 11);
-        /* We also log a warning for the user. */
-        log_message(WARNING_MSG,
-                    "Could not fetch date from OS, defaulted to \"%s\"\n",
-                    current_date);
-    }
-
-    /* We get the user name, we see if the dedicated variable is set. */
-    author = getenv("TEMPLATE_USER");
-
-    if (author == NULL) {
-        /* If the dedicated variable is not set, we default to the Linux user
-         * name.
-         */
-        author = getenv("USER");
-        /* We also log an information for the user. */
-        log_message(INFO_MSG, "Defaulted author to \"%s\"\n", author);
-    }
-
-    /* We get the user contact. */
-    contact = getenv("TEMPLATE_CONTACT");
-
-    if (contact == NULL) {
-        /* If not contact is provided, we leave an empty field. */
-        contact = "";
-        /* We also log an information for the user. */
-        log_message(INFO_MSG, "Defaulted contact to \"%s\"\n", contact);
-    }
+    /* Just in case, we assert the set the log level to its default, which is
+     * WARNING_MSG. */
+    set_log_level(WARNING_MSG);
 
     /* Handling getopt arguments. */
-    while ((getopt_option = getopt_long(argc, (char *const *)argv, "+a:c:h",
+    while ((getopt_option = getopt_long(argc, (char *const *)argv, "+a:c:hlvq",
                                         long_options, NULL)) != -1) {
         switch (getopt_option) {
         case 'a':
@@ -116,11 +88,57 @@ int main(int argc, const char **argv) {
             /* Printing the license and then exiting. */
             print_license();
             return SUCCESS;
+        case 'v':
+            /* Verbose execution, we lower the log level. */
+            set_log_level(INFO_MSG);
+            break;
+        case 'q':
+            /* Quiet execution, we raise the log level. */
+            set_log_level(ERROR_MSG);
+            break;
         default:
             /* getopt encountered and invalid character and already printed an
              * error message, we may just leave. */
             return ERROR;
         }
+    }
+
+    /* We get the current date and check for an error at the same time. */
+    if (date_now((char *)current_date) == ERROR) {
+        /* Something went wrong when getting the current date, we use a default
+         * errored one.
+         */
+        strncpy((char *)current_date, "ERROR", 11);
+        /* We also log a warning for the user. */
+        log_message(WARNING_MSG,
+                    "Could not fetch date from OS, defaulted to \"%s\"\n",
+                    current_date);
+    }
+
+    /* We get the user name, we see if the dedicated variable is set and it
+     * wasn't overriden through the command line. */
+    if (author == NULL) {
+        author = getenv("TEMPLATE_USER");
+    }
+
+    /* If the dedicated variable is not set, we default to the Linux user
+     * name. */
+    if (author == NULL) {
+        author = getenv("USER");
+        /* We also log an information for the user. */
+        log_message(INFO_MSG, "Defaulted author to \"%s\"\n", author);
+    }
+
+    /* We get the user contact if it hasn't been overriden. */
+    if (contact == NULL) {
+        contact = getenv("TEMPLATE_CONTACT");
+    }
+
+    /* If not contact is provided, we leave an empty field. */
+    if (contact == NULL) {
+        contact = "";
+        /* We also log an information for the user. */
+        log_message(INFO_MSG, "Defaulted contact to \"%s\"\n", contact);
     }
 
     /* We simply loop over the given paths and create them all. */
@@ -137,6 +155,7 @@ int main(int argc, const char **argv) {
                         "Could not fetch template for extension of \"%s\", "
                         "using default template instead\n",
                         path);
+            /* We try to fill the buffer with the default template. */
             buffer = format_extension("txt");
             /* If our buffer is still NULL, then we just skip creating this
              * file and move on to the next one. */
@@ -160,6 +179,7 @@ int main(int argc, const char **argv) {
                     "Could not use found template for (reversed) extension "
                     "\"%s\" of \"%s\", template file might be broken\n",
                     extension, path);
+                /* We try to fill the buffer with the default template. */
                 buffer = format_extension("txt");
                 /* If our buffer is still NULL, then we just skip creating this
                  * file and move on to the next one. */
