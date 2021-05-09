@@ -5,11 +5,11 @@
 /********************************** METADATA **********************************/
 
 /*
-* Contributors: roadelou
-* Contacts: 
-* Creation Date: 2021-05-09
-* Language: C Header
-*/
+ * Contributors: roadelou
+ * Contacts:
+ * Creation Date: 2021-05-09
+ * Language: C Header
+ */
 
 /********************************** INCLUDES **********************************/
 
@@ -27,9 +27,9 @@
  * whether the message will be shown to the user or not.
  * */
 enum LOG_LEVEL {
-	INFO,		// No problem occured, not intervention is required.
-	WARNING,	// A recoverable problem occured, no intervention is required.
-	ERROR,		// An irrecoverable problem occured, needs user intervention.
+    INFO,    // No problem occured, not intervention is required.
+    WARNING, // A recoverable problem occured, no intervention is required.
+    ERROR,   // An irrecoverable problem occured, needs user intervention.
 };
 
 /* The structs of your header go here */

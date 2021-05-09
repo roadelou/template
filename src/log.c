@@ -1,11 +1,11 @@
 /********************************** METADATA **********************************/
 
 /*
-* Contributors: roadelou
-* Contacts: 
-* Creation Date: 2021-05-09
-* Language: C Source
-*/
+ * Contributors: roadelou
+ * Contacts:
+ * Creation Date: 2021-05-09
+ * Language: C Source
+ */
 
 /********************************** INCLUDES **********************************/
 
@@ -13,8 +13,8 @@
 #include <log.h>
 
 // Used for vfprintf
-#include <stdio.h>
 #include <stdarg.h>
+#include <stdio.h>
 
 /********************************* SINGLETONS *********************************/
 
@@ -57,88 +57,88 @@ int should_log(enum LOG_LEVEL importance);
 
 // The functions we are implementing.
 void set_log_level(enum LOG_LEVEL level) {
-	// We assign a value based on the provided level. We need a switch to handle
-	// garbage values correctly.
-	switch (level) {
-		case INFO:
-		case WARNING:
-		case ERROR: {
-			LEVEL = level;
-			break;
-		}
-		default: {
-			// If we received a garbage input, we set the log level to WARNING.
-			LEVEL = WARNING;
-			break;
-		}
-	}
+    // We assign a value based on the provided level. We need a switch to handle
+    // garbage values correctly.
+    switch (level) {
+    case INFO:
+    case WARNING:
+    case ERROR: {
+        LEVEL = level;
+        break;
+    }
+    default: {
+        // If we received a garbage input, we set the log level to WARNING.
+        LEVEL = WARNING;
+        break;
+    }
+    }
 }
 
 int log_message(enum LOG_LEVEL importance, const char *format, ...) {
-	// The return value of the function.
-	int return_value;
-	//
-	// If the value shouldn't be logged, we simply return 1.
-	if (!should_log(importance)) {
-		return 1;
-	}
-	// else...
-	//
-	// We create the variadic list to handle variadic arguments.
-	va_list variadic_list;
-	// We initialize our variadic list.
-	va_start(variadic_list, format);
-	//
-	// We emit the ASCII color sequence for our message based on its type. Not
-	// all message types are colored.
-	switch (importance) {
-		case WARNING:
-			// Warning goes in orange.
-			printf("%s", "\033[33m");
-		case ERROR:
-			// Error goes in red.
-			printf("%s", "\033[31m");
-	}
-	// We print the logged message itself. The output stream used depends on the
-	// importance.
-	switch (importance) {
-		case ERROR: {
-			// ERROR goes to STDERR.
-			return_value = vfprintf(stderr, format, variadic_list);
-		}
-		default:
-			// Everyone else goes to stdout.
-			return_value = vfprintf(stdout, format, variadic_list);
-	}
-	// Finally we end the ASCII color sequence.
-	switch (importance) {
-		case WARNING:
-		case ERROR:
-			// Only WARNING and ERROR need a console reset.
-			printf("%s", "\033[m");
-	}
-	// We return the expected value.
-	return return_value;
+    // The return value of the function.
+    int return_value;
+    //
+    // If the value shouldn't be logged, we simply return 1.
+    if (!should_log(importance)) {
+        return 1;
+    }
+    // else...
+    //
+    // We create the variadic list to handle variadic arguments.
+    va_list variadic_list;
+    // We initialize our variadic list.
+    va_start(variadic_list, format);
+    //
+    // We emit the ASCII color sequence for our message based on its type. Not
+    // all message types are colored.
+    switch (importance) {
+    case WARNING:
+        // Warning goes in orange.
+        printf("%s", "\033[33m");
+    case ERROR:
+        // Error goes in red.
+        printf("%s", "\033[31m");
+    }
+    // We print the logged message itself. The output stream used depends on the
+    // importance.
+    switch (importance) {
+    case ERROR: {
+        // ERROR goes to STDERR.
+        return_value = vfprintf(stderr, format, variadic_list);
+    }
+    default:
+        // Everyone else goes to stdout.
+        return_value = vfprintf(stdout, format, variadic_list);
+    }
+    // Finally we end the ASCII color sequence.
+    switch (importance) {
+    case WARNING:
+    case ERROR:
+        // Only WARNING and ERROR need a console reset.
+        printf("%s", "\033[m");
+    }
+    // We return the expected value.
+    return return_value;
 }
 
 // Helper functions.
 int should_log(enum LOG_LEVEL importance) {
-	// We switch based on the importance value to handle garbage correctly.
-	switch (importance) {
-		case INFO: {
-			return LEVEL == INFO;
-		}
-		case WARNING: {
-			return LEVEL != ERROR;
-		}
-		case ERROR: {
-			return 1;
-		}
-		default: {
-			// Garbage importance is treated like INFO.
-			return LEVEL == INFO;
-		}
-	}
+    // We switch based on the importance value to handle garbage correctly.
+    switch (importance) {
+    case INFO: {
+        return LEVEL == INFO;
+    }
+    case WARNING: {
+        return LEVEL != ERROR;
+    }
+    case ERROR: {
+        return 1;
+    }
+    default: {
+        // Garbage importance is treated like INFO.
+        return LEVEL == INFO;
+    }
+    }
 }
 
 /************************************ EOF *************************************/
