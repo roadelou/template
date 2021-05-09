@@ -27,9 +27,9 @@
  * whether the message will be shown to the user or not.
  * */
 enum LOG_LEVEL {
-    INFO,    // No problem occured, not intervention is required.
-    WARNING, // A recoverable problem occured, no intervention is required.
-    ERROR,   // An irrecoverable problem occured, needs user intervention.
+    INFO_MSG,    // No problem occured, not intervention is required.
+    WARNING_MSG, // A recoverable problem occured, no intervention is required.
+    ERROR_MSG,   // An irrecoverable problem occured, needs user intervention.
 };
 
 /* The structs of your header go here */
@@ -51,7 +51,7 @@ enum LOG_LEVEL {
  *  as WARNING. Only messages of priority higher or equal to the level will be
  *  printed.
  * */
-void set_log_level(enum LOG_LEVEL);
+void set_log_level(enum LOG_LEVEL level);
 
 /* Description
  * ===========
@@ -72,7 +72,7 @@ void set_log_level(enum LOG_LEVEL);
  * =======
  * The return code of printf.
  * */
-int log_message(enum LOG_LEVEL, const char *format, ...);
+int log_message(enum LOG_LEVEL importance, const char *format, ...);
 
 /* End of include once header guard */
 #endif
