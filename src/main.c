@@ -1,6 +1,9 @@
 /* The header of the library we are using. */
 #include <template.h>
 
+/* Used for logging. */
+#include <log.h>
+
 /* Used for getopt. */
 #include <getopt.h>
 
@@ -63,6 +66,10 @@ int main(int argc, const char **argv) {
          * errored one.
          */
         strncpy((char *)current_date, "ERROR", 11);
+        /* We also log a warning for the user. */
+        log_message(WARNING_MSG,
+                    "Could not fetch date from OS, defaulted to \"%s\"\n",
+                    current_date);
     }
 
     /* We get the user name, we see if the dedicated variable is set. */
@@ -73,6 +80,8 @@ int main(int argc, const char **argv) {
          * name.
          */
         author = getenv("USER");
+        /* We also log an information for the user. */
+        log_message(INFO_MSG, "Defaulted author to \"%s\"\n", author);
     }
 
     /* We get the user contact. */
@@ -81,6 +90,8 @@ int main(int argc, const char **argv) {
     if (contact == NULL) {
         /* If not contact is provided, we leave an empty field. */
         contact = "";
+        /* We also log an information for the user. */
+        log_message(INFO_MSG, "Defaulted contact to \"%s\"\n", contact);
     }
 
     /* Handling getopt arguments. */
@@ -121,10 +132,19 @@ int main(int argc, const char **argv) {
         extension = get_format_extension(path);
         /* If we found no valid extension, we use .txt instead. */
         if (extension == NULL) {
+            /* We log a warning for the user. */
+            log_message(INFO_MSG,
+                        "Could not fetch template for extension of \"%s\", "
+                        "using default template instead\n",
+                        path);
             buffer = format_extension("txt");
             /* If our buffer is still NULL, then we just skip creating this
-             * ffile and move on to the next one. */
+             * file and move on to the next one. */
             if (buffer == NULL) {
+                /* We log an error to the user. */
+                log_message(ERROR_MSG, "%s\n",
+                            "Could not fetch default template, installation "
+                            "may be broken");
                 status += 1;
                 continue;
             }
@@ -134,10 +154,20 @@ int main(int argc, const char **argv) {
             /* If we can't grab a format for this extension, we try again with
              * the default txt format. */
             if (buffer == NULL) {
+                /* We log an error for the user. */
+                log_message(
+                    ERROR_MSG,
+                    "Could not use found template for (reversed) extension "
+                    "\"%s\" of \"%s\", template file might be broken\n",
+                    extension, path);
                 buffer = format_extension("txt");
                 /* If our buffer is still NULL, then we just skip creating this
-                 * ffile and move on to the next one. */
+                 * file and move on to the next one. */
                 if (buffer == NULL) {
+                    /* We log an error to the user. */
+                    log_message(ERROR_MSG, "%s\n",
+                                "Could not fetch default template, "
+                                "installation may be broken");
                     status += 1;
                     continue;
                 }
@@ -148,7 +178,11 @@ int main(int argc, const char **argv) {
         created_file = fopen(path, "w");
         if (created_file == NULL) {
             /* We could not open this file for some reason, we skip it and raise
-             * the error code. */
+             * the error code. We also log an error for the user. */
+            log_message(ERROR_MSG,
+                        "Could not open file \"%s\" to write template, you may "
+                        "not have the necessary permissions\n",
+                        path);
             status += 1;
             free(buffer);
             continue;
