@@ -47,7 +47,7 @@ static enum LOG_LEVEL LEVEL = WARNING_MSG;
  * |====================|======|=========|=======|
  *
  * */
-int should_log(enum LOG_LEVEL importance);
+static int should_log(enum LOG_LEVEL importance);
 
 /************************************ MAIN ************************************/
 
@@ -124,7 +124,7 @@ int log_message(enum LOG_LEVEL importance, const char *format, ...) {
 }
 
 // Helper functions.
-int should_log(enum LOG_LEVEL importance) {
+static int should_log(enum LOG_LEVEL importance) {
     // We switch based on the importance value to handle garbage correctly.
     switch (importance) {
     case INFO_MSG: {
