@@ -342,9 +342,10 @@ static size_t next_extension_part_backwards(const char *path, size_t *cursor) {
      - next_cursor = 0;
      - next_cursor >= 0 and next_cursor points to a '.';
      - next_cursor >= 0 and next_cursor points to a '/';
-    The right value to return is next_cursor + (next_cursor > 0);
+    In either of the last two cases, we should increment the returned cursor.
     */
-    return next_cursor + (next_cursor > 0);
+    return next_cursor + (*(path + next_cursor) == '.') ||
+           (*(path + next_cursor) == '/');
 }
 
 static size_t next_extension_part_forwards(const char *path, size_t *cursor) {
