@@ -56,7 +56,7 @@ The way **template** searches the extension file is non-trivial, but allows reco
 Importance Level | Printed If | Color | Meaning
 -----------------|------------|-------|--------
 INFO\_MSG | `-v` or `--verbose` is used | White | No problem occured, no user intervention is needed
-WARNING\_MSG | `-q` or `--quiet` is **not`** used | Yellow | A recoverable problem occured, no user intervention is needed
+WARNING\_MSG | `-q` or `--quiet` is **not** used | Yellow | A recoverable problem occured, no user intervention is needed
 ERROR\_MSG | *Always* | Red | A irrecoverable problem has occured, some user intervention is needed
 
 Note that template isn't meant to crash even when an **ERROR\_MSG** is printed, in most cases **template** will just not create the expected file and move on.
