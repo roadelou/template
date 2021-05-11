@@ -7,6 +7,21 @@
 /* Used for getopt. */
 #include <getopt.h>
 
+/* Description
+ * ===========
+ * An enum type used to specify the matching algorithm to use for the
+ * extensions.
+ *
+ * Values
+ * ======
+ *  - OLD: The old algorithm, will only match the entire extension.
+ *  - NEW: The new algorithm, with hierachical extension match.
+ * */
+enum ExtensionMatchAlgorithm {
+    OLD,
+    NEW,
+};
+
 /*
 Description
 ===========
@@ -51,14 +66,17 @@ int main(int argc, const char **argv) {
     /* The return code of the process, will rise by 1 each time we fail to build
      * a file. */
     int status = 0;
+    /* The extension match algorithm, defaults to new. */
+    enum ExtensionMatchAlgorithm match_algorithm = NEW;
     /* Description of the long command line options for getopt. See man 3
-     * getopt.
-     */
+     * getopt. */
     static struct option long_options[] = {
         {"author", required_argument, NULL, 'a'},
         {"contact", required_argument, NULL, 'c'},
         {"verbose", no_argument, NULL, 'v'},
         {"quiet", no_argument, NULL, 'q'},
+        {"old", no_argument, NULL, 'o'},
+        {"new", no_argument, NULL, 'n'},
         {"license", no_argument, NULL, 'l'},
         {"help", no_argument, NULL, 'h'}};
 
@@ -67,8 +85,9 @@ int main(int argc, const char **argv) {
     set_log_level(WARNING_MSG);
 
     /* Handling getopt arguments. */
-    while ((getopt_option = getopt_long(argc, (char *const *)argv, "+a:c:hlvq",
-                                        long_options, NULL)) != -1) {
+    while ((getopt_option = getopt_long(argc, (char *const *)argv,
+                                        "+a:c:hlvqon", long_options, NULL)) !=
+           -1) {
         switch (getopt_option) {
         case 'a':
             /* A new value for the author was supplied, it overwrites the
@@ -95,6 +114,14 @@ int main(int argc, const char **argv) {
         case 'q':
             /* Quiet execution, we raise the log level. */
             set_log_level(ERROR_MSG);
+            break;
+        case 'o':
+            /* Using the old matching algorithm. */
+            match_algorithm = OLD;
+            break;
+        case 'n':
+            /* Using the new extension matching algorithm (the default). */
+            match_algorithm = NEW;
             break;
         default:
             /* getopt encountered and invalid character and already printed an
@@ -146,8 +173,26 @@ int main(int argc, const char **argv) {
         /* We get the new file to create. */
         path = *(argv + cursor);
 
-        /* We first get the extension of our file. */
-        extension = get_format_extension(path);
+        /* We first get the extension of our file. The algorithm used can be
+         * overriden by the user. */
+        switch (match_algorithm) {
+        case OLD:
+            /* We have to discard the const here, but it is important to not
+             * attempt to free that string. */
+            extension = (char *)get_extension(path);
+            break;
+        case NEW:
+            extension = get_format_extension(path);
+            break;
+        default:
+            /* If we received a garbage value, we print a warning to the
+             * user and default to the default new algorithm. */
+            log_message(WARNING_MSG,
+                        "Invalid algorithm \"%X\", defaulted to NEW (%X)\n",
+                        match_algorithm, NEW);
+            extension = get_format_extension(path);
+        }
+
         /* If we found no valid extension, we use .txt instead. */
         if (extension == NULL) {
             /* We log a warning for the user. */
@@ -216,8 +261,20 @@ int main(int argc, const char **argv) {
 
         /* We free the buffer used for our format string. */
         free(buffer);
+
         /* We no longer need the dynamically allocated extension either. */
-        free(extension);
+        switch (match_algorithm) {
+        case OLD:
+            /* If we used the OLD matching algorithm, no memory was
+             * allocated for the extension hence we shouldn't attempt to
+             * free it. */
+            break;
+        default:
+            /* The other algorithms do allocate some memory that we have to
+             * free. */
+            free(extension);
+            break;
+        }
     }
     /* We exit and end the process. */
     return status;
@@ -244,6 +301,12 @@ int print_help(void) {
                   "\n"
                   " -q, --quiet\n"
                   "    Lowers the verbosity.\n"
+                  "\n"
+                  " -o, --old\n"
+                  "    Old matching algorithm, needs whole extension match.\n"
+                  "\n"
+                  " -n, --new\n"
+                  "    New matching algorithm, uses hierarchical match.\n"
                   "\n"
                   " -l, --license\n"
                   "    Prints the license message and exits.\n"
