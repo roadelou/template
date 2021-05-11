@@ -1,2 +1,25 @@
+################################### METADATA ###################################
+
+# Contributors: roadelou
+# Contacts: 
+# Creation Date: 2021-05-11
+# Language: Gitignore file
+
+##################################### BODY #####################################
+
+# Ignoring the directory used to build the executable.
 build
+
+# Ignoring vim swap files.
 *.swp
+
+# Ignoring fedora package log files.
+*.log
+
+# Ignoring source RPM.
+*.src.rpm
+
+# Ignoring build directory of the RPM packages.
+x86_64
+
+##################################### EOF ######################################
