@@ -64,6 +64,9 @@ $(BUILDDIR):
 
 clean:
 	rm -f $(EXEC) $(DEBUG)
+	# Removing fedora package leftovers
+	rm -f *.src.rpm *.log
+	rm -rf x86_64
 
 install: $(EXEC) $(TEMPLATES) $(BINDIR)
 	install -m 755 $(EXEC) $(BINDIR)/template
