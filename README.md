@@ -22,6 +22,8 @@ __template__ uses [getopt](https://www.gnu.org/software/libc/manual/html_node/Ge
 - `-c, --contact <contact>` to override the environment "contact" value with the provided one (see the [Metadata](README.md#Metadata) for details about the contact value).
 - `-v, --verbose` to raise the verbosity of the tool and see all the messages.
 - `-q, --quiet` to lower the verbosity of the tool and only see error messages.
+- `-o, --old` to use the old matching algorithm that only matches whole extensions.
+- `-n, --new` to use the new hierarchical matching algorithm.
 - `-l, --license` to print license information and exit.
 - `-h, --help` to print help and exit.
 
