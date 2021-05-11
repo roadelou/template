@@ -37,9 +37,14 @@ TEMPLATES = $(wildcard $(TOP)/etc/*.template)
 # The location where the configuration format files will be stored.
 CONFIG = $(DESTDIR)/etc/roadelou_template
 
+# The aliases used to create the RPM package.
+#
+# The spec file used to automate the compilation of the package.
+SPEC = $(TOP)/template.spec
+
 ################################### SPECIAL ####################################
 
-.PHONY: debug all clean install uninstall
+.PHONY: debug all clean install uninstall fedora
 
 #################################### RULES #####################################
 
@@ -65,6 +70,9 @@ install: $(EXEC) $(TEMPLATES) $(BINDIR)
 	# Also copying the format files to the expected location.
 	mkdir -p $(CONFIG)
 	install -m 664 -t $(CONFIG) $(TEMPLATES) 
+
+fedora: $(SRC) $(SPEC) $(HEAD) $(BUILDDIR)
+	fedpkg --release f34 local
 
 $(BINDIR):
 	mkdir -p $(BINDIR)
