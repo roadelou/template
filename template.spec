@@ -5,7 +5,6 @@ Summary: template is a small C executable to build templated files from the comm
 
 License: GPLv3
 URL: https://github.com/roadelou/template
-# Source0: master.tar.gz
 
 BuildRequires: gcc
 BuildRequires: make
