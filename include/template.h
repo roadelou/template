@@ -32,8 +32,8 @@ date is provided according to the ISO 8601 format (YYYY-MM-DD).
 Arguments
 =========
  - buffer: The buffer in which the string representation of the current date
-        will be stored. The buffer should be at least 11 bytes wide to fit the
-        entire date and the null terminating byte.
+ will be stored. The buffer should be at least 11 bytes wide to fit the entire
+ date and the null terminating byte.
 
 Returns
 =======
@@ -125,7 +125,7 @@ safe_format for more details.
 Arguments
 =========
  - extension: The file extension for which we are trying to find the format
-        string.
+ string.
 
 Returns
 =======
@@ -144,8 +144,7 @@ Safe implementation of a format function for the template files.
 
 Arguments
 =========
- - stream: The file stream to which the content of the string should be written
-        to.
+ - stream: The file stream to which the content of the string should be written.
  - format: The format string to use to create the templated file.
  - author: The name of the author to use for the template.
  - contact: The name of the contact to use for the template.
