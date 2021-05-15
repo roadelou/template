@@ -44,6 +44,17 @@ The return value of the printf call.
 */
 int print_license(void);
 
+/*
+Description
+===========
+A small helper function which returns the List holding the default search paths.
+
+Returns
+=======
+The expected List.
+*/
+struct List *default_search_paths(void);
+
 int main(int argc, const char **argv) {
     /* A cursor used to loop. */
     int cursor;
@@ -63,6 +74,8 @@ int main(int argc, const char **argv) {
     char *buffer;
     /* The file handle used to create the template files. */
     FILE *created_file;
+    /* The list of the path to search the template files through. */
+    struct List *list = default_search_paths();
     /* The return code of the process, will rise by 1 each time we fail to build
      * a file. */
     int status = 0;
@@ -182,7 +195,7 @@ int main(int argc, const char **argv) {
             extension = (char *)get_extension(path);
             break;
         case NEW:
-            extension = get_format_extension(path);
+            extension = get_format_extension(list, path);
             break;
         default:
             /* If we received a garbage value, we print a warning to the
@@ -190,7 +203,7 @@ int main(int argc, const char **argv) {
             log_message(WARNING_MSG,
                         "Invalid algorithm \"%X\", defaulted to NEW (%X)\n",
                         match_algorithm, NEW);
-            extension = get_format_extension(path);
+            extension = get_format_extension(list, path);
         }
 
         /* If we found no valid extension, we use .txt instead. */
@@ -201,7 +214,7 @@ int main(int argc, const char **argv) {
                         "using default template instead\n",
                         path);
             /* We try to fill the buffer with the default template. */
-            buffer = format_extension("txt");
+            buffer = format_extension(list, "txt");
             /* If our buffer is still NULL, then we just skip creating this
              * file and move on to the next one. */
             if (buffer == NULL) {
@@ -214,7 +227,7 @@ int main(int argc, const char **argv) {
             }
         } else {
             /* We get the format string for our extension type. */
-            buffer = format_extension(extension);
+            buffer = format_extension(list, extension);
             /* If we can't grab a format for this extension, we try again with
              * the default txt format. */
             if (buffer == NULL) {
@@ -225,7 +238,7 @@ int main(int argc, const char **argv) {
                     "\"%s\" of \"%s\", template file might be broken\n",
                     extension, path);
                 /* We try to fill the buffer with the default template. */
-                buffer = format_extension("txt");
+                buffer = format_extension(list, "txt");
                 /* If our buffer is still NULL, then we just skip creating this
                  * file and move on to the next one. */
                 if (buffer == NULL) {
@@ -334,4 +347,17 @@ int print_license(void) {
         "You should have received a copy of the GNU General Public License\n"
         "along with this program.  If not, see "
         "<https://www.gnu.org/licenses/>.");
+}
+
+struct List *default_search_paths(void) {
+    /* The HOME environment variable, used to find the template files. */
+    char *home_path = getenv("HOME");
+    size_t home_length = strlen(home_path);
+    /* The user-specific path to find template files. */
+    char *search_path = alloca(28 + home_length);
+    /* We use snprintf to create the user-specific path. */
+    snprintf(search_path, 28 + home_length, "%s/.config/roadelou_template",
+             home_path);
+    /* We use the variadic constructor to return the expected list. */
+    return new_list(2, search_path, "/etc/roadelou_template");
 }
