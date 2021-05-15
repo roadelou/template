@@ -102,8 +102,9 @@ void delete_list(struct List *list) {
 }
 
 void append_list(struct List *list, char *element) {
-    // A variable used to store the length of the element.
-    size_t element_length = strlen(element);
+    // A variable used to store the length of the element. We add 1 for the NULL
+    // terminating byte.
+    size_t element_length = strlen(element) + 1;
     //
     // We increment the size of the list for the reallocation.
     list->length++;
