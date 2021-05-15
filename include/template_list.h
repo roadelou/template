@@ -54,12 +54,12 @@ struct List {
 //  - length: The number of elements to build the list with.
 //  - ...: A list of null-terminated strings. The number of arguments given
 //  should be equal to the value given as the length argument. The strings
-//  should outlive the list, as they are passed by reference and not copied.
+//  are copied into heap-allocated buffers.
 //
 // Returns
 // =======
-// A pointer to the new heap-allocated list containing pointer references to the
-// provided strings.
+// A pointer to the new heap-allocated list containing pointer references to
+// heap-allocated copies of the provided strings.
 //
 struct List *new_list(size_t length, ...);
 
@@ -76,8 +76,8 @@ struct List *new_list(size_t length, ...);
 // Side-effects
 // ============
 // The "length" field of the list is reset to 0 and the memory allocated for the
-// list is collected. The "strings" field becomes NULL. Note that the strings
-// themselves are left untouched.
+// list is collected. The "strings" field becomes NULL. All the strings held by
+// the list are freed.
 //
 void delete_list(struct List *list);
 
@@ -92,8 +92,7 @@ void delete_list(struct List *list);
 //
 // Notes
 // =====
-// Since the list will now contain a reference to the element, it is important
-// that the element outlives the list.
+// A copy of the element is allocated on the heap and used for the List.
 //
 void append_list(struct List *list, char *element);
 
