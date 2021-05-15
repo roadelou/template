@@ -5,11 +5,11 @@
 /********************************** METADATA **********************************/
 
 /*
-* Contributors: roadelou
-* Contacts: 
-* Creation Date: 2021-05-15
-* Language: C Header
-*/
+ * Contributors: roadelou
+ * Contacts:
+ * Creation Date: 2021-05-15
+ * Language: C Header
+ */
 
 /********************************** INCLUDES **********************************/
 
@@ -126,7 +126,7 @@ than the size of the string or if the value given in direction is not BACKWARDS
 or FORWARDS.
 */
 size_t next_extension_part(const char *path, size_t *cursor,
-                                  enum Direction direction);
+                           enum Direction direction);
 
 /*
 Description
@@ -175,7 +175,6 @@ Arguments
  - path: Null-terminated path to analyse.
 */
 int correct_ending(const char *path);
-
 
 /* End of include once header guard */
 #endif

@@ -1,11 +1,11 @@
 /********************************** METADATA **********************************/
 
 /*
-* Contributors: roadelou
-* Contacts: 
-* Creation Date: 2021-05-15
-* Language: C Source
-*/
+ * Contributors: roadelou
+ * Contacts:
+ * Creation Date: 2021-05-15
+ * Language: C Source
+ */
 
 /********************************** INCLUDES **********************************/
 
@@ -44,7 +44,7 @@ size_t directory_part_size(const char *path) {
 }
 
 size_t next_extension_part(const char *path, size_t *cursor,
-                                  enum Direction direction) {
+                           enum Direction direction) {
     /* We call the appropriate implementation. */
     switch (direction) {
     case BACKWARDS:
@@ -133,8 +133,7 @@ size_t next_extension_part_forwards(const char *path, size_t *cursor) {
     return initial_cursor;
 }
 
-size_t extension_match_size(const char *path,
-                                   const char *template_path) {
+size_t extension_match_size(const char *path, const char *template_path) {
     /* The current extension match found, will be updated during the function.
      */
     size_t extension_match_size = 0;
