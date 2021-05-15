@@ -79,7 +79,7 @@ Description
 ===========
 Returns the extension of the template file which has the largest common suffix
 with the provided path. This is used to find the template file which should be
-used for a given file and replaces the use of th older "get_extension". Note
+used for a given file and replaces the use of the older "get_extension". Note
 that only whole chunk matches are counted, where a whole chunk is a part of a
 string between two '.'. This is clarified in the examples.
 
