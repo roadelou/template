@@ -33,7 +33,28 @@
 
 /********************************* PROTOYPES **********************************/
 
-/* The prototypes of your functions go here. */
+/* Description
+ * ===========
+ * Improves the provided extension match by searching for a template file in the
+ * provided directory.
+ *
+ * Arguments
+ * =========
+ *  - search_path: The path of the directory in which the solution should be
+ *  searched.
+ *  - path: The path for which we are trying to match the extension.
+ *  - best_fit: A pointer to a null terminated string holding a null-terminated
+ *  string of the current best match. The size allocated for best_fit should be
+ *  superior or equal to strlen(path) + strlen("template").
+ *  - best_score: A pointer to the score of the current best fit.
+ *
+ * Returns
+ * =======
+ * SUCCESS if the search could be performed and the solutions were updated,
+ * ERROR otherwise.
+ * */
+static int improve_extension_match(const char *search_path, const char *path,
+                                   char **best_fit, size_t *best_score);
 
 /************************************ MAIN ************************************/
 
@@ -54,77 +75,23 @@ char *get_format_extension(const char *path) {
     /* The current search directory. Is large enough to hold both the
      * user-specific folder and the system-wide one. */
     char *search_path = alloca(28 + home_length);
-    /* A variable used to hold the directory entries as we go through them. */
-    struct dirent *directory_entry;
 
     /* We first go over all the candidates in the user-specific location. */
     snprintf(search_path, 28 + home_length, "%s/.config/roadelou_template",
              home_path);
-    /* We open the user-specific directory, if it exists. */
-    DIR *search_dir = opendir(search_path);
-    /* We only search the directory if it exists. */
-    if (search_dir != NULL) {
-        /* We read the entry for all the files in the directory. */
-        while ((directory_entry = readdir(search_dir)) != NULL) {
-            /* We skip the entry if it doesn't end in ".template". */
-            if (!correct_ending(directory_entry->d_name)) {
-                continue;
-            }
-            /* We score the new entry. */
-            size_t current_score =
-                extension_match_size(path, directory_entry->d_name);
-            if ((best_fit != NULL) && (current_score == best_score) &&
-                (strlen(directory_entry->d_name) < strlen(best_fit))) {
-                /* If the current score is equal to the best scroe and not 0, we
-                 * favor the template with the shortest name. This ensures that
-                 * the hierachical resolution of extensions is performed
-                 * correctly. */
-                best_fit = directory_entry->d_name;
-            } else if (current_score > best_score) {
-                /* We update our best match. */
-                best_score = current_score;
-                best_fit = directory_entry->d_name;
-            }
-            /* Else the previous fit is better. */
-        }
-    }
+    /* We update our best match. For now, we assume no error will occur. */
+    improve_extension_match(search_path, path, &best_fit, &best_score);
 
     /* We also try the system wide location. */
     strncpy(search_path, "/etc/roadelou_template", 23);
-    /* We open the system-wide directory for inspection. */
-    search_dir = opendir(search_path);
-    /* We only search the directory if it exists. */
-    if (search_dir != NULL) {
-        /* We read the entry for all the files in the directory. */
-        while ((directory_entry = readdir(search_dir)) != NULL) {
-            /* We skip the entry if it doesn't end in ".template". */
-            if (!correct_ending(directory_entry->d_name)) {
-                continue;
-            }
-            /* We score the new entry. */
-            size_t current_score =
-                extension_match_size(path, directory_entry->d_name);
-            if ((best_fit != NULL) && (current_score == best_score) &&
-                (strlen(directory_entry->d_name) < strlen(best_fit))) {
-                /* If the current score is equal to the best scroe and not 0, we
-                 * favor the template with the shortest name. This ensures that
-                 * the hierachical resolution of extensions is performed
-                 * correctly. */
-                best_fit = directory_entry->d_name;
-            } else if (current_score > best_score) {
-                /* We update our best match. */
-                best_score = current_score;
-                best_fit = directory_entry->d_name;
-            }
-            /* Else the previous fit is better. */
-        }
-    }
+    /* We update our best match. For now, we assume no error will occur. */
+    improve_extension_match(search_path, path, &best_fit, &best_score);
 
     /* If we found no best match, we simply return NULL. */
     if (best_fit == NULL) {
         return NULL;
     } else {
-        /* We create a statically allocated copy of the extension to return it.
+        /* We create a heap-allocated copy of the extension to return it.
          * That way it won't be subject to strange behaviors from dirent. */
         size_t extension_size =
             strlen(best_fit) - 9; /* 9 = strlen(".template"). */
@@ -140,4 +107,44 @@ char *get_format_extension(const char *path) {
     }
 }
 
+// Helper functions.
+static int improve_extension_match(const char *search_path, const char *path,
+                                   char **best_fit, size_t *best_score) {
+    /* A variable used to hold the directory entries as we go through them. */
+    struct dirent *directory_entry;
+    /* We open the system-wide directory for inspection. */
+    DIR *search_dir = opendir(search_path);
+    /* We only search the directory if it exists. */
+    if (search_dir != NULL) {
+        /* We read the entry for all the files in the directory. */
+        while ((directory_entry = readdir(search_dir)) != NULL) {
+            /* We skip the entry if it doesn't end in ".template". */
+            if (!correct_ending(directory_entry->d_name)) {
+                continue;
+            }
+            /* We score the new entry. */
+            size_t current_score =
+                extension_match_size(path, directory_entry->d_name);
+            if ((*best_fit != NULL) && (current_score == *best_score) &&
+                (strlen(directory_entry->d_name) < strlen(*best_fit))) {
+                /* If the current score is equal to the best scroe and not 0, we
+                 * favor the template with the shortest name. This ensures that
+                 * the hierachical resolution of extensions is performed
+                 * correctly. */
+                *best_fit = directory_entry->d_name;
+            } else if (current_score > *best_score) {
+                /* We update our best match. */
+                *best_score = current_score;
+                *best_fit = directory_entry->d_name;
+            }
+            /* Else the previous fit is better. */
+        }
+        /* We return once we have inspected all the possible templates. */
+        return SUCCESS;
+    } else {
+        /* We could not open the provided path, we raise an error for the
+         * caller. */
+        return ERROR;
+    }
+}
 /************************************ EOF *************************************/
