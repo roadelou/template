@@ -63,29 +63,40 @@ static int improve_extension_match(const char *search_path, const char *path,
 /********************************* FUNCTIONS **********************************/
 
 /* The public function we are implementing. */
-char *get_format_extension(const char *path) {
+char *get_format_extension(const struct List *list, const char *path) {
     /* The name to the template file with the best mathcing extension, allocated
      * in dirent.h */
     char *best_fit = NULL;
     /* The number of characters matching with the current best fit. */
     size_t best_score = 0;
-    /* The HOME environment variable, used to find the template files. */
-    char *home_path = getenv("HOME");
-    size_t home_length = strlen(home_path);
-    /* The current search directory. Is large enough to hold both the
-     * user-specific folder and the system-wide one. */
-    char *search_path = alloca(28 + home_length);
+    /* The current search path. */
+    char *search_path;
 
-    /* We first go over all the candidates in the user-specific location. */
-    snprintf(search_path, 28 + home_length, "%s/.config/roadelou_template",
-             home_path);
-    /* We update our best match. For now, we assume no error will occur. */
-    improve_extension_match(search_path, path, &best_fit, &best_score);
+    // /* The HOME environment variable, used to find the template files. */
+    // char *home_path = getenv("HOME");
+    // size_t home_length = strlen(home_path);
+    // /* The current search directory. Is large enough to hold both the
+    //  * user-specific folder and the system-wide one. */
+    // char *search_path = alloca(28 + home_length);
 
-    /* We also try the system wide location. */
-    strncpy(search_path, "/etc/roadelou_template", 23);
-    /* We update our best match. For now, we assume no error will occur. */
-    improve_extension_match(search_path, path, &best_fit, &best_score);
+    /* We go through all the provided candidates in order. */
+    for (size_t i = 0; i < list.length; i++) {
+        /* We get the ith path from the list. */
+        search_path = *(list.strings + i);
+        /* We update our best match. For now, we assume no error will occur. */
+        improve_extension_match(search_path, path, &best_fit, &best_score);
+    }
+
+    // /* We first go over all the candidates in the user-specific location. */
+    // snprintf(search_path, 28 + home_length, "%s/.config/roadelou_template",
+    //          home_path);
+    // /* We update our best match. For now, we assume no error will occur. */
+    // improve_extension_match(search_path, path, &best_fit, &best_score);
+
+    // /* We also try the system wide location. */
+    // strncpy(search_path, "/etc/roadelou_template", 23);
+    // /* We update our best match. For now, we assume no error will occur. */
+    // improve_extension_match(search_path, path, &best_fit, &best_score);
 
     /* If we found no best match, we simply return NULL. */
     if (best_fit == NULL) {
