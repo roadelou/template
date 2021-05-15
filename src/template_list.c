@@ -39,13 +39,13 @@
 struct List *new_list(size_t length, ...) {
     // We first create the list we are going to return.
     struct List *list = malloc(sizeof(struct List));
-	//
-	// Variable used to hold the length of various arguments.
-	size_t argument_length;
-	//
-	// Variable used to temporarily store the arguments when they are being
-	// copied.
-	char *argument;
+    //
+    // Variable used to hold the length of various arguments.
+    size_t argument_length;
+    //
+    // Variable used to temporarily store the arguments when they are being
+    // copied.
+    char *argument;
     //
     // We also create a variadic list to go through the provided arguments.
     va_list strings_argument;
@@ -63,16 +63,16 @@ struct List *new_list(size_t length, ...) {
     // We go throught the "length" next variadic arguments and add them to the
     // list.
     for (size_t i = 0; i < length; i++) {
-		// We first get the next variadic argument.
-		argument = va_arg(strings_argument, char *);
-		//
-		// We compute the length of the argument.
-		argument_length = strlen(argument);
-		//
-		// We allocate enough memory to hold a copy of the argument.
-		*(list->strings + i) = malloc((argument_length+1) * sizeof(char));
-		//
-		// We copy the content of the original argument to its List-owned copy.
+        // We first get the next variadic argument.
+        argument = va_arg(strings_argument, char *);
+        //
+        // We compute the length of the argument.
+        argument_length = strlen(argument);
+        //
+        // We allocate enough memory to hold a copy of the argument.
+        *(list->strings + i) = malloc((argument_length + 1) * sizeof(char));
+        //
+        // We copy the content of the original argument to its List-owned copy.
         strncpy(*(list->strings + i), argument, argument_length);
     }
     // We close the variadic macro.
@@ -83,11 +83,11 @@ struct List *new_list(size_t length, ...) {
 }
 
 void delete_list(struct List *list) {
-	// We free all the strings owned by this list.
-	for (int i = 0; i<list->length; i++) {
-		free(*(list->strings + i));
-	}
-	//
+    // We free all the strings owned by this list.
+    for (int i = 0; i < list->length; i++) {
+        free(*(list->strings + i));
+    }
+    //
     // We free the allocated memory for the pointer to the strings of the list.
     free(list->strings);
     //
@@ -102,9 +102,9 @@ void delete_list(struct List *list) {
 }
 
 void append_list(struct List *list, char *element) {
-	// A variable used to store the length of the element.
-	size_t element_length = strlen(element);
-	//
+    // A variable used to store the length of the element.
+    size_t element_length = strlen(element);
+    //
     // We increment the size of the list for the reallocation.
     list->length++;
     //
@@ -112,9 +112,9 @@ void append_list(struct List *list, char *element) {
     // is quite reasonable given the memory used by the program compared to that
     // of a Linux-capable host.
     list->strings = realloc(list->strings, list->length * sizeof(char *));
-	//
-	// We allocate some memory to hold the copy of the element.
-	*(list->strings + list->length - 1) = malloc(element_length * sizeof(char));
+    //
+    // We allocate some memory to hold the copy of the element.
+    *(list->strings + list->length - 1) = malloc(element_length * sizeof(char));
     //
     // We create a copy of the provided element.
     strncpy(*(list->strings + list->length - 1), element, element_length);
