@@ -69,10 +69,10 @@ char *format_extension(const struct List *list, const char *extension) {
     /* We go through all the provided paths in order until we find one where
      * the extension matches what we have been given. */
     for (size_t i = 0; i < list->length; i++) {
-        /* We compute the size of the format path. 9 is for ".template" and 1 is
-         * for the NULL byte. */
+        /* We compute the size of the format path. 9 is for ".template" , 1 is
+         * for the NULL byte and the last 1 is for the '/'. */
         format_path_length =
-            (strlen(*(list->strings + i)) + strlen(extension) + 9 + 1) *
+            (strlen(*(list->strings + i)) + strlen(extension) + 9 + 1 + 1) *
             sizeof(char);
         /* We resize our format_path to hold the path to the new file. For now
          * we assume that this never fails. */
