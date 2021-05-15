@@ -1,6 +1,9 @@
 #ifndef TEMPLATE_LIBRARY_INCLUDED
 #define TEMPLATE_LIBRARY_INCLUDED
 
+/* Used for the List type. */
+#include <template_list.h>
+
 /* Used to write the templated file. */
 #include <stdio.h>
 
@@ -85,6 +88,8 @@ string between two '.'. This is clarified in the examples.
 
 Arguments
 =========
+ - list: The search path, i.e. list of directories in which we should find the
+ template files.
  - path: The path of the file for which we want the template file extension.
 
 Returns
@@ -108,7 +113,7 @@ get_format_extension("foo.gplv3.c") -> "gplv3.c"
 get_format_extension("foo_v3.c") -> ".c"	// Because "gplv3" isn't a whole
 match.
 */
-char *get_format_extension(const char *path);
+char *get_format_extension(const struct List *list, const char *path);
 
 /*
 Description
@@ -124,6 +129,8 @@ safe_format for more details.
 
 Arguments
 =========
+ - list: The search path, i.e. list of directories in which we should find the
+ template files.
  - extension: The file extension for which we are trying to find the format
  string.
 
@@ -135,7 +142,7 @@ Note
 ====
 The pointer returned by this function has to be freed later on.
 */
-char *format_extension(const char *extension);
+char *format_extension(const struct List *list, const char *extension);
 
 /*
 Description
