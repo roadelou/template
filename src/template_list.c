@@ -87,7 +87,7 @@ void append_list(struct List *list, char *element) {
 	list->strings = realloc(list->strings, list->length * sizeof(char *));
 	//
 	// We copy a reference to the provided element at the end of the list.
-	*(list->string+list->length-1) = element;
+	*(list->strings+list->length-1) = element;
 }
 
 /************************************ EOF *************************************/

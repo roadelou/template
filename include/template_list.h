@@ -36,7 +36,7 @@
 //
 struct List {
     size_t length;
-    char *strings;
+    char **strings;
 };
 
 /* The unions of your header go here */
