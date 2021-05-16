@@ -13,7 +13,8 @@
 
 /********************************** INCLUDES **********************************/
 
-/* The includes for your header go here */
+// Used for the size_t type.
+#include <stddef.h>
 
 /*********************************** MACROS ***********************************/
 
@@ -75,7 +76,7 @@ int new_associative_array(size_t length, const char **keys,
 // the associative array, hence the caller should not attempt to free not modify
 // it.
 //
-const char *search_associative_array(const char *key);
+const char *search_associative_array(char *key);
 
 // Description
 // ===========
