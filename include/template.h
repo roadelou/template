@@ -4,6 +4,9 @@
 /* Used for the List type. */
 #include <template_list.h>
 
+/* Used for the SUCCESS and ERROR values. */
+#include <template_base.h>
+
 /* Used to write the templated file. */
 #include <stdio.h>
 
@@ -15,16 +18,6 @@
 
 /* Used to get access to environment variables for the user name and contact. */
 #include <stdlib.h>
-
-/* We define SUCCESS and ERROR that will be used to make our return codes more
- * explicit. */
-#ifndef SUCCESS
-#define SUCCESS 0
-#endif
-
-#ifndef ERROR
-#define ERROR -1
-#endif
 
 /*
 Description
