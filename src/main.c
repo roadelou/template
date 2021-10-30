@@ -7,6 +7,9 @@
 /* Used for getopt. */
 #include <getopt.h>
 
+/* Used for the alloca in default_search_paths. */
+#include <alloca.h>
+
 /* Description
  * ===========
  * An enum type used to specify the matching algorithm to use for the
