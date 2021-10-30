@@ -21,8 +21,11 @@ INCLUDE = -I $(TOP)/include/
 # Flag to trigger compiler warnings
 WARN = -Wall -pedantic
 
+# Pinning the C standard used for the compilation of the code.
+C_STD = --std=c99
+
 # Adding RPM distro C flags if they are provided.
-CFLAGS = $(RPM_OPT_FLAGS) $(WARN) $(INCLUDE)
+CFLAGS = $(RPM_OPT_FLAGS) $(WARN) $(INCLUDE) $(C_STD)
 
 # The name of the compiled executable
 BUILDDIR = $(TOP)/build
