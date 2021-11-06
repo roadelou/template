@@ -24,6 +24,8 @@ __template__ uses [getopt](https://www.gnu.org/software/libc/manual/html_node/Ge
 - `-q, --quiet` to lower the verbosity of the tool and only see error messages.
 - `-o, --old` to use the old matching algorithm that only matches whole extensions.
 - `-n, --new` to use the new hierarchical matching algorithm.
+- `-s, --static` to use the older templating style described in the [Static Format section](README.md#Static Format).
+- `-d, --dynamic` to use the newer templating style with shell subcommands. This is the default.
 - `-l, --license` to print license information and exit.
 - `-h, --help` to print help and exit.
 
@@ -43,11 +45,17 @@ __template__ uses printf-style format files to build the templated files. For a 
 
 The way **template** searches the extension file is non-trivial, but allows recognition of hierachies of extension. So a file like `foo.bar.txt` can use the template `txt.bar.template` even if the more generic `txt.template` also exists. This is usefull for templates with a license specific headers.
 
-### Formatting syntax
+### Static Format
 
- - When writing the template files, __%1__ will refer to the author metadata, __%2__ will be the contact and __%3__ will be the date of creation.
+ - When writing the template files with the older static format, __%1__ will refer to the author metadata, __%2__ will be the contact and __%3__ will be the date of creation.
  - __%%__ can be used as an escape and will print a single character '%'.
  - Any other occurence of '%' which doesn't fit into the previous definitions will simply be pasted litteraly to the created file, without formatting.
+
+### Dynamic Format
+
+ - The newer dynamic format takes advantage of shell scripting to include the output of commands in your created file. The basic syntax for a subcommand is `%$ [...] $` where `$` can be any ASCII character. This is similar to the way the `sed` command handles its `/` for instance.
+ - For instance, `%/echo rouge/` would yield `rouge`.
+ - `template` will warn about incomplete or malformed format specifiers and should proceed without crashing.
 
 ## Verbosity
 
