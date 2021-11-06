@@ -32,6 +32,15 @@
 #define WARNING -2
 #endif
 
+/* We define some constant for the use of the occurence function. */
+#ifndef FIRST_OCCURENCE
+#define FIRST_OCCURENCE 1
+#endif
+
+#ifndef LAST_OCCURENCE
+#define LAST_OCCURENCE 0
+#endif
+
 /********************************** STRUCTS ***********************************/
 
 /* The enums of your header go here */
