@@ -12,6 +12,9 @@
 /* The library we are trying to implement. */
 #include "template_base.h"
 
+/* Used for strlen. */
+#include <string.h>
+
 /********************************* SINGLETONS *********************************/
 
 /* The static global variables for your code goe here. */
@@ -26,13 +29,13 @@
 
 /********************************* FUNCTIONS **********************************/
 
-int occurence(const char *string, char letter, int first) {
+size_t occurence(const char *string, char letter, int first) {
     /* The length of the string, we shouldn't try to look any further. */
-    int length = strlen(string);
+    size_t length = strlen(string);
     /* The result we will return, it will be set once we find a match. */
-    int result = -1;
+    size_t result = -1;
     /* The cursor that we use to go through the string. */
-    int cursor;
+    size_t cursor;
 
     /* We look for a match. */
     for (cursor = 0; cursor < length; cursor++) {

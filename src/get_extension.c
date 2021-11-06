@@ -24,7 +24,7 @@
 
 const char *get_extension(const char *path) {
     /* The integer we will use to build the returned pointer. */
-    int cursor;
+    size_t cursor;
     /* We try to get the position of the first dot in the path. */
     cursor = occurence(path, '.', 1);
     if (cursor == -1) {

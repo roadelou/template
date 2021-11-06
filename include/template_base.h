@@ -13,7 +13,8 @@
 
 /********************************** INCLUDES **********************************/
 
-/* The includes for your header go here */
+/* Used for size_t. */
+#include <stddef.h>
 
 /*********************************** MACROS ***********************************/
 
@@ -59,7 +60,7 @@ Returns
 =======
 The index of the occurence if the letter was found, -1 otherwise.
 */
-int occurence(const char *string, char letter, int first);
+size_t occurence(const char *string, char letter, int first);
 
 /* End of include once header guard */
 #endif
