@@ -15,6 +15,9 @@
 /* Used for malloc and free. */
 #include <stdlib.h>
 
+/* Used for popen and pclose. */
+#include <stdio.h>
+
 /* Used for strlen. */
 #include <string.h>
 
@@ -175,6 +178,48 @@ int append_match_list(struct MatchList *match_list, size_t head, size_t tail) {
     *(match_list->tail + match_list->count) = tail;
     /* We increment the count of elements in the match_list. */
     match_list->count++;
+    return SUCCESS;
+}
+
+int write_command_output(const char *command, FILE *output_file) {
+    /* The number of characters copied in the current loop iteration. */
+    size_t buffered_bytes;
+    /* We start by allocating some memory for the copy buffer.
+     *
+     * NOTE
+     * ====
+     * We assume that malloc doesn't fail here.
+     * */
+    char *copy_buffer = malloc(COMMAND_OUTPUT_CHUNK_SIZE * sizeof(char));
+    /* We use popen to get the output of the provided command. */
+    FILE *command_output = popen(command, "r");
+    /* Checking for errors. */
+    if (command_output == NULL) {
+        /* Note that although the function encountered an error, the failure to
+         * run a single command is only considered a warning for the whole
+         * execution. */
+        log_message(WARNING_MSG, "Command \"%s\" failed.\n", command);
+        /* We free the allocated memory. */
+        free(copy_buffer);
+        return WARNING;
+    }
+    /* We copy the output of the command by chunks. */
+    while ((buffered_bytes =
+                fread(copy_buffer, sizeof(char), COMMAND_OUTPUT_CHUNK_SIZE,
+                      command_output)) != 0) {
+        /* We copy the buffered bytes. */
+        if (fwrite(copy_buffer, sizeof(char), buffered_bytes, output_file) !=
+            buffered_bytes * sizeof(char)) {
+            log_message(ERROR_MSG, "%s\n",
+                        "Could not write command output to the provided file.");
+            free(copy_buffer);
+            pclose(command_output);
+            return ERROR;
+        }
+    }
+    /* If we reach this line, the execution was a success. We end the child
+     * process. */
+    pclose(command_output);
     return SUCCESS;
 }
 

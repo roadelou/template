@@ -27,6 +27,12 @@
 #define MATCH_LIST_CHUNK_SIZE 32
 #endif
 
+/* The cunk size used when copying the output of a command to the target file.
+ */
+#ifndef COMMAND_OUTPUT_CHUNK_SIZE
+#define COMMAND_OUTPUT_CHUNK_SIZE 1024
+#endif
+
 /********************************** STRUCTS ***********************************/
 
 /* The enums of your header go here */
@@ -103,6 +109,33 @@ For the text "Today is the %$date +%F/.", the corresponding MatchList should be
 '%' is never matched. A warning will be logged. The call shall return WARNING.
 */
 int find_format(const char *text, struct MatchList *match_list);
+
+/*
+Description
+===========
+This function is used to write the output of the provided (shell) command to the
+specified open file.
+
+Arguments
+=========
+ - command: The shell command whise output shall be written to the provided
+ file. This command will be executed in a subprocess using popen.
+ - output_file: The file to which the output of the command will be written. It
+ should of course be opened in write mode, otherwise the function will fail.
+
+Returns
+=======
+This function will return SUCCESS if no problem was encountered, or ERROR if:
+ - The output file could not be written to.
+ - The shell command could not be executed.
+
+Side-effects
+============
+Any side-effect of the provided command will take place. The provided file will
+be written to, and if the command outputs something to stderr, it will be
+visible on the stderr of the main parent process.
+*/
+int write_command_output(const char *command, FILE *output_file);
 
 /* End of include once header guard */
 #endif
