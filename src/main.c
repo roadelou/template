@@ -28,6 +28,21 @@ enum ExtensionMatchAlgorithm {
 /*
 Description
 ===========
+Choice for the formatting style. Static uses the old , while dynamic will
+
+Values
+======
+ - STATIC: Uses the old %1, %2 etc... and doesn't execute shell commands
+ - DYNAMIC: Uses the newer %$ [...] $ subcommands, more powerful but risky.
+*/
+enum FormatStyle {
+    STATIC,
+    DYNAMIC,
+};
+
+/*
+Description
+===========
 Prints help for the user on stdout.
 
 Returns
@@ -84,6 +99,8 @@ int main(int argc, const char **argv) {
     int status = 0;
     /* The extension match algorithm, defaults to new. */
     enum ExtensionMatchAlgorithm match_algorithm = NEW;
+    /* The format specifyer syntax, defaults to the new dynamic one. */
+    enum FormatStyle format_style = DYNAMIC;
     /* Description of the long command line options for getopt. See man 3
      * getopt. */
     static struct option long_options[] = {
@@ -93,6 +110,8 @@ int main(int argc, const char **argv) {
         {"quiet", no_argument, NULL, 'q'},
         {"old", no_argument, NULL, 'o'},
         {"new", no_argument, NULL, 'n'},
+        {"static", no_argument, NULL, 's'},
+        {"dynamic", no_argument, NULL, 'd'},
         {"license", no_argument, NULL, 'l'},
         {"help", no_argument, NULL, 'h'}};
 
@@ -102,7 +121,7 @@ int main(int argc, const char **argv) {
 
     /* Handling getopt arguments. */
     while ((getopt_option = getopt_long(argc, (char *const *)argv,
-                                        "+a:c:hlvqon", long_options, NULL)) !=
+                                        "+a:c:hlvqosdn", long_options, NULL)) !=
            -1) {
         switch (getopt_option) {
         case 'a':
@@ -138,6 +157,14 @@ int main(int argc, const char **argv) {
         case 'n':
             /* Using the new extension matching algorithm (the default). */
             match_algorithm = NEW;
+            break;
+        case 's':
+            /* Using the old static formatting. */
+            format_style = STATIC;
+            break;
+        case 'd':
+            /* Using the new dynamic formatting. */
+            format_style = DYNAMIC;
             break;
         default:
             /* getopt encountered and invalid character and already printed an
@@ -270,7 +297,20 @@ int main(int argc, const char **argv) {
         }
 
         /* We print our formatted content to the file. */
-        safe_format(created_file, buffer, author, contact, current_date);
+        switch (format_style) {
+        case STATIC:
+            safe_format(created_file, buffer, author, contact, current_date);
+            break;
+        default:
+            log_message(
+                WARNING_MSG,
+                "Invalid formatting style \"%X\", defaulted to DYNAMIC (%X)\n",
+                format_style, DYNAMIC);
+            /* No break, we fall through to the dynamic case. */
+        case DYNAMIC:
+            dynamic_format(buffer, created_file);
+            break;
+        }
 
         /* We flush the file by closing it. */
         fclose(created_file);

@@ -7,6 +7,9 @@
 /* Used for the SUCCESS and ERROR values. */
 #include <template_base.h>
 
+/* Used for the dynamic formatting implementation. */
+#include <dynamic_format.h>
+
 /* Used to write the templated file. */
 #include <stdio.h>
 

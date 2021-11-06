@@ -71,7 +71,7 @@ int find_format(const char *text, struct MatchList *match_list) {
     while ((cursor < text_length) &&
            ((next_cursor = occurence(text + cursor, '%', FIRST_OCCURENCE)) !=
             -1)) {
-        /* we offset the next_cursor to take into account the part of the string
+        /* We offset the next_cursor to take into account the part of the string
          * we have already gone through. */
         next_cursor += cursor;
 
@@ -147,7 +147,7 @@ int find_format(const char *text, struct MatchList *match_list) {
          * next iteration. Note that we can end up outside the memory bounds
          * that way, but that will be checked at the beginning of the next hence
          * there is not problem. */
-        cursor = next_cursor + 1;
+        cursor += next_cursor + 1;
         /* Implicit, we start looking for the next format specifier. */
         continue;
     }
@@ -272,7 +272,7 @@ int dynamic_format(char *text, FILE *output_file) {
         /* We use the substring from the original text to run the command see
          * the comment in find_format to see where the +2 comes from. */
         status |= write_command_output(
-            text + *(match_list.tail + specifier) + 2, output_file);
+            text + *(match_list.head + specifier) + 2, output_file);
         /* Error checking. */
         if (status == ERROR) {
             /* We propagate the error. */
