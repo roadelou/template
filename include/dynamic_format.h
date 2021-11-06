@@ -133,9 +133,42 @@ Side-effects
 ============
 Any side-effect of the provided command will take place. The provided file will
 be written to, and if the command outputs something to stderr, it will be
-visible on the stderr of the main parent process.
+visible on the stderr of the main parent process. Warning and error messages can
+also be emitted.
 */
 int write_command_output(const char *command, FILE *output_file);
+
+/*
+Description
+===========
+High-level function used to fill the provided output_file according to the
+template provided in the text. Note that the text argument will be mutated by
+the function to take advantage of slight optimizations. The commands required by
+the dynamic format specifiers will also be executed.
+
+Arguments
+=========
+ - text: The text conatining the format string and specifying how the
+ output_file should be filled.
+ - output_file: The file to which the template result should be written.
+
+Returns
+=======
+SUCCESS if the execution could take place, WARNING if some recoverable error was
+encountered and ERROR if the formatting could not be performed.
+
+Side-effects
+============
+See write_commad_output. Also, the provided text file will be overwritten.
+*/
+int dynamic_format(char *text, FILE *output_file);
+
+/*
+Description
+===========
+Destructor for the MatchList struct.
+*/
+void delete_match_list(struct MatchList *match_list);
 
 /* End of include once header guard */
 #endif

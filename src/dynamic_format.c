@@ -223,4 +223,94 @@ int write_command_output(const char *command, FILE *output_file) {
     return SUCCESS;
 }
 
+int dynamic_format(char *text, FILE *output_file) {
+    /* The current status of the execution. */
+    int status;
+    /* The cursor to our current location in the template file. */
+    size_t cursor = 0;
+    /* The number of the format specifier we are currently working on. */
+    size_t specifier = 0;
+    /* Used to check errors from fwrite. */
+    size_t copy_count;
+    /* The length of the entire text, computed at the end for a small
+     * optimization. */
+    size_t text_length;
+    /* Our first task is to find all of the format specifiers. */
+    struct MatchList match_list;
+
+    status = find_format(text, &match_list);
+    /* Error checking. */
+    if (status == ERROR) {
+        /* A bug was encountered when parsing the template file, there is no
+         * need to go any further as the execution will fail regardless. We free
+         * the memory used for the MatchList. */
+        delete_match_list(&match_list);
+        return ERROR;
+    }
+
+    /* We go over each format specifier. */
+    for (specifier = 0; specifier < match_list.count; specifier++) {
+        /* We copy any character from the current position of the cursor until
+         * the beginning of the specifier, that is to say
+         * *(match_list.head + specifier) - cursor characters. */
+        copy_count =
+            fwrite(text + cursor, sizeof(char),
+                   *(match_list.head + specifier) - cursor, output_file);
+        /* Error checking. */
+        if (copy_count != *(match_list.head + specifier) - cursor) {
+            log_message(ERROR_MSG,
+                        "Could not write %ld characters to the output file.\n",
+                        *(match_list.head + specifier) - cursor);
+            delete_match_list(&match_list);
+            return ERROR;
+        }
+
+        /* We modify the template string in order to isolate the format
+         * specifier command. This little trick is the reason why we want the
+         * input text to be mutable. */
+        *(text + *(match_list.tail + specifier)) = '\0';
+        /* We use the substring from the original text to run the command see
+         * the comment in find_format to see where the +2 comes from. */
+        status |= write_command_output(
+            text + *(match_list.tail + specifier) + 2, output_file);
+        /* Error checking. */
+        if (status == ERROR) {
+            /* We propagate the error. */
+            delete_match_list(&match_list);
+            return ERROR;
+        }
+
+        /* We update the cursor for the next iteration. */
+        cursor = *(match_list.tail + specifier) + 1;
+        /* Implicit, we go to the next format specifier. */
+        continue;
+    }
+
+    /* We still have to handle the characters between the last format specifier
+     * (if any) and the end of the text. */
+    text_length = strlen(text + cursor);
+    copy_count = fwrite(text + cursor, sizeof(char), text_length, output_file);
+    /* Error checking. */
+    if (copy_count != text_length) {
+        log_message(ERROR_MSG,
+                    "Could not write %ld characters to the output file.\n",
+                    text_length);
+        delete_match_list(&match_list);
+        return ERROR;
+    }
+
+    /* If we reach this line, the execution was a success, maybe with some
+     * warnings. */
+    delete_match_list(&match_list);
+    return status;
+}
+
+void delete_match_list(struct MatchList *match_list) {
+    /* If any memory was allocated for the head and tail arrays, we free it. */
+    if (match_list->count != 0) {
+        free(match_list->head);
+        free(match_list->tail);
+    }
+}
+
 /************************************ EOF *************************************/
