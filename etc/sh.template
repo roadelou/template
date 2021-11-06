@@ -1,14 +1,15 @@
+#!/usr/bin/env bash
+
 ################################### METADATA ###################################
 
 # Contributors: %/echo $TEMPLATE_USER | tr -d '\n'/
 # Contacts: %/echo $TEMPLATE_CONTACT | tr -d '\n'/
 # Creation Date: %/date +%F | tr -d '\n'/
-# Language: Gitignore file
-# Git version: %/git --version | tr -d '\n'/
-# Origin: %/git remote get-url origin | tr -d '\n'/
+# Language: Bash Script
+# Bash Version: %/bash --version | head -n1 | tr -d '\n'/
 
-##################################### BODY #####################################
+##################################### CODE #####################################
 
-# Add here patterns that git should not track
+# The code for your script goes here
 
 ##################################### EOF ######################################

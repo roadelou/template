@@ -1,13 +1,15 @@
 ################################### METADATA ###################################
 
-# Contributors: %1
-# Contacts: %2
-# Creation Date: %3
+# Contributors: %/echo $TEMPLATE_USER | tr -d '\n'/
+# Contacts: %/echo $TEMPLATE_CONTACT | tr -d '\n'/
+# Creation Date: %/date +%F | tr -d '\n'/
 # Language: Tox ini configuration file
+# Tox version: %/tox --version | awk -F ' ' '{print $1}' | tr -d '\n'/
 
 ##################################### BODY #####################################
 
 [tox]
+# Your default python is %/python3 --version | tr -d '\n'/
 # Testing for python 3.9
 envlist=py39
 isolate_build=True

@@ -1,10 +1,11 @@
 /********************************** METADATA **********************************/
 
 /*
-* Contributors: %1
-* Contacts: %2
-* Creation Date: %3
+* Contributors: %/echo $TEMPLATE_USER | tr -d '\n'/
+* Contacts: %/echo $TEMPLATE_CONTACT | tr -d '\n'/
+* Creation Date: %/date +%F | tr -d '\n'/
 * Language: C Source
+* Compiler: %/cc --version | head -n1 | tr -d '\n'/
 */
 
 /********************************** INCLUDES **********************************/

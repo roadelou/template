@@ -1,0 +1,18 @@
+/********************************** METADATA **********************************/
+
+/*
+* Contributors: %/echo $TEMPLATE_USER | tr -d '\n'/
+* Contacts: %/echo $TEMPLATE_CONTACT | tr -d '\n'/
+* Creation Date: %/date +%F | tr -d '\n'/
+* Language: Verilog Source
+*/
+
+/********************************** INCLUDES **********************************/
+
+/* The includes for your code go here. */
+
+/*********************************** MODULE ***********************************/
+
+/* The modules for your hardware go here. */
+
+/************************************ EOF *************************************/

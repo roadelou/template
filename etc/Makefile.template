@@ -1,9 +1,10 @@
 ################################### METADATA ###################################
 
-# Contributors: %1
-# Contacts: %2
-# Creation Date: %3
+# Contributors: %/echo $TEMPLATE_USER | tr -d '\n'/
+# Contacts: %/echo $TEMPLATE_CONTACT | tr -d '\n'/
+# Creation Date: %/date +%F | tr -d '\n'/
 # Language: Makefile
+# Make version: %/make --version | head -n1 | tr -d '\n'/
 
 ################################### ALIASES ####################################
 

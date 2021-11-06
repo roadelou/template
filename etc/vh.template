@@ -1,6 +1,6 @@
 /* Include once header guard */
-#ifndef YOUR_HEADER_GUARD
-#define YOUR_HEADER_GUARD
+`ifndef YOUR_HEADER_GUARD
+`define YOUR_HEADER_GUARD
 
 /********************************** METADATA **********************************/
 
@@ -8,8 +8,7 @@
 * Contributors: %/echo $TEMPLATE_USER | tr -d '\n'/
 * Contacts: %/echo $TEMPLATE_CONTACT | tr -d '\n'/
 * Creation Date: %/date +%F | tr -d '\n'/
-* Language: C Header
-* Compiler: %/cc --version | head -n1 | tr -d '\n'/
+* Language: Verilog Header
 */
 
 /********************************** INCLUDES **********************************/
@@ -20,21 +19,7 @@
 
 /* The macros definitions for your header go here */
 
-/********************************** STRUCTS ***********************************/
-
-/* The enums of your header go here */
-
-/* The structs of your header go here */
-
-/* The unions of your header go here */
-
-/* The typedefs of your header go here */
-
-/********************************* PROTOTYPES *********************************/
-
-/* The prototypes for your header go here */
-
 /* End of include once header guard */
-#endif
+`endif
 
 /************************************ EOF *************************************/
