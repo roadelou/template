@@ -54,12 +54,12 @@ SPEC = $(TOP)/template.spec
 # The compilation flow here is rather straightforward.
 all: $(EXEC)
 
-$(EXEC): $(SRC) $(HEAD) $(BUILDDIR)
+$(EXEC): $(SRC) $(HEAD) | $(BUILDDIR)
 	$(CC) $(CFLAGS) $(SRC) -o $(EXEC)
 
 debug: $(DEBUG)
 
-$(DEBUG): $(SRC) $(HEAD) $(BUILDDIR)
+$(DEBUG): $(SRC) $(HEAD) | $(BUILDDIR)
 	$(CC) $(CFLAGS) -g -O0 $(SRC) -o $(DEBUG)
 
 $(BUILDDIR):
@@ -71,13 +71,13 @@ clean:
 	rm -f *.src.rpm *.log
 	rm -rf x86_64
 
-install: $(EXEC) $(TEMPLATES) $(BINDIR)
+install: $(EXEC) $(TEMPLATES) | $(BINDIR)
 	install -m 755 $(EXEC) $(BINDIR)/template
 	# Also copying the format files to the expected location.
 	mkdir -p $(CONFIG)
 	install -m 664 -t $(CONFIG) $(TEMPLATES) 
 
-fedora: $(SRC) $(SPEC) $(HEAD) $(BUILDDIR)
+fedora: $(SRC) $(SPEC) $(HEAD) | $(BUILDDIR)
 	fedpkg --release f34 local
 
 $(BINDIR):
