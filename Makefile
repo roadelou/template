@@ -22,7 +22,13 @@ INCLUDE = -I $(TOP)/include/
 WARN = -Wall -pedantic
 
 # Pinning the C standard used for the compilation of the code.
-C_STD = --std=c99
+#
+# NOTE
+# ====
+# popen and pclose are POSIX extensions, which aren't enabled by default. To use
+# them (in write_command_output from dynamic_format) we have to specify that we
+# are compiling under a POSIX system.
+C_STD = --std=c99 -D_POSIX_C_SOURCE=2
 
 # Adding RPM distro C flags if they are provided.
 CFLAGS = $(RPM_OPT_FLAGS) $(WARN) $(INCLUDE) $(C_STD)
