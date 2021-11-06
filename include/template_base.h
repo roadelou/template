@@ -27,6 +27,10 @@
 #define ERROR -1
 #endif
 
+#ifndef WARNING
+#define WARNING -2
+#endif
+
 /********************************** STRUCTS ***********************************/
 
 /* The enums of your header go here */
@@ -39,7 +43,23 @@
 
 /********************************* PROTOTYPES *********************************/
 
-/* The prototypes for your header go here */
+/*
+Description
+===========
+Returns the index of the first or last occurence of a character in a string.
+
+Arguments
+=========
+ - string: The string in which we are looking for the character.
+ - letter: The character we are looking for.
+ - first: If set to 0, we return the last occurence. Else we return the first
+ occurence.
+
+Returns
+=======
+The index of the occurence if the letter was found, -1 otherwise.
+*/
+int occurence(const char *string, char letter, int first);
 
 /* End of include once header guard */
 #endif
