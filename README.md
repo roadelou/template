@@ -24,8 +24,8 @@ __template__ uses [getopt](https://www.gnu.org/software/libc/manual/html_node/Ge
 - `-q, --quiet` to lower the verbosity of the tool and only see error messages.
 - `-o, --old` to use the old matching algorithm that only matches whole extensions.
 - `-n, --new` to use the new hierarchical matching algorithm.
-- `-s, --static` to use the older templating style described in the [Static Format section](README.md#Static Format).
-- `-d, --dynamic` to use the newer templating style with shell subcommands. This is the default.
+- `-s, --static` to use the older templating style described in the **Static Format** section.
+- `-d, --dynamic` to use the newer templating style with shell subcommands. This is the default and is described in the **Dynamic Format** section.
 - `-l, --license` to print license information and exit.
 - `-h, --help` to print help and exit.
 
