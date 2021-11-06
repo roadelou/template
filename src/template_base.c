@@ -1,11 +1,11 @@
 /********************************** METADATA **********************************/
 
 /*
-* Contributors: roadelou
-* Contacts: 
-* Creation Date: 2021-11-06
-* Language: C Source
-*/
+ * Contributors: roadelou
+ * Contacts:
+ * Creation Date: 2021-11-06
+ * Language: C Source
+ */
 
 /********************************** INCLUDES **********************************/
 
@@ -48,6 +48,5 @@ size_t occurence(const char *string, char letter, int first) {
     }
     return result;
 }
-
 
 /************************************ EOF *************************************/
