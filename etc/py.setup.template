@@ -2,11 +2,11 @@
 
 ################################### METADATA ###################################
 
-# Contributors: %/echo $TEMPLATE_USER | tr -d '\n'/
-# Contacts: %/echo $TEMPLATE_CONTACT | tr -d '\n'/
-# Creation Date: %/date +%F | tr -d '\n'/
+# Contributors: %/echo $TEMPLATE_USER/
+# Contacts: %/echo $TEMPLATE_CONTACT/
+# Creation Date: %/date +%F/
 # Language: Python3
-# Python Version: %/python3 --version | tr -d '\n'/
+# Python Version: %/python3 --version/
 
 ################################### IMPORTS ####################################
 
@@ -27,7 +27,7 @@ def main():
     #
     # The name of your package.
     ###########################
-    name = "%.echo ${PWD##*/} | tr -d '\n'."
+    name = "%.echo ${PWD##*/}."
     #
     # The version of your package.
     ##############################

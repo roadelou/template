@@ -1,4 +1,4 @@
-# %.echo ${PWD##*/} | tr '[:lower:]' '[:upper:] | tr -d '\n''.
+# %.echo ${PWD##*/} | tr '[:lower:]' '[:upper:]'.
 
 __The body of your document goes here__
 
@@ -6,10 +6,10 @@ __The body of your document goes here__
 
 Field | Value
 --- | ---
-:pencil: Contributors | %/echo $TEMPLATE_USER | tr -d '\n'/
-:email: Contacts | %/echo $TEMPLATE_CONTACT | tr -d '\n'/
-:date: Creation Date | %/date +%F | tr -d '\n'/
+:pencil: Contributors | %/echo $TEMPLATE_USER/
+:email: Contacts | %/echo $TEMPLATE_CONTACT/
+:date: Creation Date | %/date +%F/
 :bulb: Language | Markdown Document
-:page: Repository | %/git remote get-url origin | tr -d '\n'/
+:page: Repository | %/git remote get-url origin/
 
 ### EOF

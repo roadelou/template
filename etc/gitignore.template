@@ -1,11 +1,11 @@
 ################################### METADATA ###################################
 
-# Contributors: %/echo $TEMPLATE_USER | tr -d '\n'/
-# Contacts: %/echo $TEMPLATE_CONTACT | tr -d '\n'/
-# Creation Date: %/date +%F | tr -d '\n'/
+# Contributors: %/echo $TEMPLATE_USER/
+# Contacts: %/echo $TEMPLATE_CONTACT/
+# Creation Date: %/date +%F/
 # Language: Gitignore file
-# Git version: %/git --version | tr -d '\n'/
-# Origin: %/git remote get-url origin | tr -d '\n'/
+# Git version: %/git --version/
+# Origin: %/git remote get-url origin/
 
 ##################################### BODY #####################################
 

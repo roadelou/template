@@ -5,9 +5,9 @@
 /********************************** METADATA **********************************/
 
 /*
-* Contributors: %/echo $TEMPLATE_USER | tr -d '\n'/
-* Contacts: %/echo $TEMPLATE_CONTACT | tr -d '\n'/
-* Creation Date: %/date +%F | tr -d '\n'/
+* Contributors: %/echo $TEMPLATE_USER/
+* Contacts: %/echo $TEMPLATE_CONTACT/
+* Creation Date: %/date +%F/
 * Language: Verilog Header
 */
 
