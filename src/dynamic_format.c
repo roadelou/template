@@ -203,10 +203,26 @@ int write_command_output(const char *command, FILE *output_file) {
         free(copy_buffer);
         return WARNING;
     }
-    /* We copy the output of the command by chunks. */
-    while ((buffered_bytes =
-                fread(copy_buffer, sizeof(char), COMMAND_OUTPUT_CHUNK_SIZE,
-                      command_output)) != 0) {
+
+    /* NOTE
+     * ====
+     * The handling of the trailing newline might be buggy when the output of
+     * the subcommand yields exactly COMMAND_OUTPUT_CHUNK_SIZE bytes.
+     * */
+
+    /* We consume the output of the shell command. */
+    while (!feof(command_output) && !ferror(command_output)) {
+        /* We copy the output of the command by chunks. */
+        buffered_bytes = fread(copy_buffer, sizeof(char),
+                               COMMAND_OUTPUT_CHUNK_SIZE, command_output);
+
+        /* We check wether the EOF has been reached, in which case a trailing
+         * '\n' should be removed. */
+        if (feof(command_output) &&
+            (*(copy_buffer + buffered_bytes - 1) == '\n')) {
+            /* We simply won't be copying this last byte. */
+            buffered_bytes--;
+        }
         /* We copy the buffered bytes. */
         if (fwrite(copy_buffer, sizeof(char), buffered_bytes, output_file) !=
             buffered_bytes * sizeof(char)) {
