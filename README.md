@@ -54,7 +54,7 @@ The way **template** searches the extension file is non-trivial, but allows reco
 ### Dynamic Format
 
  - The newer dynamic format takes advantage of shell scripting to include the output of commands in your created file. The basic syntax for a subcommand is `%$ [...] $` where `$` can be any ASCII character. This is similar to the way the `sed` command handles its `/` for instance.
- - For instance, `%/echo rouge/` would yield `rouge`.
+ - For instance, `%/echo rouge/` would yield `rouge`. Note that trailing newlines will be automatically trimmed.
  - `template` will warn about incomplete or malformed format specifiers and should proceed without crashing.
 
 ## Verbosity
