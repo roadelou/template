@@ -211,6 +211,12 @@ int main(int argc, const char **argv) {
         log_message(INFO_MSG, "Defaulted contact to \"%s\"\n", contact);
     }
 
+    /* We set the TEMPLATE_USER and TEMPLATE_CONTACE environment variables for
+     * the subprocesses. This is particularly usefull for the dynamic formatting
+     * style, otherwise the --author and --contact flags would be ignored. */
+    setenv("TEMPLATE_USER", author, 1);
+    setenv("TEMPLATE_CONTACT", contact, 1);
+
     /* We simply loop over the given paths and create them all. */
     for (cursor = optind; cursor < argc; cursor++) {
         /* We get the new file to create. */
