@@ -1,5 +1,5 @@
 Name: template
-Version: 1.9
+Version: 1.10
 Release: 1%{?dist}
 Summary: template is a small C executable to build templated files from the command line
 
