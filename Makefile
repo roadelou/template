@@ -87,6 +87,7 @@ $(BUILD_DIR):
 
 install: $(EXEC_ELF) $(TEMPLATES) | $(BIN_DIR)
 	install -m 755 $(EXEC_TEMPLATE_ELF) $(BIN_DIR)/template
+	install -m 755 $(EXEC_TEMPLATE_RUN_ELF) $(BIN_DIR)/template-run
 	# Also copying the format files to the expected location.
 	mkdir -p $(CONFIG)
 	install -m 664 -t $(CONFIG) $(TEMPLATES) 

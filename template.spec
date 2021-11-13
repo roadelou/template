@@ -1,6 +1,6 @@
 Name: template
-Version: 1.10
-Release: 2%{?dist}
+Version: 1.11
+Release: 1%{?dist}
 Summary: template is a small C executable to build templated files from the command line
 
 License: GPLv3
@@ -28,6 +28,9 @@ make %{?_smp_mflags}
 #
 # This is the executable itself, stored in /usr/bin
 /usr/bin/template
+#
+# The second executable for running templates directly
+/usr/bin/template-run
 #
 # The default template files are stored in /etc/roadelou_template
 /etc/roadelou_template/*.template
