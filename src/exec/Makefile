@@ -38,15 +38,32 @@ EXEC_TEMPLATE_ELF = $(EXEC_BUILD_DIR)/template.elf
 # The linked executable used for debugging.
 EXEC_TEMPLATE_DEBUG_ELF = $(EXEC_BUILD_DIR)/template.debug.elf
 
+# TEMPLATE_RUN
+##########
+# The source code for the template-run executable.
+EXEC_TEMPLATE_RUN_SRC = $(SRC_DIR)/exec/template-run.c
+#
+# The object file containing the code for the template-run executable.
+EXEC_TEMPLATE_RUN_OBJ = $(EXEC_BUILD_DIR)/template-run.o
+#
+# The object file containing the code used for debugging purposes.
+EXEC_TEMPLATE_RUN_DEBUG_OBJ = $(EXEC_BUILD_DIR)/template-run.debug.o
+#
+# The linked template-run executable.
+EXEC_TEMPLATE_RUN_ELF = $(EXEC_BUILD_DIR)/template-run.elf
+#
+# The linked executable used for debugging.
+EXEC_TEMPLATE_RUN_DEBUG_ELF = $(EXEC_BUILD_DIR)/template-run.debug.elf
+
 # EXEC
 ######
 # The object files for the executables.
-EXEC_OBJ = $(EXEC_TEMPLATE_OBJ)
-EXEC_DEBUG_OBJ = $(EXEC_TEMPLATE_DEBUG_OBJ)
+EXEC_OBJ = $(EXEC_TEMPLATE_OBJ) $(EXEC_TEMPLATE_RUN_OBJ)
+EXEC_DEBUG_OBJ = $(EXEC_TEMPLATE_DEBUG_OBJ) $(EXEC_TEMPLATE_RUN_DEBUG_OBJ)
 #
 # The execuatables themselves.
-EXEC_ELF = $(EXEC_TEMPLATE_ELF)
-EXEC_DEBUG_ELF = $(EXEC_TEMPLATE_DEBUG_ELF)
+EXEC_ELF = $(EXEC_TEMPLATE_ELF) $(EXEC_TEMPLATE_RUN_ELF)
+EXEC_DEBUG_ELF = $(EXEC_TEMPLATE_DEBUG_ELF) $(EXEC_TEMPLATE_RUN_DEBUG_ELF)
 
 # TO CLEAN
 ##########
@@ -68,7 +85,19 @@ $(EXEC_TEMPLATE_OBJ): $(EXEC_TEMPLATE_SRC) $(EXEC_TEMPLATE_HEAD) | $(EXEC_BUILD_
 	$(CC) $(C_FLAGS) -c -o $(EXEC_TEMPLATE_OBJ) $(EXEC_TEMPLATE_SRC)
 
 $(EXEC_TEMPLATE_ELF): $(EXEC_TEMPLATE_OBJ) $(UTIL_OBJ) $(EXTENSION_OBJ) $(FORMAT_OBJ) | $(EXEC_BUILD_DIR)
+	#
+	# Compiling template.elf
+	#
 	$(CC) $(C_FLAGS) -o $(EXEC_TEMPLATE_ELF) $(EXEC_TEMPLATE_OBJ) $(UTIL_OBJ) $(EXTENSION_OBJ) $(FORMAT_OBJ)
+
+$(EXEC_TEMPLATE_RUN_OBJ): $(EXEC_TEMPLATE_RUN_SRC) $(EXEC_TEMPLATE_RUN_HEAD) | $(EXEC_BUILD_DIR)
+	$(CC) $(C_FLAGS) -c -o $(EXEC_TEMPLATE_RUN_OBJ) $(EXEC_TEMPLATE_RUN_SRC)
+
+$(EXEC_TEMPLATE_RUN_ELF): $(EXEC_TEMPLATE_RUN_OBJ) $(UTIL_OBJ) $(FORMAT_OBJ) | $(EXEC_BUILD_DIR)
+	#
+	# Compiling template-run.elf
+	#
+	$(CC) $(C_FLAGS) -o $(EXEC_TEMPLATE_RUN_ELF) $(EXEC_TEMPLATE_RUN_OBJ) $(UTIL_OBJ) $(EXTENSION_OBJ) $(FORMAT_OBJ)
 
 # DEBUG
 #######
@@ -76,6 +105,18 @@ $(EXEC_TEMPLATE_DEBUG_OBJ): $(EXEC_TEMPLATE_SRC) $(EXEC_TEMPLATE_HEAD) | $(EXEC_
 	$(CC) $(C_FLAGS) -c -o $(EXEC_TEMPLATE_DEBUG_OBJ) $(EXEC_TEMPLATE_SRC)
 
 $(EXEC_TEMPLATE_DEBUG_ELF): $(EXEC_TEMPLATE_DEBUG_OBJ) $(UTIL_DEBUG_OBJ) $(EXTENSION_DEBUG_OBJ) $(FORMAT_DEBUG_OBJ) | $(EXEC_BUILD_DIR)
+	#
+	# Compiling template.debug.elf
+	#
 	$(CC) $(C_FLAGS) -o $(EXEC_TEMPLATE_DEBUG_ELF) $(EXEC_TEMPLATE_DEBUG_OBJ) $(UTIL_DEBUG_OBJ) $(EXTENSION_DEBUG_OBJ) $(FORMAT_DEBUG_OBJ)
+
+$(EXEC_TEMPLATE_RUN_DEBUG_OBJ): $(EXEC_TEMPLATE_RUN_SRC) $(EXEC_TEMPLATE_RUN_HEAD) | $(EXEC_BUILD_DIR)
+	$(CC) $(C_FLAGS) -c -o $(EXEC_TEMPLATE_RUN_DEBUG_OBJ) $(EXEC_TEMPLATE_RUN_SRC)
+
+$(EXEC_TEMPLATE_RUN_DEBUG_ELF): $(EXEC_TEMPLATE_RUN_DEBUG_OBJ) $(UTIL_DEBUG_OBJ) $(FORMAT_DEBUG_OBJ) | $(EXEC_BUILD_DIR)
+	#
+	# Compiling template-run.debug.elf
+	#
+	$(CC) $(C_FLAGS) -o $(EXEC_TEMPLATE_RUN_DEBUG_ELF) $(EXEC_TEMPLATE_RUN_DEBUG_OBJ) $(UTIL_DEBUG_OBJ) $(EXTENSION_DEBUG_OBJ) $(FORMAT_DEBUG_OBJ)
 
 ##################################### EOF ######################################
