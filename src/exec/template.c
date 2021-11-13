@@ -1,8 +1,15 @@
-/* The header of the library we are using. */
+/* The template library, providing all the functionalities we need to treat the
+ * extensions and apply the formatting. */
 #include <template.h>
 
-/* Used for logging. */
-#include <log.h>
+/* Used to write the templated file. */
+#include <stdio.h>
+
+/* Used for string manipulations (strlen for instance). */
+#include <string.h>
+
+/* Used to get access to environment variables for the user name and contact. */
+#include <stdlib.h>
 
 /* Used for getopt. */
 #include <getopt.h>

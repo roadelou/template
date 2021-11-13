@@ -10,10 +10,13 @@
 /********************************** INCLUDES **********************************/
 
 /* The library that we are implementing. */
-#include <template.h>
+#include <template/extension/get_format_extension.h>
 
 /* Used for the implementation of the extension matching. */
-#include <extension_match.h>
+#include <template/extension/extension_match.h>
+
+/* Used for the ERROR and SUCCESS values. */
+#include <template/util/base.h>
 
 /* Used for strlen and strncmp. */
 #include <string.h>

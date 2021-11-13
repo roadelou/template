@@ -10,7 +10,7 @@
 /********************************** INCLUDES **********************************/
 
 // The header we are trying to implement.
-#include <template_list.h>
+#include <template/util/list.h>
 
 // Used for malloc, free and realloc.
 #include <stdlib.h>

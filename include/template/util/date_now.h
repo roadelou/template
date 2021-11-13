@@ -1,6 +1,6 @@
 /* Include once header guard */
-#ifndef TEMPLATE_LIBRARY_INCLUDED
-#define TEMPLATE_LIBRARY_INCLUDED
+#ifndef TEMPLATE_UTIL_DATE_INCLUDED
+#define TEMPLATE_UTIL_DATE_INCLUDED
 
 /********************************** METADATA **********************************/
 
@@ -14,10 +14,7 @@
 
 /********************************** INCLUDES **********************************/
 
-/* Including all the declarations from the different parts of the library. */
-#include <template/extension.h>
-#include <template/format.h>
-#include <template/util.h>
+/* The includes for your header go here */
 
 /*********************************** MACROS ***********************************/
 
@@ -35,7 +32,23 @@
 
 /********************************* PROTOTYPES *********************************/
 
-/* The prototypes for your header go here */
+/*
+Description
+===========
+Stores a string representation of the current date in the provided buffer. The
+date is provided according to the ISO 8601 format (YYYY-MM-DD).
+
+Arguments
+=========
+ - buffer: The buffer in which the string representation of the current date
+ will be stored. The buffer should be at least 11 bytes wide to fit the entire
+ date and the null terminating byte.
+
+Returns
+=======
+SUCCESS if the call succeeded, ERROR otherwise.
+*/
+int date_now(char *buffer);
 
 /* End of include once header guard */
 #endif

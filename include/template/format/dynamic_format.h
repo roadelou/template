@@ -1,6 +1,6 @@
 /* Include once header guard */
-#ifndef DYNAMIC_FORMAT_INCLUDED
-#define DYNAMIC_FORMAT_INCLUDED
+#ifndef TEMPLATE_FORMAT_DYNAMIC_FORMAT_INCLUDED
+#define TEMPLATE_FORMAT_DYNAMIC_FORMAT_INCLUDED
 
 /********************************** METADATA **********************************/
 
@@ -12,10 +12,6 @@
  */
 
 /********************************** INCLUDES **********************************/
-
-/* Used for the SUCCESS, WARNING and ERROR constants as well as the occurence
- * function. */
-#include <template_base.h>
 
 /* Used for the FILE type. */
 #include <stdio.h>

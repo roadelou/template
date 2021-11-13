@@ -10,7 +10,13 @@
 /********************************** INCLUDES **********************************/
 
 /* The header for which we are providing an implementation. */
-#include <template.h>
+#include <template/format/safe_format.h>
+
+/* Used for the SUCCESS and ERROR values. */
+#include <template/util/base.h>
+
+/* Used for the string-related manipulations. */
+#include <string.h>
 
 /********************************* PROTOYPES **********************************/
 

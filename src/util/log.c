@@ -10,7 +10,7 @@
 /********************************** INCLUDES **********************************/
 
 // The header we are implementing.
-#include <log.h>
+#include <template/util/log.h>
 
 // Used for vfprintf
 #include <stdarg.h>

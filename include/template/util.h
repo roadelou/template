@@ -1,6 +1,6 @@
 /* Include once header guard */
-#ifndef TEMPLATE_LIBRARY_INCLUDED
-#define TEMPLATE_LIBRARY_INCLUDED
+#ifndef TEMPLATE_UTIL_INCLUDED
+#define TEMPLATE_UTIL_INCLUDED
 
 /********************************** METADATA **********************************/
 
@@ -14,10 +14,11 @@
 
 /********************************** INCLUDES **********************************/
 
-/* Including all the declarations from the different parts of the library. */
-#include <template/extension.h>
-#include <template/format.h>
-#include <template/util.h>
+/* Included the utilities declarations. */
+#include <template/util/base.h>
+#include <template/util/date_now.h>
+#include <template/util/list.h>
+#include <template/util/log.h>
 
 /*********************************** MACROS ***********************************/
 

@@ -10,7 +10,7 @@
 /********************************** INCLUDES **********************************/
 
 /* The library we are trying to implement. */
-#include "template_base.h"
+#include <template/util/base.h>
 
 /* Used for strlen. */
 #include <string.h>

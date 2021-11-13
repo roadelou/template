@@ -2,21 +2,23 @@
 
 # Contributors: roadelou
 # Contacts: 
-# Creation Date: 2020-10-09
+# Creation Date: 2021-11-13
 # Language: Makefile
+# Make version: GNU Make 4.3
 
 ################################### ALIASES ####################################
 
 # Root directory of the git repository
 TOP = $(CURDIR)
 
-# All source files
-SRC = $(wildcard src/*.c)
-# All the headers, used for recompilation.
-HEAD = $(wildcard include/*.h)
+# The directory hodling the source code.
+SRC_DIR = $(TOP)/src
+
+# The directory holding the header files.
+HEAD_DIR = $(TOP)/include
 
 # Flag to include all headers
-INCLUDE = -I $(TOP)/include/
+INCLUDE = -I $(HEAD_DIR)
 
 # Flag to trigger compiler warnings
 WARN = -Wall -pedantic
@@ -29,30 +31,44 @@ WARN = -Wall -pedantic
 # them (in write_command_output from dynamic_format) we have to specify that we
 # are compiling under a POSIX system.
 #
-# setenv (used in the main to set TEMPLATE_USER and TEMPLATE_CONTACT requires
+# setenv (used in the main to set TEMPLATE_USER and TEMPLATE_CONTACT) requires
 # at least posix 200112L.
 C_STD = --std=c99 -D_POSIX_C_SOURCE=200112L
 
 # Adding RPM distro C flags if they are provided.
-CFLAGS = $(RPM_OPT_FLAGS) $(WARN) $(INCLUDE) $(C_STD)
+C_FLAGS = $(RPM_OPT_FLAGS) $(WARN) $(INCLUDE) $(C_STD)
+#
+# Additional flags used for the debug builds.
+DEBUG_FLAGS = -O0 -g
 
 # The name of the compiled executable
-BUILDDIR = $(TOP)/build
-EXEC = $(BUILDDIR)/template.elf
-# Target used for debugging
-DEBUG = $(BUILDDIR)/template.debug.elf
+BUILD_DIR = $(TOP)/build
+#
 # The location where the executable will be installed.
-BINDIR = $(DESTDIR)/usr/bin
-
+BIN_DIR = $(DESTDIR)/usr/bin
+#
 # All the preset template files.
 TEMPLATES = $(wildcard $(TOP)/etc/*.template)
+#
 # The location where the configuration format files will be stored.
 CONFIG = $(DESTDIR)/etc/roadelou_template
-
-# The aliases used to create the RPM package.
 #
 # The spec file used to automate the compilation of the package.
 SPEC = $(TOP)/template.spec
+#
+# A variable used to hold the path to every file which should be deleted when
+# the clean command is used.
+TO_CLEAN =
+
+# We force the default rule to be 'all' even though it isn't the first rule in
+# the Makefile (because of the includes).
+.DEFAULT_GOAL = all
+
+# Including the definitions for the header files.
+include $(HEAD_DIR)/Makefile
+#
+# Including the defintions for the source code compilation.
+include $(SRC_DIR)/Makefile
 
 ################################### SPECIAL ####################################
 
@@ -60,40 +76,36 @@ SPEC = $(TOP)/template.spec
 
 #################################### RULES #####################################
 
-# The compilation flow here is rather straightforward.
-all: $(EXEC)
+# Release build.
+all: $(EXEC_ELF) | $(BUILD_DIR)
 
-$(EXEC): $(SRC) $(HEAD) | $(BUILDDIR)
-	$(CC) $(CFLAGS) $(SRC) -o $(EXEC)
+# Debug build.
+debug: $(EXEC_DEBUG_ELF) | $(BUILD_DIR)
 
-debug: $(DEBUG)
+$(BUILD_DIR):
+	mkdir -p $(BUILD_DIR)
 
-$(DEBUG): $(SRC) $(HEAD) | $(BUILDDIR)
-	$(CC) $(CFLAGS) -g -O0 $(SRC) -o $(DEBUG)
-
-$(BUILDDIR):
-	mkdir -p $(BUILDDIR)
-
-clean:
-	rm -f $(EXEC) $(DEBUG)
-	# Removing fedora package leftovers
-	rm -f *.src.rpm *.log
-	rm -rf x86_64
-
-install: $(EXEC) $(TEMPLATES) | $(BINDIR)
-	install -m 755 $(EXEC) $(BINDIR)/template
+install: $(EXEC_ELF) $(TEMPLATES) | $(BIN_DIR)
+	install -m 755 $(EXEC_TEMPLATE_ELF) $(BIN_DIR)/template
 	# Also copying the format files to the expected location.
 	mkdir -p $(CONFIG)
 	install -m 664 -t $(CONFIG) $(TEMPLATES) 
 
-fedora: $(SRC) $(SPEC) $(HEAD) | $(BUILDDIR)
+# Target fedora should also depend on every source file and header!
+fedora: $(SPEC) | $(BUILD_DIR)
 	fedpkg --release f34 local
 
-$(BINDIR):
-	mkdir -p $(BINDIR)
+$(BIN_DIR):
+	mkdir -p $(BIN_DIR)
 
 uninstall:
-	rm -f $(BINDIR)/template
+	rm -f $(BIN_DIR)/template
 	rm -rf $(CONFIG)
+
+clean:
+	rm -f $(TO_CLEAN)
+	# Removing fedora package leftovers
+	rm -f *.src.rpm *.log
+	rm -rf x86_64
 
 ##################################### EOF ######################################

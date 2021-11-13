@@ -1,5 +1,11 @@
 /* The header of the library we are currently implementing. */
-#include <template.h>
+#include <template/util/date_now.h>
+
+/* Used for the ERROR and SUCCESS values. */
+#include <template/util/base.h>
+
+/* Used for localtime. */
+#include <time.h>
 
 int date_now(char *buffer) {
     /* We allocate some memory to hold the current time information. */

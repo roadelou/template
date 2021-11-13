@@ -10,7 +10,10 @@
 /********************************** INCLUDES **********************************/
 
 /* The header with the function we are trying to implement. */
-#include <template.h>
+#include <template/extension/get_extension.h>
+
+/* Used for the occurence function. */
+#include <template/util/base.h>
 
 /********************************* PROTOYPES **********************************/
 

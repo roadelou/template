@@ -10,7 +10,7 @@
 /********************************** INCLUDES **********************************/
 
 /* The header declaring the functions we are implementing. */
-#include <extension_match.h>
+#include <template/extension/extension_match.h>
 
 /* Used for strlen and strncmp. */
 #include <string.h>

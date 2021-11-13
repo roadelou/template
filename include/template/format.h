@@ -1,6 +1,6 @@
 /* Include once header guard */
-#ifndef TEMPLATE_LIBRARY_INCLUDED
-#define TEMPLATE_LIBRARY_INCLUDED
+#ifndef TEMPLATE_FORMAT_INCLUDED
+#define TEMPLATE_FORMAT_INCLUDED
 
 /********************************** METADATA **********************************/
 
@@ -14,10 +14,9 @@
 
 /********************************** INCLUDES **********************************/
 
-/* Including all the declarations from the different parts of the library. */
-#include <template/extension.h>
-#include <template/format.h>
-#include <template/util.h>
+/* Including the format-related declarations. */
+#include <template/format/dynamic_format.h>
+#include <template/format/safe_format.h>
 
 /*********************************** MACROS ***********************************/
 

@@ -10,7 +10,14 @@
 /********************************** INCLUDES **********************************/
 
 /* The library we are trying to implement. */
-#include "dynamic_format.h"
+#include <template/format/dynamic_format.h>
+
+/* Used for the SUCCESS, WARNING and ERROR constants as well as the occurence
+ * function. */
+#include <template/util/base.h>
+
+/* Used to log warnings about incomplete format specifiers. */
+#include <template/util/log.h>
 
 /* Used for malloc and free. */
 #include <stdlib.h>
@@ -20,9 +27,6 @@
 
 /* Used for strlen. */
 #include <string.h>
-
-/* Used to log warnings about incomplete format specifiers. */
-#include "log.h"
 
 /********************************* SINGLETONS *********************************/
 

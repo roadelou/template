@@ -1,6 +1,6 @@
 /* Include once header guard */
-#ifndef TEMPLATE_LOG_INCLUDED
-#define TEMPLATE_LOG_INCLUDED
+#ifndef TEMPLATE_UTIL_LOG_INCLUDED
+#define TEMPLATE_UTIL_LOG_INCLUDED
 
 /********************************** METADATA **********************************/
 

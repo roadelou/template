@@ -10,10 +10,16 @@
 /********************************** INCLUDES **********************************/
 
 /* The header containing the functions we are trying to implement. */
-#include <template.h>
+#include <template/extension/format_extension.h>
 
 /* Used for realloc and free. */
 #include <stdlib.h>
+
+/* Used for the file manipulations. */
+#include <stdio.h>
+
+/* Used for the string-related functions. */
+#include <string.h>
 
 /********************************* PROTOYPES **********************************/
 

@@ -1,6 +1,6 @@
 /* Include once header guard */
-#ifndef EXTENSION_MATCH_INCLUDED
-#define EXTENSION_MATCH_INCLUDED
+#ifndef TEMPLATE_EXTENSION_MATCH_INCLUDED
+#define TEMPLATE_EXTENSION_MATCH_INCLUDED
 
 /********************************** METADATA **********************************/
 
