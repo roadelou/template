@@ -93,7 +93,7 @@ install: $(EXEC_ELF) $(TEMPLATES) | $(BIN_DIR)
 
 # Target fedora should also depend on every source file and header!
 fedora: $(SPEC) | $(BUILD_DIR)
-	fedpkg --release f34 local
+	fedpkg --release f35 local
 
 $(BIN_DIR):
 	mkdir -p $(BIN_DIR)
