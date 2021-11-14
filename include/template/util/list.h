@@ -75,9 +75,8 @@ struct List *new_list(size_t length, ...);
 //
 // Side-effects
 // ============
-// The "length" field of the list is reset to 0 and the memory allocated for the
-// list is collected. The "strings" field becomes NULL. All the strings held by
-// the list are freed.
+// All the strings held by the list are freed, and the memory for list itself is
+// also collected.
 //
 void delete_list(struct List *list);
 
