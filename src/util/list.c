@@ -123,6 +123,10 @@ void append_list(struct List *list, char *element) {
     //
     // We create a copy of the provided element.
     strncpy(*(list->strings + list->length - 1), element, element_length);
+    //
+    // We add the trailing newline character at the end of the list-owned
+    // string.
+    *(*(list->strings + list->length - 1) + element_length) = '\0';
 }
 
 /************************************ EOF *************************************/
