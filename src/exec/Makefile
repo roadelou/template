@@ -39,7 +39,7 @@ EXEC_TEMPLATE_ELF = $(EXEC_BUILD_DIR)/template.elf
 EXEC_TEMPLATE_DEBUG_ELF = $(EXEC_BUILD_DIR)/template.debug.elf
 
 # TEMPLATE_RUN
-##########
+##############
 # The source code for the template-run executable.
 EXEC_TEMPLATE_RUN_SRC = $(SRC_DIR)/exec/template-run.c
 #
