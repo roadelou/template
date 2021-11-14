@@ -22,16 +22,30 @@ TEST_UTIL_BASE_ELF = $(TEST_BIN_DIR)/base.elf
 # The csv file containing the results of the base test.
 TEST_UTIL_BASE_CSV = $(TEST_CSV_DIR)/base.csv
 
+# LIST
+######
+# The source code for the list tests.
+TEST_UTIL_LIST_SRC = $(TEST_DIR)/util/list.c
+#
+# The object file containing the code for the list test.
+TEST_UTIL_LIST_OBJ = $(TEST_BIN_DIR)/list.o
+#
+# The linked executable for the list test.
+TEST_UTIL_LIST_ELF = $(TEST_BIN_DIR)/list.elf
+#
+# The csv file containing the results of the list test.
+TEST_UTIL_LIST_CSV = $(TEST_CSV_DIR)/list.csv
+
 # UTIL
 ######
 # The object files for the tests.
-TEST_UTIL_OBJ = $(TEST_UTIL_BASE_OBJ)
+TEST_UTIL_OBJ = $(TEST_UTIL_BASE_OBJ) $(TEST_UTIL_LIST_OBJ)
 #
 # The execuatables themselves.
-TEST_UTIL_ELF = $(TEST_UTIL_BASE_ELF)
+TEST_UTIL_ELF = $(TEST_UTIL_BASE_ELF) $(TEST_UTIL_LIST_ELF)
 #
 # The CSVs containing the results of the test.
-TEST_UTIL_CSV = $(TEST_UTIL_BASE_CSV)
+TEST_UTIL_CSV = $(TEST_UTIL_BASE_CSV) $(TEST_UTIL_LIST_CSV)
 
 # TO CLEAN
 ##########
@@ -49,7 +63,6 @@ TEST_CSV += $(TEST_UTIL_CSV)
 
 #################################### RULES #####################################
 
-#
 # Note that the tests are always compiled againts the 'RELEASE' version of the
 # code.
 #
@@ -61,10 +74,18 @@ $(TEST_UTIL_BASE_OBJ): $(TEST_UTIL_BASE_SRC) | $(TEST_BIN_DIR)
 $(TEST_UTIL_BASE_ELF): $(TEST_UTIL_BASE_OBJ) $(TEST_OBJ) $(UTIL_DEBUG_OBJ) | $(TEST_BIN_DIR)
 	$(CC) $(C_FLAGS) -o $(TEST_UTIL_BASE_ELF) $(TEST_UTIL_BASE_OBJ) $(TEST_OBJ) $(UTIL_DEBUG_OBJ)
 
-#
+$(TEST_UTIL_LIST_OBJ): $(TEST_UTIL_LIST_SRC) | $(TEST_BIN_DIR)
+	$(CC) $(C_FLAGS) -c -o $(TEST_UTIL_LIST_OBJ) $(TEST_UTIL_LIST_SRC)
+
+$(TEST_UTIL_LIST_ELF): $(TEST_UTIL_LIST_OBJ) $(TEST_OBJ) $(UTIL_DEBUG_OBJ) | $(TEST_BIN_DIR)
+	$(CC) $(C_FLAGS) -o $(TEST_UTIL_LIST_ELF) $(TEST_UTIL_LIST_OBJ) $(TEST_OBJ) $(UTIL_DEBUG_OBJ)
+
 # RUNNING TESTS
 ###############
 $(TEST_UTIL_BASE_CSV): $(TEST_UTIL_BASE_ELF) | $(TEST_CSV_DIR)
 	$(TEST_UTIL_BASE_ELF) | tee $(TEST_UTIL_BASE_CSV)
+
+$(TEST_UTIL_LIST_CSV): $(TEST_UTIL_LIST_ELF) | $(TEST_CSV_DIR)
+	$(TEST_UTIL_LIST_ELF) | tee $(TEST_UTIL_LIST_CSV)
 
 ##################################### EOF ######################################
