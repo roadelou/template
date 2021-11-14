@@ -28,8 +28,7 @@
 /* Testing the new_list function. */
 void test_new_list(void);
 
-/* Testing the delete_list function. */
-void test_delete_list(void);
+/* Testing the delete_list function is not possible, it acts by side-effect. */
 
 /* Testing the append_list function. */
 void test_append_list(void);
@@ -38,7 +37,6 @@ void test_append_list(void);
 
 int main(int argc, const char **argv) {
     test_new_list();
-    test_delete_list();
     test_append_list();
 }
 
@@ -72,26 +70,6 @@ void test_new_list(void) {
 
     /* Freing the memory. */
     delete_list(test_list);
-}
-
-void test_delete_list(void) {
-    /* Testing empty list deletion. */
-    struct List *test_list = new_list(0);
-
-    /* Freing the memory. */
-    delete_list(test_list);
-
-    TEST_INTEGER(0, test_list->length);
-    TEST_INTEGER(1, NULL == test_list->strings);
-
-    /* Testing normal list. */
-    test_list = new_list(2, "rouge", "bleu");
-
-    /* Freing the memory. */
-    delete_list(test_list);
-
-    TEST_INTEGER(0, test_list->length);
-    TEST_INTEGER(1, NULL == test_list->strings);
 }
 
 void test_append_list(void) {
