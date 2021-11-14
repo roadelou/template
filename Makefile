@@ -17,6 +17,9 @@ SRC_DIR = $(TOP)/src
 # The directory holding the header files.
 HEAD_DIR = $(TOP)/include
 
+# Directory holding all of the test files.
+TEST_DIR = $(TOP)/test
+
 # Flag to include all headers
 INCLUDE = -I $(HEAD_DIR)
 
@@ -69,10 +72,13 @@ include $(HEAD_DIR)/Makefile
 #
 # Including the defintions for the source code compilation.
 include $(SRC_DIR)/Makefile
+#
+# Including the definitions for the tests.
+include $(TEST_DIR)/Makefile
 
 ################################### SPECIAL ####################################
 
-.PHONY: debug all clean install uninstall fedora
+.PHONY: debug all clean install uninstall fedora test
 
 #################################### RULES #####################################
 
@@ -81,6 +87,9 @@ all: $(EXEC_ELF) | $(BUILD_DIR)
 
 # Debug build.
 debug: $(EXEC_DEBUG_ELF) | $(BUILD_DIR)
+
+# Running the tests.
+test: $(TEST_CSV) | $(BUILD_DIR)
 
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
