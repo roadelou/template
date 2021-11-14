@@ -61,7 +61,7 @@ Arguments
 
 Returns
 =======
-The number of matchin characters between the two extensions, excluding the
+The number of matching characters between the two extensions, excluding the
 leading '.' or '/'. This count also excludes the '.' between the parts of the
 extension.
 */
@@ -150,7 +150,7 @@ the last '/'.
 
 Arguments
 =========
- - path: The NULL-termniated ASCII string of the path.
+ - path: The NULL-terminated ASCII string of the path.
 
 Returns
 =======
