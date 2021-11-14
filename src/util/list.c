@@ -74,6 +74,10 @@ struct List *new_list(size_t length, ...) {
         //
         // We copy the content of the original argument to its List-owned copy.
         strncpy(*(list->strings + i), argument, argument_length);
+        //
+        // We add the trailing newline character at the end of the list-owned
+        // string.
+        *(*(list->strings + i) + argument_length) = '\0';
     }
     // We close the variadic macro.
     va_end(strings_argument);
