@@ -27,6 +27,7 @@ TEST_CSV =
 
 # Sourcing all of the unit tests for the project.
 include $(TEST_DIR)/util/Makefile
+include $(TEST_DIR)/extension/Makefile
 
 ################################### SPECIAL ####################################
 
