@@ -63,6 +63,16 @@ size_t next_extension_part_backwards(const char *path, size_t *cursor) {
     /* The value we are going to return. */
     size_t next_cursor;
 
+    /*
+    EDGE CASE
+    =========
+    If the cursor is initially set to 0, we should no try to progress backwards
+    at all.
+    */
+    if (*cursor == 0) {
+        return 0;
+    }
+
     /* First thing, if *cursor-1 lands on a dot, we skip the dot. */
     if (*(path + (*cursor) - 1) == '.') {
         /* We use the brackets to have an lvalue for the decrement operator. */
