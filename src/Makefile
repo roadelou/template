@@ -33,6 +33,11 @@ FORMAT_MAKEFILE = $(SRC_DIR)/format/Makefile
 # The Makefile used to create the util library.
 UTIL_MAKEFILE = $(SRC_DIR)/util/Makefile
 
+# TEST
+######
+# The Makefile used to create the test library.
+TEST_MAKEFILE = $(SRC_DIR)/test/Makefile
+
 #
 # Including the Makefiles from the children directories to use their rules.
 #
@@ -43,6 +48,7 @@ UTIL_MAKEFILE = $(SRC_DIR)/util/Makefile
 include $(UTIL_MAKEFILE)
 include $(EXTENSION_MAKEFILE)
 include $(FORMAT_MAKEFILE)
+include $(TEST_MAKEFILE)
 include $(EXEC_MAKEFILE)
 
 ##################################### EOF ######################################
