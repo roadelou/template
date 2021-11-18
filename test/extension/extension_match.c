@@ -44,7 +44,7 @@ int main(int argc, char **argv) {
     test_next_extension_part();
     test_directory_part_size();
     test_correct_ending();
-    // test_extension_match_size();
+    test_extension_match_size();
     return EXIT_SUCCESS;
 }
 
@@ -135,6 +135,30 @@ void test_correct_ending(void) {
 
     /* Testing with empty string. */
     TEST_INTEGER(0, correct_ending(""));
+}
+
+void test_extension_match_size(void) {
+    /* Testing normal examples. */
+    TEST_INTEGER(1, extension_match_size("test.c", "c.template"));
+    TEST_INTEGER(4, extension_match_size("test", "test.template"));
+    TEST_INTEGER(4, extension_match_size("/foo/test", "/bar/test.template"));
+    TEST_INTEGER(6, extension_match_size("foo.bar", "bar.foo.template"));
+    TEST_INTEGER(0, extension_match_size("test", "foo.template"));
+    TEST_INTEGER(3, extension_match_size("test.bar", "bar.foo.template"));
+
+    /* Testing malformed template path. */
+    TEST_INTEGER(6, extension_match_size("foo.bar", "bar.foo"));
+    TEST_INTEGER(6, extension_match_size("foo.bar", "/root/bar.foo"));
+
+    /* Testing with empty strings. */
+    TEST_INTEGER(0, extension_match_size("", "test.template"));
+    TEST_INTEGER(0, extension_match_size("/", "test.template"));
+    TEST_INTEGER(0, extension_match_size("/.", "test.template"));
+    TEST_INTEGER(0, extension_match_size("..", "test.template"));
+    TEST_INTEGER(0, extension_match_size("test", ""));
+    TEST_INTEGER(0, extension_match_size("test", "/"));
+    TEST_INTEGER(0, extension_match_size("test", "/."));
+    TEST_INTEGER(0, extension_match_size("", ""));
 }
 
 /************************************ EOF *************************************/
