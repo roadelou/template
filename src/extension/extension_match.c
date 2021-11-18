@@ -34,13 +34,28 @@ size_t directory_part_size(const char *path) {
     /* We will read the string bacwards and exit after the first '/' we find. */
     size_t path_len = strlen(path);
     size_t cursor = path_len - 1;
+
+    /*
+    EDGE CASE
+    =========
+    If the string is empty we exit here. That is because the compiler will
+    optimize `cursor > 0` to `cursor != 0` since size_t is supposed to be
+    unsigned.
+    */
+    if (path_len == 0) {
+        return 0;
+    }
+
     while ((cursor > 0) && (*(path + cursor) != '/')) {
         /* We haven't found a '/' yet, we decrease our cursor. */
         cursor--;
     }
-    /* Regardless the exit condition, the length we are interested in is given
-     * by the cursor. */
-    return cursor;
+
+    /* There are two posible exit conditions here: either the string does not
+     * contain a '/', or it contains one and we found it. In the second case, we
+     * have to increment the cursor before returning it in order to fit the
+     * specification. */
+    return cursor + (*(path + cursor) == '/');
 }
 
 size_t next_extension_part(const char *path, size_t *cursor,

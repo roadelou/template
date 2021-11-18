@@ -40,8 +40,9 @@ void test_extension_match_size(void);
 /************************************ MAIN ************************************/
 
 int main(int argc, char **argv) {
+    test_header();
     test_next_extension_part();
-    // test_directory_part_size();
+    test_directory_part_size();
     // test_correct_ending();
     // test_extension_match_size();
     return EXIT_SUCCESS;
@@ -104,6 +105,23 @@ void test_next_extension_part(void) {
     cursor = 0;
     TEST_INTEGER(0, (int)next_extension_part("", &cursor, FORWARDS));
     TEST_INTEGER(0, cursor);
+}
+
+void test_directory_part_size(void) {
+    /* Testing documentation examples. */
+    TEST_INTEGER(5, directory_part_size("test/foo.bar"));
+    TEST_INTEGER(8, directory_part_size("foo/bar/baz"));
+    TEST_INTEGER(12, directory_part_size("foo/bar/baz/"));
+    TEST_INTEGER(0, directory_part_size("foo.bar.baz"));
+
+    /* Testing leading slash. */
+    TEST_INTEGER(1, directory_part_size("/foo.bar.baz"));
+
+    /* Testing lone slash. */
+    TEST_INTEGER(1, directory_part_size("/"));
+
+    /* Testing empty string. */
+    TEST_INTEGER(0, directory_part_size(""));
 }
 
 /************************************ EOF *************************************/
