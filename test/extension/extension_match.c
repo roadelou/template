@@ -43,7 +43,7 @@ int main(int argc, char **argv) {
     test_header();
     test_next_extension_part();
     test_directory_part_size();
-    // test_correct_ending();
+    test_correct_ending();
     // test_extension_match_size();
     return EXIT_SUCCESS;
 }
@@ -122,6 +122,19 @@ void test_directory_part_size(void) {
 
     /* Testing empty string. */
     TEST_INTEGER(0, directory_part_size(""));
+}
+
+void test_correct_ending(void) {
+    /* Testing the normal case. */
+    TEST_INTEGER(1, correct_ending("test.template"));
+    TEST_INTEGER(1, correct_ending("/foo/bar.baz.template"));
+    TEST_INTEGER(0, correct_ending("test_template"));
+
+    /* Testing with empty basename. */
+    TEST_INTEGER(1, correct_ending(".template"));
+
+    /* Testing with empty string. */
+    TEST_INTEGER(0, correct_ending(""));
 }
 
 /************************************ EOF *************************************/
