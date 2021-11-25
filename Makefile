@@ -20,6 +20,9 @@ HEAD_DIR = $(TOP)/include
 # Directory holding all of the test files.
 TEST_DIR = $(TOP)/test
 
+# Directory holding the documentation.
+DOC_DIR = $(TOP)/doc
+
 # Flag to include all headers
 INCLUDE = -I $(HEAD_DIR)
 
@@ -50,6 +53,9 @@ BUILD_DIR = $(TOP)/build
 # The location where the executable will be installed.
 BIN_DIR = $(DESTDIR)/usr/bin
 #
+# The location where the man pages should be installed.
+MAN_DIR = $(DESTDIR)/usr/share/man
+#
 # All the preset template files.
 TEMPLATES = $(wildcard $(TOP)/etc/*.template)
 #
@@ -62,6 +68,9 @@ SPEC = $(TOP)/template.spec
 # A variable used to hold the path to every file which should be deleted when
 # the clean command is used.
 TO_CLEAN =
+#
+# The documentation produced for the man tool.
+MAN_DOC =
 
 # We force the default rule to be 'all' even though it isn't the first rule in
 # the Makefile (because of the includes).
@@ -75,6 +84,9 @@ include $(SRC_DIR)/Makefile
 #
 # Including the definitions for the tests.
 include $(TEST_DIR)/Makefile
+#
+# Including the definitions for the documentation files.
+include $(DOC_DIR)/Makefile
 
 ################################### SPECIAL ####################################
 
@@ -83,7 +95,7 @@ include $(TEST_DIR)/Makefile
 #################################### RULES #####################################
 
 # Release build.
-all: $(EXEC_ELF) | $(BUILD_DIR)
+all: $(EXEC_ELF) $(MAN_DOC) | $(BUILD_DIR)
 
 # Debug build.
 debug: $(EXEC_DEBUG_ELF) | $(BUILD_DIR)
@@ -94,12 +106,16 @@ test: $(TEST_CSV) | $(BUILD_DIR)
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
 
-install: $(EXEC_ELF) $(TEMPLATES) | $(BIN_DIR)
+install: $(EXEC_ELF) $(TEMPLATES) $(MAN_DOC) | $(BIN_DIR)
 	install -m 755 $(EXEC_TEMPLATE_ELF) $(BIN_DIR)/template
 	install -m 755 $(EXEC_TEMPLATE_RUN_ELF) $(BIN_DIR)/template-run
 	# Also copying the format files to the expected location.
 	mkdir -p $(CONFIG)
 	install -m 664 -t $(CONFIG) $(TEMPLATES) 
+	# Also copying the man-pages.
+	mkdir -p $(MAN_DIR)/man1
+	install -m 664 $(TEMPLATE_MAN_ZIP) $(MAN_DIR)/man1/template.1.gz
+	install -m 664 $(TEMPLATE_RUN_MAN_ZIP) $(MAN_DIR)/man1/template-run.1.gz
 
 # Target fedora should also depend on every source file and header!
 fedora: $(SPEC) | $(BUILD_DIR)
@@ -110,7 +126,10 @@ $(BIN_DIR):
 
 uninstall:
 	rm -f $(BIN_DIR)/template
+	rm -f $(BIN_DIR)/template-run
 	rm -rf $(CONFIG)
+	rm -rf $(MAN_DIR)/man1/template.1.gz
+	rm -rf $(MAN_DIR)/man1/template-run.1.gz
 
 clean:
 	rm -f $(TO_CLEAN)
