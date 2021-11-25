@@ -1,44 +1,31 @@
-# TEMPLATE-RUN
+% TEMPLATE-RUN(1)
+% roadelou
+% November 2021
+
+# NAME
 
 __template-run__ is a small C executable to execute template files from the command line.
 
-## Usage
+# SYNOPSIS
+
+The syntax of __template__ is
 
 ```
-Usage: template-run [options] filename
-
-Description
-===========
-Executes the provided template file and prints the result to stdout.
-
-Options
-=======
- -a, --author <author>
-    Overrides the environment supplied author value.
-
- -c, --contact <contact>
-    Overrides the contact value.
-
- -v, --verbose
-    Raises the verbosity.
-
- -q, --quiet
-    Lowers the verbosity.
-
- -s, --static
-    Older static format style, does not run any commands.
-
- -d, --dynamic
-    New dynamic format style which uses the %/ [...] / subcommands.
-
- -l, --license
-    Prints the license message and exits.
-
- -h, --help
-    Prints this help message and exits.
+template-run [options] filename
 ```
 
-## Example
+# DESCRIPTION
+
+- `-a, --author <author>`: Overrides the environment supplied author value.
+- `-c, --contact <contact>`: Overrides the contact value.
+- `-v, --verbose`: Raises the verbosity.
+- `-q, --quiet`: Lowers the verbosity.
+- `-s, --static`: Older static format style, does not run any commands.
+- `-d, --dynamic`: New dynamic format style which uses the %/ [...] / subcommands.
+- `-l, --license`: Prints the license message and exits.
+- `-h, --help`: Prints this help message and exits.
+
+# EXAMPLES
 
 An example dynamic template file could be:
 
@@ -116,7 +103,11 @@ For bug reporting instructions, please see:
 <http://bugzilla.redhat.com/bugzilla>.
 ```
 
-### METADATA
+# SEE ALSO
+
+**template(1)**
+
+# VARIOUS
 
 Field | Value
 --- | ---
@@ -125,5 +116,3 @@ Contacts |
 Creation Date | 2021-11-20
 Language | Markdown Document
 Repository | git@github.com:roadelou/template
-
-### EOF

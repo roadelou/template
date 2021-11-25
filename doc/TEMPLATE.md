@@ -1,8 +1,12 @@
-# TEMPLATE
+% TEMPLATE(1)
+% roadelou
+% November 2021
+
+# NAME
 
 __template__ is a small C executable to build templated files from the command line.
 
-## Usage
+# SYNOPSIS
 
 The syntax of __template__ is
 
@@ -14,7 +18,7 @@ template [options] [filenames ...]
 
 - __template__ will use the extension of the provided file to determine which template should be applied.
 
-### Options
+# DESCRIPTION
 
 __template__ uses [getopt](https://www.gnu.org/software/libc/manual/html_node/Getopt.html) to parse its command line options. The recognized options are:
 
@@ -29,7 +33,7 @@ __template__ uses [getopt](https://www.gnu.org/software/libc/manual/html_node/Ge
 - `-l, --license` to print license information and exit.
 - `-h, --help` to print help and exit.
 
-## Metadata
+# METADATA
 
 When creating a template file, __template__ will fill in some dynamically deduced contextual information.
 
@@ -39,25 +43,25 @@ When creating a template file, __template__ will fill in some dynamically deduce
 
 It is also common to find a __Language__ field in the created files, but it is in fact part of the template file and not dynamically deduced by __template__.
 
-## Template files
+# TEMPLATE FILES
 
 __template__ uses printf-style format files to build the templated files. For a file with the extension _bar_, template will try to find the template file `$HOME/.config/roadelou_template/bar.template`. If this file cannot be found, then `$HOME/.config/roadelou_template/txt.template` will be used instead.
 
 The way **template** searches the extension file is non-trivial, but allows recognition of hierachies of extension. So a file like `foo.bar.txt` can use the template `txt.bar.template` even if the more generic `txt.template` also exists. This is usefull for templates with a license specific headers.
 
-### Static Format
+# STATIC FORMAT
 
  - When writing the template files with the older static format, __%1__ will refer to the author metadata, __%2__ will be the contact and __%3__ will be the date of creation.
  - __%%__ can be used as an escape and will print a single character '%'.
  - Any other occurence of '%' which doesn't fit into the previous definitions will simply be pasted litteraly to the created file, without formatting.
 
-### Dynamic Format
+# DYNAMIC FORMAT
 
  - The newer dynamic format takes advantage of shell scripting to include the output of commands in your created file. The basic syntax for a subcommand is `%$ [...] $` where `$` can be any ASCII character. This is similar to the way the `sed` command handles its `/` for instance.
  - For instance, `%/echo rouge/` would yield `rouge`. Note that trailing newlines will be automatically trimmed.
  - `template` will warn about incomplete or malformed format specifiers and should proceed without crashing.
 
-## Verbosity
+# VERBOSITY
 
 **template** prints messages with three levels of importance. Whether a message os printed or not depends on the log level (i.e. the verbosity of the tool) during the execution. The three importance levels are explained in the table below.
 
@@ -69,7 +73,11 @@ ERROR\_MSG | *Always* | Red | A irrecoverable problem has occured, some user int
 
 Note that template isn't meant to crash even when an **ERROR\_MSG** is printed, in most cases **template** will just not create the expected file and move on.
 
-### METADATA
+# SEE ALSO
+
+**template-run(1)**
+
+# VARIOUS
 
 Field | Value
 --- | ---
@@ -77,5 +85,4 @@ Contributors | roadelou
 Contacts |
 Creation Date | 2020-09-27
 Language | Markdown Document
-
-### EOF
+Repository | git@github.com:roadelou/template
