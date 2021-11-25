@@ -120,10 +120,10 @@ For bug reporting instructions, please see:
 
 Field | Value
 --- | ---
-:pencil: Contributors | roadelou
-:email: Contacts | 
-:date: Creation Date | 2021-11-20
-:bulb: Language | Markdown Document
-:page: Repository | git@github.com:roadelou/template
+Contributors | roadelou
+Contacts | 
+Creation Date | 2021-11-20
+Language | Markdown Document
+Repository | git@github.com:roadelou/template
 
 ### EOF
