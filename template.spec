@@ -1,6 +1,6 @@
 Name: template
 Version: 1.11
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: template is a small C executable to build templated files from the command line
 
 License: GPLv3
@@ -8,6 +8,11 @@ URL: https://github.com/roadelou/template
 
 BuildRequires: gcc
 BuildRequires: make
+BuildRequires: pandoc
+BuildRequires: gzip
+
+# Needed for the documentation.
+Requires: man-db
 
 %description
 template is a small C executable to build templated files from the command line.
@@ -34,3 +39,7 @@ make %{?_smp_mflags}
 #
 # The default template files are stored in /etc/roadelou_template
 /etc/roadelou_template/*.template
+#
+# The man pages should be installed in the end.
+%{_mandir}/man1/template.1*
+%{_mandir}/man1/template-run.1*
