@@ -1,0 +1,9 @@
+Package: template
+Version: 11.1-3
+Section: contrib
+Priority: optional
+Architecture: amd64
+Depends: man-db
+Maintainer: roadelou <roadelou@github.com>
+Description: template
+ template is a C tool to create templated files from the command line.
