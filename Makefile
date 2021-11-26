@@ -65,6 +65,9 @@ CONFIG = $(DESTDIR)/etc/roadelou_template
 # The spec file used to automate the compilation of the package.
 SPEC = $(TOP)/template.spec
 #
+# The fakeroot used to compile the debian package.
+FAKEROOT_DEBIAN = $(TOP)/template_11.1-3
+#
 # A variable used to hold the path to every file which should be deleted when
 # the clean command is used.
 TO_CLEAN =
@@ -90,7 +93,7 @@ include $(DOC_DIR)/Makefile
 
 ################################### SPECIAL ####################################
 
-.PHONY: debug all clean install uninstall fedora test
+.PHONY: debug all clean install uninstall fedora test debian
 
 #################################### RULES #####################################
 
@@ -106,7 +109,13 @@ test: $(TEST_CSV) | $(BUILD_DIR)
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
 
-install: $(EXEC_ELF) $(TEMPLATES) $(MAN_DOC) | $(BIN_DIR)
+$(CONFIG):
+	mkdir -p $(CONFIG)
+
+$(MAN_DIR):
+	mkdir -p $(MAN_DIR)
+
+install: $(EXEC_ELF) $(TEMPLATES) $(MAN_DOC) | $(BIN_DIR) $(CONFIG) $(MAN_DIR)
 	install -m 755 $(EXEC_TEMPLATE_ELF) $(BIN_DIR)/template
 	install -m 755 $(EXEC_TEMPLATE_RUN_ELF) $(BIN_DIR)/template-run
 	# Also copying the format files to the expected location.
@@ -118,8 +127,22 @@ install: $(EXEC_ELF) $(TEMPLATES) $(MAN_DOC) | $(BIN_DIR)
 	install -m 664 $(TEMPLATE_RUN_MAN_ZIP) $(MAN_DIR)/man1/template-run.1.gz
 
 # Target fedora should also depend on every source file and header!
-fedora: $(SPEC) | $(BUILD_DIR)
+fedora: $(SPEC)
 	fedpkg --release f35 local
+
+debian: 
+	# We start by creating the fakeroot to build the debian package.
+	mkdir -p $(FAKEROOT_DEBIAN)
+	# We compile the source code.
+	make
+	# We install the code in the fakeroot.
+	DESTDIR=$(FAKEROOT_DEBIAN) make install
+	# We copy the package metadata inside the fakeroot.
+	mkdir -p $(FAKEROOT_DEBIAN)/DEBIAN
+	install -m 664 DEBIAN.control $(FAKEROOT_DEBIAN)/DEBIAN/control
+	# Finally, we build the debian package itself.
+	dpkg-deb --build $(FAKEROOT_DEBIAN)
+
 
 $(BIN_DIR):
 	mkdir -p $(BIN_DIR)
@@ -136,5 +159,8 @@ clean:
 	# Removing fedora package leftovers
 	rm -f *.src.rpm *.log
 	rm -rf x86_64
+	# Removing the debian package leftovers.
+	rm -rf $(FAKEROOT_DEBIAN)
+	rm -f *.deb
 
 ##################################### EOF ######################################
