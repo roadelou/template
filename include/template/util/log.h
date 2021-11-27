@@ -55,14 +55,14 @@ void set_log_level(enum LOG_LEVEL level);
 
 /* Description
  * ===========
- * Logs a message for the user to stdout or stderr. INFO is logged in white,
- * WARNING is logged in orange and ERROR is logged in red.
+ * Logs a message for the user to stderr. INFO is logged in white, WARNING is
+ * logged in orange and ERROR is logged in red.
  *
  * Arguments
  * =========
  *  - importance: The importance of the message, which will only be displayed to
- *  the user if the importance is higher than the current log level. INFO and
- *  WARNING are printed to STDOUT, while ERROR is printed to STDERR.
+ *  the user if the importance is higher than the current log level. Messages
+ *  are displayed on stderr.
  *  - format: A constant format string for printf, see its documentation for
  *  more details.
  *  - ...: Variadic arguments for printf, see its documentation for more

@@ -90,41 +90,28 @@ int log_message(enum LOG_LEVEL importance, const char *format, ...) {
     // We initialize our variadic list.
     va_start(variadic_list, format);
     //
-    // The stream to which we are going to output the message.
-    FILE *stream;
-    //
-    // The stream used depends on the importance.
-    //
-    switch (importance) {
-    case ERROR_MSG:
-        // Errors go to stderr.
-        stream = stderr;
-        break;
-    default:
-        // Other messages go to stdout.
-        stream = stdout;
-        break;
-    }
     // We emit the ASCII color sequence for our message based on its type.
     switch (importance) {
     case WARNING_MSG:
         // Warning goes in orange.
-        fprintf(stream, "%s", "\033[33m");
+        fprintf(stderr, "%s", "\033[33m");
         break;
     case ERROR_MSG:
         // Error goes in red.
-        fprintf(stream, "%s", "\033[31m");
+        fprintf(stderr, "%s", "\033[31m");
         break;
     default:
         // INFO and garbage are printed in white.
-        fprintf(stream, "%s", "\033[37m");
+        fprintf(stderr, "%s", "\033[37m");
         break;
     }
-    // We print the logged message itself. The output stream used depends on the
-    // importance.
-    return_value = vfprintf(stream, format, variadic_list);
+    //
+    // We print the logged message itself.
+    return_value = vfprintf(stderr, format, variadic_list);
+    //
     // Finally we end the ASCII color sequence.
-    fprintf(stream, "%s", "\033[m");
+    fprintf(stderr, "%s", "\033[m");
+    //
     // We return the expected value.
     return return_value;
 }
