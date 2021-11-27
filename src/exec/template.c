@@ -191,6 +191,8 @@ int main(int argc, const char **argv) {
                     "Could not fetch date from OS, defaulted to \"%s\"\n",
                     current_date);
     }
+    /* Adding a debug message. */
+    log_message(INFO_MSG, "Using date \"%s\"\n", current_date);
 
     /* We get the user name, we see if the dedicated variable is set and it
      * wasn't overriden through the command line. */
@@ -202,9 +204,22 @@ int main(int argc, const char **argv) {
      * name. */
     if (author == NULL) {
         author = getenv("USER");
-        /* We also log an information for the user. */
-        log_message(INFO_MSG, "Defaulted author to \"%s\"\n", author);
+        /* In some cases USER may not be defined, for instance when logged-in
+         * as root. In that case, we default to an empty string. */
+        if (author == NULL) {
+            author = "";
+            /* We also log a message for the user. */
+            log_message(INFO_MSG,
+                        "Both TEMPLATE_USER and USER are undefined, defaulted "
+                        "author to \"%s\"\n",
+                        author);
+        } else {
+            /* We also log a message for the user. */
+            log_message(INFO_MSG, "Defaulted author to \"%s\"\n", author);
+        }
     }
+    /* Adding a debug message. */
+    log_message(INFO_MSG, "Using author \"%s\"\n", author);
 
     /* We get the user contact if it hasn't been overriden. */
     if (contact == NULL) {
@@ -217,17 +232,24 @@ int main(int argc, const char **argv) {
         /* We also log an information for the user. */
         log_message(INFO_MSG, "Defaulted contact to \"%s\"\n", contact);
     }
+    /* Adding a debug message. */
+    log_message(INFO_MSG, "Using contact \"%s\"\n", contact);
 
     /* We set the TEMPLATE_USER and TEMPLATE_CONTACE environment variables for
      * the subprocesses. This is particularly usefull for the dynamic formatting
      * style, otherwise the --author and --contact flags would be ignored. */
     setenv("TEMPLATE_USER", author, 1);
     setenv("TEMPLATE_CONTACT", contact, 1);
+    /* Adding a debug message. */
+    log_message(INFO_MSG, "%s\n",
+                "TEMPLATE_USER and TEMPLATE_CONTACT have been set");
 
     /* We simply loop over the given paths and create them all. */
     for (cursor = optind; cursor < argc; cursor++) {
         /* We get the new file to create. */
         path = *(argv + cursor);
+        /* Adding a debug message. */
+        log_message(INFO_MSG, "Working on path \"%s\"\n", path);
 
         /* We first get the extension of our file. The algorithm used can be
          * overriden by the user. */
@@ -248,6 +270,8 @@ int main(int argc, const char **argv) {
                         match_algorithm, NEW);
             extension = get_format_extension(list, path);
         }
+        /* Adding a debug message. */
+        log_message(INFO_MSG, "Matched extension \"%s\"\n", extension);
 
         /* If we found no valid extension, we use .txt instead. */
         if (extension == NULL) {
@@ -294,6 +318,11 @@ int main(int argc, const char **argv) {
                 }
             }
         }
+        /* Adding a debug message. */
+        log_message(INFO_MSG,
+                    "Fetched the format for the extension \"%s\", it has %ld "
+                    "characters\n",
+                    extension, strlen(buffer));
 
         /* We open the file we are going to create. */
         created_file = fopen(path, "w");
@@ -308,6 +337,8 @@ int main(int argc, const char **argv) {
             free(buffer);
             continue;
         }
+        /* Adding a debug message. */
+        log_message(INFO_MSG, "Opened the file at path \"%s\"\n", path);
 
         /* We print our formatted content to the file. */
         switch (format_style) {
@@ -324,6 +355,9 @@ int main(int argc, const char **argv) {
             dynamic_format(buffer, created_file);
             break;
         }
+        /* Adding a debug message. */
+        log_message(INFO_MSG,
+                    "Filled target file \"%s\" with templated content\n", path);
 
         /* We flush the file by closing it. */
         fclose(created_file);
@@ -344,6 +378,9 @@ int main(int argc, const char **argv) {
             free(extension);
             break;
         }
+        /* Adding a debug message. */
+        log_message(INFO_MSG,
+                    "Cleaned ressources for creation of file \"%s\"\n", path);
     }
     /* We exit and end the process. */
     return status;
