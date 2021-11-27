@@ -1,6 +1,6 @@
 Name: template
 Version: 1.11
-Release: 3%{?dist}
+Release: 4%{?dist}
 Summary: template is a small C executable to build templated files from the command line
 
 License: GPLv3
