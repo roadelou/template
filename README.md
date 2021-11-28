@@ -9,6 +9,10 @@ There are currently 2 executables provided by this project:
  - [template](doc/TEMPLATE.md) which is used to create files from templates chosen based on the extension.
  - [template-run](doc/TEMPLATE-RUN.md) which is used to print the result of the execution of a provided template file.
 
+Rudimentary man pages are also provided, check `man 1 template` and `man 1 template-run`.
+
+The package will also install the shared library *libtemplate.so* used by the two executable, and store the corresponding header files on the system.
+
 ## Examples
 
 `template example.c` will create a C source file based on the template in the `/etc/roadelou_template` directory, if any.
@@ -19,10 +23,10 @@ There are currently 2 executables provided by this project:
 
 Field | Value
 --- | ---
-:pencil: Contributors | roadelou
-:email: Contacts | 
-:date: Creation Date | 2021-11-20
-:bulb: Language | Markdown Document
-:page: Repository | git@github.com:roadelou/template
+Contributors | roadelou
+Contacts | 
+Creation Date | 2021-11-20
+Language | Markdown Document
+Repository | git@github.com:roadelou/template
 
 ### EOF
