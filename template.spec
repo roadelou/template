@@ -43,3 +43,10 @@ make %{?_smp_mflags}
 # The man pages should be installed in the end.
 %{_mandir}/man1/template.1*
 %{_mandir}/man1/template-run.1*
+#
+# The shared library used by the template executables.
+/usr/lib/template/libtemplate.so
+#
+# The header files for the template library.
+/usr/include/template.h
+/usr/include/template/*
