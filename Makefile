@@ -72,7 +72,7 @@ CONFIG = $(DESTDIR)/etc/roadelou_template
 SPEC = $(TOP)/template.spec
 #
 # The fakeroot used to compile the debian package.
-FAKEROOT_DEBIAN = $(TOP)/template_11.1-4
+FAKEROOT_DEBIAN = $(TOP)/template_1.12-1
 #
 # A variable used to hold the path to every file which should be deleted when
 # the clean command is used.
