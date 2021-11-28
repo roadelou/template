@@ -63,7 +63,7 @@ TEST_CSV += $(TEST_UTIL_CSV)
 
 #################################### RULES #####################################
 
-# Note that the tests are always compiled againts the 'RELEASE' version of the
+# Note that the tests are always compiled againts the 'DEBUG' version of the
 # code.
 #
 # COMPLING
@@ -71,21 +71,21 @@ TEST_CSV += $(TEST_UTIL_CSV)
 $(TEST_UTIL_BASE_OBJ): $(TEST_UTIL_BASE_SRC) | $(TEST_BIN_DIR)
 	$(CC) $(C_FLAGS) -c -o $(TEST_UTIL_BASE_OBJ) $(TEST_UTIL_BASE_SRC)
 
-$(TEST_UTIL_BASE_ELF): $(TEST_UTIL_BASE_OBJ) $(TEST_OBJ) $(UTIL_DEBUG_OBJ) | $(TEST_BIN_DIR)
-	$(CC) $(C_FLAGS) -o $(TEST_UTIL_BASE_ELF) $(TEST_UTIL_BASE_OBJ) $(TEST_OBJ) $(UTIL_DEBUG_OBJ)
+$(TEST_UTIL_BASE_ELF): $(TEST_UTIL_BASE_OBJ) $(TEMPLATE_DEBUG_LIB) | $(TEST_BIN_DIR)
+	$(CC) $(C_FLAGS) -L$(LIB_BUILD_DIR) -ltemplate.debug -o $(TEST_UTIL_BASE_ELF) $(TEST_UTIL_BASE_OBJ)
 
 $(TEST_UTIL_LIST_OBJ): $(TEST_UTIL_LIST_SRC) | $(TEST_BIN_DIR)
 	$(CC) $(C_FLAGS) -c -o $(TEST_UTIL_LIST_OBJ) $(TEST_UTIL_LIST_SRC)
 
-$(TEST_UTIL_LIST_ELF): $(TEST_UTIL_LIST_OBJ) $(TEST_OBJ) $(UTIL_DEBUG_OBJ) | $(TEST_BIN_DIR)
-	$(CC) $(C_FLAGS) -o $(TEST_UTIL_LIST_ELF) $(TEST_UTIL_LIST_OBJ) $(TEST_OBJ) $(UTIL_DEBUG_OBJ)
+$(TEST_UTIL_LIST_ELF): $(TEST_UTIL_LIST_OBJ) $(TEMPLATE_DEBUG_LIB) | $(TEST_BIN_DIR)
+	$(CC) $(C_FLAGS) -L$(LIB_BUILD_DIR) -ltemplate.debug -o $(TEST_UTIL_LIST_ELF) $(TEST_UTIL_LIST_OBJ)
 
 # RUNNING TESTS
 ###############
 $(TEST_UTIL_BASE_CSV): $(TEST_UTIL_BASE_ELF) | $(TEST_CSV_DIR)
-	$(TEST_UTIL_BASE_ELF) | tee $(TEST_UTIL_BASE_CSV)
+	$(SET_LD) $(TEST_UTIL_BASE_ELF) | tee $(TEST_UTIL_BASE_CSV)
 
 $(TEST_UTIL_LIST_CSV): $(TEST_UTIL_LIST_ELF) | $(TEST_CSV_DIR)
-	$(TEST_UTIL_LIST_ELF) | tee $(TEST_UTIL_LIST_CSV)
+	$(SET_LD) $(TEST_UTIL_LIST_ELF) | tee $(TEST_UTIL_LIST_CSV)
 
 ##################################### EOF ######################################

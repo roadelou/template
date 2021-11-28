@@ -25,6 +25,10 @@ TEST_CSV_DIR = $(BUILD_DIR)/testing/csv
 # The list of all the CSV files produced by all the tests.
 TEST_CSV =
 
+# This short macro is used to set the LD_LIBRARY_PATH to use the compiled
+# library for debugging purposes.
+SET_LD = LD_LIBRARY_PATH=$(LIB_BUILD_DIR):$(LD_LIBRARY_PATH)
+
 # Sourcing all of the unit tests for the project.
 include $(TEST_DIR)/util/Makefile
 include $(TEST_DIR)/extension/Makefile
