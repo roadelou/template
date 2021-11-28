@@ -56,6 +56,12 @@ BIN_DIR = $(DESTDIR)/usr/bin
 # The location where the man pages should be installed.
 MAN_DIR = $(DESTDIR)/usr/share/man
 #
+# The location where the shared library should be installed.
+LIB_DIR = $(DESTDIR)/usr/lib/template
+#
+# The directory where the header file should be installed on the target system.
+INCLUDE_DIR = $(DESTDIR)/usr/include
+#
 # All the preset template files.
 TEMPLATES = $(wildcard $(TOP)/etc/*.template)
 #
@@ -125,6 +131,13 @@ install: $(EXEC_ELF) $(TEMPLATES) $(MAN_DOC) | $(BIN_DIR) $(CONFIG) $(MAN_DIR)
 	mkdir -p $(MAN_DIR)/man1
 	install -m 664 $(TEMPLATE_MAN_ZIP) $(MAN_DIR)/man1/template.1.gz
 	install -m 664 $(TEMPLATE_RUN_MAN_ZIP) $(MAN_DIR)/man1/template-run.1.gz
+	# Copying the shared library, otherwise the executables won't work.
+	mkdir -p $(LIB_DIR)
+	install -m 755 $(TEMPLATE_LIB) $(LIB_DIR)/$(LIB_NAME)
+	# Copying the headers of the template library.
+	mkdir -p $(INCLUDE_DIR)
+	install -m 664 $(HEAD_DIR)/template.h $(INCLUDE_DIR)/template.h
+	cp -r $(HEAD_DIR)/template $(INCLUDE_DIR)/template
 
 # Target fedora should also depend on every source file and header!
 fedora: $(SPEC)
@@ -151,8 +164,11 @@ uninstall:
 	rm -f $(BIN_DIR)/template
 	rm -f $(BIN_DIR)/template-run
 	rm -rf $(CONFIG)
-	rm -rf $(MAN_DIR)/man1/template.1.gz
-	rm -rf $(MAN_DIR)/man1/template-run.1.gz
+	rm -f $(MAN_DIR)/man1/template.1.gz
+	rm -f $(MAN_DIR)/man1/template-run.1.gz
+	rm -f $(LIB_DIR)/$(LIB_NAME)
+	rm -f $(INCLUDE_DIR)/template.h
+	rm -rf $(INCLUDE_DIR)/template
 
 clean:
 	rm -f $(TO_CLEAN)
