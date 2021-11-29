@@ -57,7 +57,7 @@ BIN_DIR = $(DESTDIR)/usr/bin
 MAN_DIR = $(DESTDIR)/usr/share/man
 #
 # The location where the shared library should be installed.
-LIB_DIR = $(DESTDIR)/usr/lib/template
+LIB_DIR = $(DESTDIR)/usr/lib64
 #
 # The directory where the header file should be installed on the target system.
 INCLUDE_DIR = $(DESTDIR)/usr/include
@@ -147,7 +147,7 @@ debian:
 	# We start by creating the fakeroot to build the debian package.
 	mkdir -p $(FAKEROOT_DEBIAN)
 	# We compile the source code.
-	make
+	make -j12
 	# We install the code in the fakeroot.
 	DESTDIR=$(FAKEROOT_DEBIAN) make install
 	# We copy the package metadata inside the fakeroot.

@@ -45,7 +45,7 @@ make %{?_smp_mflags}
 %{_mandir}/man1/template-run.1*
 #
 # The shared library used by the template executables.
-/usr/lib/template/libtemplate.so
+/usr/lib64/libtemplate.so
 #
 # The header files for the template library.
 /usr/include/template.h
