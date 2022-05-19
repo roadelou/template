@@ -40,7 +40,6 @@ void test_extension_match_size(void);
 /************************************ MAIN ************************************/
 
 int main(int argc, char **argv) {
-    test_header();
     test_next_extension_part();
     test_directory_part_size();
     test_correct_ending();

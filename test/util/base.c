@@ -38,8 +38,6 @@ int main(int argc, char **argv) {
 /********************************* FUNCTIONS **********************************/
 
 void test_occurence(void) {
-	test_header();
-
 	/* No occurence. */
 	TEST_INTEGER(-1, occurence("sample text.", '/', FIRST_OCCURENCE));
 	TEST_INTEGER(-1, occurence("sample text.", '/', LAST_OCCURENCE));
