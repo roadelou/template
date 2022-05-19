@@ -8,54 +8,16 @@
 
 ################################### ALIASES ####################################
 
-# BASE
-######
-# The source code for the base tests.
-TEST_UTIL_BASE_SRC = $(TEST_DIR)/util/base.c
+# The source files for the tests.
+TEST_UTIL_SRC = $(wildcard $(TEST_DIR)/util/*.c)
 #
-# The object file containing the code for the base test.
-TEST_UTIL_BASE_OBJ = $(TEST_BIN_DIR)/base.o
-#
-# The linked executable for the base test.
-TEST_UTIL_BASE_ELF = $(TEST_BIN_DIR)/base.elf
-#
-# The csv file containing the results of the base test.
-TEST_UTIL_BASE_CSV = $(TEST_CSV_DIR)/base.csv
-
-# LIST
-######
-# The source code for the list tests.
-TEST_UTIL_LIST_SRC = $(TEST_DIR)/util/list.c
-#
-# The object file containing the code for the list test.
-TEST_UTIL_LIST_OBJ = $(TEST_BIN_DIR)/list.o
-#
-# The linked executable for the list test.
-TEST_UTIL_LIST_ELF = $(TEST_BIN_DIR)/list.elf
-#
-# The csv file containing the results of the list test.
-TEST_UTIL_LIST_CSV = $(TEST_CSV_DIR)/list.csv
-
-# UTIL
-######
-# The object files for the tests.
-TEST_UTIL_OBJ = $(TEST_UTIL_BASE_OBJ) $(TEST_UTIL_LIST_OBJ)
-#
-# The execuatables themselves.
-TEST_UTIL_ELF = $(TEST_UTIL_BASE_ELF) $(TEST_UTIL_LIST_ELF)
-#
-# The CSVs containing the results of the test.
-TEST_UTIL_CSV = $(TEST_UTIL_BASE_CSV) $(TEST_UTIL_LIST_CSV)
-
-# TO CLEAN
-##########
-# Used for the global clean rule.
-TO_CLEAN += $(TEST_UTIL_OBJ) $(TEST_UTIL_ELF) $(TEST_UTIL_CSV)
+# The elf files for the tests.
+TEST_UTIL_ELF = $(patsubst $(TEST_DIR)/util/%.c,$(TEST_BIN_DIR)/%.elf,$(TEST_UTIL_SRC))
 
 # REGISTERING TEST
 ##################
 # Registering the tests for the global Makefile.
-TEST_CSV += $(TEST_UTIL_CSV)
+TEST_LIST += $(TEST_UTIL_ELF)
 
 ################################### SPECIAL ####################################
 
@@ -66,26 +28,16 @@ TEST_CSV += $(TEST_UTIL_CSV)
 # Note that the tests are always compiled againts the 'DEBUG' version of the
 # code.
 #
-# COMPLING
-##########
-$(TEST_UTIL_BASE_OBJ): $(TEST_UTIL_BASE_SRC) | $(TEST_BIN_DIR)
-	$(CC) $(C_FLAGS) -c -o $(TEST_UTIL_BASE_OBJ) $(TEST_UTIL_BASE_SRC)
+# COMPILING
+###########
+#
+# Generic rule to build the object file from the test source.
+$(TEST_BIN_DIR)/%.o: $(TEST_DIR)/util/%.c | $(TEST_BIN_DIR)
+	$(CC) $(C_FLAGS) -c -o $@ $<
 
-$(TEST_UTIL_BASE_ELF): $(TEST_UTIL_BASE_OBJ) $(TEMPLATE_DEBUG_LIB) | $(TEST_BIN_DIR)
-	$(CC) $(C_FLAGS) -L$(LIB_BUILD_DIR) -ltemplate.debug -o $(TEST_UTIL_BASE_ELF) $(TEST_UTIL_BASE_OBJ)
-
-$(TEST_UTIL_LIST_OBJ): $(TEST_UTIL_LIST_SRC) | $(TEST_BIN_DIR)
-	$(CC) $(C_FLAGS) -c -o $(TEST_UTIL_LIST_OBJ) $(TEST_UTIL_LIST_SRC)
-
-$(TEST_UTIL_LIST_ELF): $(TEST_UTIL_LIST_OBJ) $(TEMPLATE_DEBUG_LIB) | $(TEST_BIN_DIR)
-	$(CC) $(C_FLAGS) -L$(LIB_BUILD_DIR) -ltemplate.debug -o $(TEST_UTIL_LIST_ELF) $(TEST_UTIL_LIST_OBJ)
-
-# RUNNING TESTS
-###############
-$(TEST_UTIL_BASE_CSV): $(TEST_UTIL_BASE_ELF) | $(TEST_CSV_DIR)
-	$(SET_LD) $(TEST_UTIL_BASE_ELF) | tee $(TEST_UTIL_BASE_CSV)
-
-$(TEST_UTIL_LIST_CSV): $(TEST_UTIL_LIST_ELF) | $(TEST_CSV_DIR)
-	$(SET_LD) $(TEST_UTIL_LIST_ELF) | tee $(TEST_UTIL_LIST_CSV)
+#
+# Generic rule to build the test elf from its object file.
+$(TEST_BIN_DIR)/%.elf: $(TEST_BIN_DIR)/%.o $(TEMPLATE_DEBUG_LIB) | $(TEST_BIN_DIR)
+	$(CC) $(C_FLAGS) -L$(LIB_BUILD_DIR) -ltemplate.debug -o $@ $<
 
 ##################################### EOF ######################################

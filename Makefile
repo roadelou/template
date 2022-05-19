@@ -109,8 +109,7 @@ all: $(EXEC_ELF) $(MAN_DOC) | $(BUILD_DIR)
 # Debug build.
 debug: $(EXEC_DEBUG_ELF) | $(BUILD_DIR)
 
-# Running the tests.
-test: $(TEST_CSV) | $(BUILD_DIR)
+# The test rule lives inside of test/Makefile
 
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)

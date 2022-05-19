@@ -18,12 +18,15 @@
 
 # The directory where the test executables will be stored.
 TEST_BIN_DIR = $(BUILD_DIR)/testing/bin
-
-# The directory where the test results will be stored.
+#
+# The directory where the log for the tests will be stored.
 TEST_CSV_DIR = $(BUILD_DIR)/testing/csv
-
-# The list of all the CSV files produced by all the tests.
-TEST_CSV =
+#
+# The list of test executables, which will be populated in the leaf Makefiles.
+TEST_LIST =
+#
+# The log file for the tests.
+TEST_LOG = $(TEST_CSV_DIR)/log.csv
 
 # This short macro is used to set the LD_LIBRARY_PATH to use the compiled
 # library for debugging purposes.
@@ -33,16 +36,26 @@ SET_LD = LD_LIBRARY_PATH=$(LIB_BUILD_DIR):$(LD_LIBRARY_PATH)
 include $(TEST_DIR)/util/Makefile
 include $(TEST_DIR)/extension/Makefile
 
+#
+# TO CLEAN
+##########
+# The CSV files  and the test programs should be deleted on clean.
+TO_CLEAN += $(TEST_LIST)
+
 ################################### SPECIAL ####################################
 
 # The special rule modifiers (.PHONY etc...) go here
+.PHONY: $(TEST_CSV)
 
 #################################### RULES #####################################
 
+# Running the tests.
+test: $(TEST_LIST) | $(TEST_CSV_DIR)
+	@# Printing the header for the tests.
+	@echo "STATUS;FILE;FUNCTION;LINE;EXPECTED;COMPUTED" | tee $(TEST_LOG)
+	@$(foreach TEST,$(TEST_LIST),$(SET_LD) $(TEST) | tee -a $(TEST_LOG);)
+
 $(TEST_BIN_DIR):
 	mkdir -p $(TEST_BIN_DIR)
-
-$(TEST_CSV_DIR):
-	mkdir -p $(TEST_CSV_DIR)
 
 ##################################### EOF ######################################
