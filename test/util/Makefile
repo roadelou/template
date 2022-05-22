@@ -37,7 +37,7 @@ $(TEST_BIN_DIR)/%.o: $(TEST_DIR)/util/%.c | $(TEST_BIN_DIR)
 
 #
 # Generic rule to build the test elf from its object file.
-$(TEST_BIN_DIR)/%.elf: $(TEST_BIN_DIR)/%.o $(TEMPLATE_DEBUG_LIB) | $(TEST_BIN_DIR)
-	$(CC) $(C_FLAGS) -L$(LIB_BUILD_DIR) -ltemplate.debug -o $@ $<
+$(TEST_BIN_DIR)/%.elf: $(TEST_BIN_DIR)/%.o $(TEMPLATE_LIB) $(TEST_LIB) | $(TEST_BIN_DIR)
+	$(CC) $(C_TEST_ELF_FLAGS) -o $@ $<
 
 ##################################### EOF ######################################
