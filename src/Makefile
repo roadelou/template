@@ -38,60 +38,90 @@ UTIL_MAKEFILE = $(SRC_DIR)/util/Makefile
 # The Makefile used to create the test library.
 TEST_MAKEFILE = $(SRC_DIR)/test/Makefile
 
+# OBJECT FILES
+##############
 #
 # Flags used to compile the objects for the template library.
 C_LIB_OBJ_FLAGS = $(C_FLAGS) -fPIC
+#
+# The list of objects and debug objects to build, which will be populated by the
+# included leaf Makefiles.
+OBJ_LIST =
 
 # LIBRARY
 #########
-#
-# The name of the template library file.
-LIB_NAME = libtemplate.so
-#
-# The name of the debugging library.
-LIB_DEBUG_NAME = libtemplate.debug.so
 #
 # The directory where the compiled library will be stored.
 LIB_BUILD_DIR = $(BUILD_DIR)/lib
 #
 # The compiled library path.
-TEMPLATE_LIB = $(LIB_BUILD_DIR)/$(LIB_NAME)
+TEMPLATE_LIB = $(LIB_BUILD_DIR)/libtemplate.so
 #
-# Same for debugging.
-TEMPLATE_DEBUG_LIB = $(LIB_BUILD_DIR)/$(LIB_DEBUG_NAME)
-#
-# Flags used to compile the template library itself.
-C_LIB_FLAGS = $(C_FLAGS) -shared -Wl,-soname,libtemplate.so
+# The library with the test functions.
+TEST_LIB = $(LIB_BUILD_DIR)/libtemplate_test.so
 #
 # Flags used to compile the template library itself.
-C_LIB_DEBUG_FLAGS = $(C_FLAGS) -shared -Wl,-soname,libtemplate.debug.so
-
-# The dynamic library should also be cleaned by the `make clean` command.
-TO_CLEAN += $(TEMPLATE_LIB) $(TEMPLATE_DEBUG_LIB)
-
-# Including the Makefiles from the children directories to use their rules.
+C_TEMPLATE_LIB_FLAGS = $(C_FLAGS) -shared -Wl,-soname,libtemplate.so
 #
-# NOTE
-######
-# The order of the inclusions is important, it corresponds to compilation
-# dependancies.
+# Flags used to compile the test library.
+C_TEST_LIB_FLAGS = $(C_FLAGS) -shared -Wl,-soname,libtemplate_test.so
+
+# INCLUDING MAKEFILES
+#####################
+#
+# Including the Makefiles from the children directories to use their rules and
+# populate the list of objects to build.
 include $(UTIL_MAKEFILE)
 include $(EXTENSION_MAKEFILE)
 include $(FORMAT_MAKEFILE)
 include $(TEST_MAKEFILE)
+include $(EXEC_MAKEFILE)
+
+# EXECUTABLES
+#############
+#
+# We put the executables in the exec directory, since it would be empty anyway.
+ELF_BUILD_DIR = $(BUILD_DIR)/exec
+#
+# Each EXEC_OBJ contaons a main and will have its own ELF.
+ELF_LIST = $(patsubst $(EXEC_BUILD_DIR)/%.o,$(ELF_BUILD_DIR)/%.elf,$(EXEC_OBJ))
+
+#
+# The dynamic library and every object file should also be cleaned by the
+# `make clean` command.
+TO_CLEAN += $(TEMPLATE_LIB) $(TEST_LIB) $(ELF_LIST)
+
+# We define a PHONY rule to build all of the ELF files.
+.PHONY: elfs
+#
+# The object files are marked as intermediary so that they are cleaned up
+# automatically.
+.INTERMEDIATE: $(OBJ_LIST) $(TEST_OBJ) $(EXEC_OBJ)
 
 # Rule to create the library build directory.
 $(LIB_BUILD_DIR): | $(BUILD_DIR)
 	mkdir -p $(LIB_BUILD_DIR)
 
-$(TEMPLATE_LIB): $(UTIL_OBJ) $(EXTENSION_OBJ) $(FORMAT_OBJ) $(TEST_OBJ) | $(LIB_BUILD_DIR)
-	$(CC) $(C_LIB_FLAGS) -o $(TEMPLATE_LIB) $(UTIL_OBJ) $(EXTENSION_OBJ) $(FORMAT_OBJ) $(TEST_OBJ)
+# RULES FOR LIBRARY
+###################
+# Rules to build the libraries from the object files.
+$(TEMPLATE_LIB): $(OBJ_LIST) | $(LIB_BUILD_DIR)
+	$(CC) $(C_TEMPLATE_LIB_FLAGS) -o $@ $^
 
-$(TEMPLATE_DEBUG_LIB): $(UTIL_DEBUG_OBJ) $(EXTENSION_DEBUG_OBJ) $(FORMAT_DEBUG_OBJ) $(TEST_DEBUG_OBJ) | $(LIB_BUILD_DIR)
-	$(CC) $(C_LIB_DEBUG_FLAGS) -o $(TEMPLATE_DEBUG_LIB) $(UTIL_DEBUG_OBJ) $(EXTENSION_DEBUG_OBJ) $(FORMAT_DEBUG_OBJ) $(TEST_DEBUG_OBJ)
+# RULES FOR TEST LIBRARY
+########################
+# Rules to build the library with the test functions.
+$(TEST_LIB): $(TEST_OBJ) | $(LIB_BUILD_DIR)
+	$(CC) $(C_TEST_LIB_FLAGS) -o $@ $^
 
-# The executables depend on the main library, hence they have to be included
-# last.
-include $(EXEC_MAKEFILE)
+# RULES FOR EXECUTABLES
+#######################
+# Rules to build the executables and link them against the libraries.
+$(ELF_BUILD_DIR)/%.elf: $(EXEC_BUILD_DIR)/%.o $(TEMPLATE_LIB) | $(ELF_BUILD_DIR)
+	$(CC) $(C_FLAGS) -L$(LIB_BUILD_DIR) -o $@ $< -ltemplate
+
+#
+# PHONY rule to build every elf at once.
+elfs: $(ELF_LIST)
 
 ##################################### EOF ######################################

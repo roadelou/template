@@ -16,63 +16,21 @@
 # Note that the X_HEAD variables are defined in the Makefiles of the include
 # folder.
 
-# The build directory for this part of the library.
+#
+# The directory where this part of the codebase will be built.
 EXTENSION_BUILD_DIR = $(BUILD_DIR)/extension
-
-# EXTENSION_MATCH
-#################
-# The source code for the extension match part of the library.
-EXTENSION_EXTENSION_MATCH_SRC = $(SRC_DIR)/extension/extension_match.c
 #
-# The object file containing the code for extension_match part of the extension library.
-EXTENSION_EXTENSION_MATCH_OBJ = $(EXTENSION_BUILD_DIR)/extension_match.o
+# The directory containing the source code for this part of the codebase.
+EXTENSION_SRC_DIR = $(SRC_DIR)/extension
 #
-# The object file containing the code used for debugging purposes.
-EXTENSION_EXTENSION_MATCH_DEBUG_OBJ = $(EXTENSION_BUILD_DIR)/extension_match.debug.o
-
-# FORMAT_EXTENSION
-##################
-# The source code for the format_extension part of the library.
-EXTENSION_FORMAT_EXTENSION_SRC = $(SRC_DIR)/extension/format_extension.c
+# The source files for the tests.
+EXTENSION_SRC = $(wildcard $(EXTENSION_SRC_DIR)/*.c)
 #
-# The object file containing the code for format_extension part of the extension library.
-EXTENSION_FORMAT_EXTENSION_OBJ = $(EXTENSION_BUILD_DIR)/format_extension.o
+# The object files built for the release.
+EXTENSION_OBJ = $(patsubst $(EXTENSION_SRC_DIR)/%.c,$(EXTENSION_BUILD_DIR)/%.o,$(EXTENSION_SRC))
 #
-# The object file containing the code used for debugging purposes.
-EXTENSION_FORMAT_EXTENSION_DEBUG_OBJ = $(EXTENSION_BUILD_DIR)/format_extension.debug.o
-
-# GET_EXTENSION
-###############
-# The source code for the get_extension part of the library.
-EXTENSION_GET_EXTENSION_SRC = $(SRC_DIR)/extension/get_extension.c
-#
-# The object file containing the code for get_extension part of the extension library.
-EXTENSION_GET_EXTENSION_OBJ = $(EXTENSION_BUILD_DIR)/get_extension.o
-#
-# The object file containing the code used for debugging purposes.
-EXTENSION_GET_EXTENSION_DEBUG_OBJ = $(EXTENSION_BUILD_DIR)/get_extension.debug.o
-
-# GET_FORMAT_EXTENSION
-######################
-# The source code for the get_format_extension part of the library.
-EXTENSION_GET_FORMAT_EXTENSION_SRC = $(SRC_DIR)/extension/get_format_extension.c
-#
-# The object file containing the code for get_format_extension part of the extension library.
-EXTENSION_GET_FORMAT_EXTENSION_OBJ = $(EXTENSION_BUILD_DIR)/get_format_extension.o
-#
-# The object file containing the code used for debugging purposes.
-EXTENSION_GET_FORMAT_EXTENSION_DEBUG_OBJ = $(EXTENSION_BUILD_DIR)/get_format_extension.debug.o
-
-# EXTENSION
-###########
-# The object files for the extension library.
-EXTENSION_OBJ = $(EXTENSION_EXTENSION_MATCH_OBJ) $(EXTENSION_FORMAT_EXTENSION_OBJ) $(EXTENSION_GET_EXTENSION_OBJ) $(EXTENSION_GET_FORMAT_EXTENSION_OBJ)
-EXTENSION_DEBUG_OBJ = $(EXTENSION_EXTENSION_MATCH_DEBUG_OBJ) $(EXTENSION_FORMAT_EXTENSION_DEBUG_OBJ) $(EXTENSION_GET_EXTENSION_DEBUG_OBJ) $(EXTENSION_GET_FORMAT_EXTENSION_DEBUG_OBJ)
-
-# TO CLEAN
-##########
-# Used for the global clean rule.
-TO_CLEAN += $(EXTENSION_OBJ) $(EXTENSION_DEBUG_OBJ)
+# We add the objects from this directory to the list of compiled objects.
+OBJ_LIST += $(EXTENSION_OBJ)
 
 ################################### SPECIAL ####################################
 
@@ -85,30 +43,7 @@ $(EXTENSION_BUILD_DIR):
 
 # RELEASE
 #########
-$(EXTENSION_EXTENSION_MATCH_OBJ): $(EXTENSION_EXTENSION_MATCH_SRC) $(EXTENSION_EXTENSION_MATCH_HEAD) | $(EXTENSION_BUILD_DIR)
-	$(CC) $(C_LIB_OBJ_FLAGS) -c -o $(EXTENSION_EXTENSION_MATCH_OBJ) $(EXTENSION_EXTENSION_MATCH_SRC)
-
-$(EXTENSION_FORMAT_EXTENSION_OBJ): $(EXTENSION_FORMAT_EXTENSION_SRC) $(EXTENSION_FORMAT_EXTENSION_HEAD) | $(EXTENSION_BUILD_DIR)
-	$(CC) $(C_LIB_OBJ_FLAGS) -c -o $(EXTENSION_FORMAT_EXTENSION_OBJ) $(EXTENSION_FORMAT_EXTENSION_SRC)
-
-$(EXTENSION_GET_EXTENSION_OBJ): $(EXTENSION_GET_EXTENSION_SRC) $(EXTENSION_GET_EXTENSION_HEAD) | $(EXTENSION_BUILD_DIR)
-	$(CC) $(C_LIB_OBJ_FLAGS) -c -o $(EXTENSION_GET_EXTENSION_OBJ) $(EXTENSION_GET_EXTENSION_SRC)
-
-$(EXTENSION_GET_FORMAT_EXTENSION_OBJ): $(EXTENSION_GET_FORMAT_EXTENSION_SRC) $(EXTENSION_GET_FORMAT_EXTENSION_HEAD) | $(EXTENSION_BUILD_DIR)
-	$(CC) $(C_LIB_OBJ_FLAGS) -c -o $(EXTENSION_GET_FORMAT_EXTENSION_OBJ) $(EXTENSION_GET_FORMAT_EXTENSION_SRC)
-
-# DEBUG
-#######
-$(EXTENSION_EXTENSION_MATCH_DEBUG_OBJ): $(EXTENSION_EXTENSION_MATCH_SRC) $(EXTENSION_EXTENSION_MATCH_HEAD) | $(EXTENSION_BUILD_DIR)
-	$(CC) $(C_LIB_OBJ_FLAGS) $(DEBUG_FLAGS) -c -o $(EXTENSION_EXTENSION_MATCH_DEBUG_OBJ) $(EXTENSION_EXTENSION_MATCH_SRC)
-
-$(EXTENSION_FORMAT_EXTENSION_DEBUG_OBJ): $(EXTENSION_FORMAT_EXTENSION_SRC) $(EXTENSION_FORMAT_EXTENSION_HEAD) | $(EXTENSION_BUILD_DIR)
-	$(CC) $(C_LIB_OBJ_FLAGS) $(DEBUG_FLAGS) -c -o $(EXTENSION_FORMAT_EXTENSION_DEBUG_OBJ) $(EXTENSION_FORMAT_EXTENSION_SRC)
-
-$(EXTENSION_GET_EXTENSION_DEBUG_OBJ): $(EXTENSION_GET_EXTENSION_SRC) $(EXTENSION_GET_EXTENSION_HEAD) | $(EXTENSION_BUILD_DIR)
-	$(CC) $(C_LIB_OBJ_FLAGS) $(DEBUG_FLAGS) -c -o $(EXTENSION_GET_EXTENSION_DEBUG_OBJ) $(EXTENSION_GET_EXTENSION_SRC)
-
-$(EXTENSION_GET_FORMAT_EXTENSION_DEBUG_OBJ): $(EXTENSION_GET_FORMAT_EXTENSION_SRC) $(EXTENSION_GET_FORMAT_EXTENSION_HEAD) | $(EXTENSION_BUILD_DIR)
-	$(CC) $(C_LIB_OBJ_FLAGS) $(DEBUG_FLAGS) -c -o $(EXTENSION_GET_FORMAT_EXTENSION_DEBUG_OBJ) $(EXTENSION_GET_FORMAT_EXTENSION_SRC)
+$(EXTENSION_BUILD_DIR)/%.o: $(EXTENSION_SRC_DIR)/%.c $(EXTENSION_HEAD) | $(EXTENSION_BUILD_DIR)
+	$(CC) $(C_LIB_OBJ_FLAGS) -c -o $@ $<
 
 ##################################### EOF ######################################
