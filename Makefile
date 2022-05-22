@@ -45,7 +45,9 @@ C_STD = --std=c99 -D_POSIX_C_SOURCE=200112L
 C_FLAGS = $(RPM_OPT_FLAGS) $(WARN) $(INCLUDE) $(C_STD)
 #
 # Additional flags used for the debug builds.
-DEBUG_FLAGS = -O0 -g
+ifeq ($(DEBUG),1)
+C_FLAGS += -O0 -g
+endif
 
 # The name of the compiled executable
 BUILD_DIR = $(TOP)/build
@@ -77,9 +79,6 @@ FAKEROOT_DEBIAN = $(TOP)/template_1.12-1
 # A variable used to hold the path to every file which should be deleted when
 # the clean command is used.
 TO_CLEAN =
-#
-# The documentation produced for the man tool.
-MAN_DOC =
 
 # We force the default rule to be 'all' even though it isn't the first rule in
 # the Makefile (because of the includes).
@@ -104,10 +103,7 @@ include $(DOC_DIR)/Makefile
 #################################### RULES #####################################
 
 # Release build.
-all: $(EXEC_ELF) $(MAN_DOC) | $(BUILD_DIR)
-
-# Debug build.
-debug: $(EXEC_DEBUG_ELF) | $(BUILD_DIR)
+all: elfs manpages | $(BUILD_DIR)
 
 # The test rule lives inside of test/Makefile
 
@@ -120,16 +116,16 @@ $(CONFIG):
 $(MAN_DIR):
 	mkdir -p $(MAN_DIR)
 
-install: $(EXEC_ELF) $(TEMPLATES) $(MAN_DOC) | $(BIN_DIR) $(CONFIG) $(MAN_DIR)
-	install -m 755 $(EXEC_TEMPLATE_ELF) $(BIN_DIR)/template
-	install -m 755 $(EXEC_TEMPLATE_RUN_ELF) $(BIN_DIR)/template-run
+install: all $(TEMPLATES) | $(BIN_DIR) $(CONFIG) $(MAN_DIR)
+	# Installing the executables to the required location. We have to remove the
+	# '.elf' from every executable file once installed.
+	$(foreach ELF,$(ELF_LIST),install -m 755 -T $(ELF) $(BIN_DIR)/$(patsubst $(ELF_BUILD_DIR)/%.elf,%,$(ELF));)
 	# Also copying the format files to the expected location.
 	mkdir -p $(CONFIG)
 	install -m 664 -t $(CONFIG) $(TEMPLATES) 
 	# Also copying the man-pages.
 	mkdir -p $(MAN_DIR)/man1
-	install -m 664 $(TEMPLATE_MAN_ZIP) $(MAN_DIR)/man1/template.1.gz
-	install -m 664 $(TEMPLATE_RUN_MAN_ZIP) $(MAN_DIR)/man1/template-run.1.gz
+	install -m 664 -t $(MAN_DIR)/man1/ $(MAN_PAGE_LIST)
 	# Copying the shared library, otherwise the executables won't work.
 	mkdir -p $(LIB_DIR)
 	install -m 755 $(TEMPLATE_LIB) $(LIB_DIR)/$(LIB_NAME)
@@ -172,7 +168,7 @@ uninstall:
 clean:
 	rm -f $(TO_CLEAN)
 	# Removing fedora package leftovers
-	rm -f *.src.rpm *.log
+	rm -f *.src.rpm *.log .*.ld
 	rm -rf x86_64
 	# Removing the debian package leftovers.
 	rm -rf $(FAKEROOT_DEBIAN)
