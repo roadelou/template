@@ -10,9 +10,14 @@
 
 # The global library header.
 TEMPLATE_LIB_HEAD = $(HEAD_DIR)/template.h
+#
+# The folder where the internal header files are located.
+TEMPLATE_LIB_INC = $(HEAD_DIR)/template
 
-# We source the next Makefile.
-include $(HEAD_DIR)/template/Makefile
+EXTENSION_HEAD = $(wildcard $(TEMPLATE_LIB_INC)/test/*.h) $(TEMPLATE_LIB_INC)/test.h
+FORMAT_HEAD = $(wildcard $(TEMPLATE_LIB_INC)/format/*.h) $(TEMPLATE_LIB_INC)/format.h
+TEST_HEAD = $(wildcard $(TEMPLATE_LIB_INC)/test/*.h) $(TEMPLATE_LIB_INC)/test.h
+UTIL_HEAD = $(wildcard $(TEMPLATE_LIB_INC)/util/*.h) $(TEMPLATE_LIB_INC)/util.h
 
 ################################### SPECIAL ####################################
 
