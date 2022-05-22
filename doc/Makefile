@@ -9,39 +9,43 @@
 ################################### ALIASES ####################################
 
 # The source for the man pages.
-TEMPLATE_DOC_SRC = $(DOC_DIR)/TEMPLATE.md
-TEMPLATE_RUN_DOC_SRC = $(DOC_DIR)/TEMPLATE-RUN.md
+DOC_LIST = $(wildcard $(DOC_DIR)/*.md)
 #
 # The directory where the documentation is built.
 DOC_BUILD_DIR = $(BUILD_DIR)/doc
 #
-# The man pages produced by pandoc.
-TEMPLATE_MAN_SRC = $(DOC_BUILD_DIR)/template.1
-TEMPLATE_RUN_MAN_SRC = $(DOC_BUILD_DIR)/template-run.1
-#
-# The compressed man pages.
-TEMPLATE_MAN_ZIP = $(DOC_BUILD_DIR)/template.1.gz
-TEMPLATE_RUN_MAN_ZIP = $(DOC_BUILD_DIR)/template-run.1.gz
+# The list of man pages built for distribution.
+MAN_PAGE_LIST = $(patsubst $(DOC_DIR)%.md,$(DOC_BUILD_DIR)%.1.gz,$(DOC_LIST))
 
-# Adding the documentation to the dedicate variable.
-MAN_DOC += $(TEMPLATE_MAN_ZIP) $(TEMPLATE_RUN_MAN_ZIP)
-TO_CLEAN += $(MAN_DOC)
+#
+# The man pages shuld be deleted when `make clean` is called.
+TO_CLEAN += $(MAN_PAGE_LIST)
+
 
 ################################### SPECIAL ####################################
 
-# The special rule modifiers (.PHONY etc...) go here
+#
+# Phony rule to build every man page.
+.PHONY: manpages
 
 #################################### RULES #####################################
 
 $(DOC_BUILD_DIR): | $(BUILD_DIR)
 	mkdir -p $(DOC_BUILD_DIR)
 
-$(TEMPLATE_MAN_ZIP): $(TEMPLATE_DOC_SRC) | $(DOC_BUILD_DIR)
-	pandoc $(TEMPLATE_DOC_SRC) -s -t man -o $(TEMPLATE_MAN_SRC)
-	gzip $(TEMPLATE_MAN_SRC)
+#
+# Pattern rule to build the raw man-page from the Markdown documentation.
+$(DOC_BUILD_DIR)/%.1: $(DOC_DIR)/%.md
+	pandoc $< -s -t man -o $@
 
-$(TEMPLATE_RUN_MAN_ZIP): $(TEMPLATE_RUN_DOC_SRC) | $(DOC_BUILD_DIR)
-	pandoc $(TEMPLATE_RUN_DOC_SRC) -s -t man -o $(TEMPLATE_RUN_MAN_SRC)
-	gzip $(TEMPLATE_RUN_MAN_SRC)
+#
+# Pattern rule to compress an man page.
+$(DOC_BUILD_DIR)/%.1.gz: $(DOC_BUILD_DIR)/%.1
+	gzip $<
+
+#
+# PHONY rule to build every man page.
+manpages: $(MAN_PAGE_LIST) | $(DOC_BUILD_DIR)
+	echo $(MAN_PAGE_LIST)
 
 ##################################### EOF ######################################
