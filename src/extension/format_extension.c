@@ -75,15 +75,18 @@ char *format_extension(const struct List *list, const char *extension) {
     /* The handle to the format file, once we will have opened it. */
     FILE *format_file = NULL;
 
-	/* EDGE CASE
-	 * =========
-	 * The arguments could be NULL and we have to handle this correctly. */
-	if (list == NULL || extension == NULL) {
-		/* We log a warining for the user. */
-		log_message(WARNING_MSG, "Internal function `%s` received a null pointer as argument and fails.\n", __func__);
-		/* we fail to provide a valid template string. */
-		return NULL;
-	}
+    /* EDGE CASE
+     * =========
+     * The arguments could be NULL and we have to handle this correctly. */
+    if (list == NULL || extension == NULL) {
+        /* We log a warining for the user. */
+        log_message(WARNING_MSG,
+                    "Internal function `%s` received a null pointer as "
+                    "argument and fails.\n",
+                    __func__);
+        /* we fail to provide a valid template string. */
+        return NULL;
+    }
 
     /* We go through all the provided paths in order until we find one where
      * the extension matches what we have been given. */

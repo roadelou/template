@@ -1,12 +1,12 @@
 /********************************** METADATA **********************************/
 
 /*
-* Contributors: roadelou
-* Contacts: 
-* Creation Date: 2022-05-22
-* Language: C Source
-* Compiler: cc (GCC) 12.1.1 20220507 (Red Hat 12.1.1-1)
-*/
+ * Contributors: roadelou
+ * Contacts:
+ * Creation Date: 2022-05-22
+ * Language: C Source
+ * Compiler: cc (GCC) 12.1.1 20220507 (Red Hat 12.1.1-1)
+ */
 
 /********************************** INCLUDES **********************************/
 
@@ -30,8 +30,8 @@
 
 /********************************* FUNCTIONS **********************************/
 
-int test_null_function(void *computed, int line,
-                          const char *file, const char *function) {
+int test_null_function(void *computed, int line, const char *file,
+                       const char *function) {
     /* The result of the equality test. */
     int result = (NULL == computed);
     /* A string telling whether the test failed or not. */
@@ -42,8 +42,7 @@ int test_null_function(void *computed, int line,
         status = "FAILED";
     }
     /* We print a CSV line for the status of the test. */
-    printf("%s;%s;%s;%d;%p;%p\n", status, file, function, line, NULL,
-           computed);
+    printf("%s;%s;%s;%d;%p;%p\n", status, file, function, line, NULL, computed);
     return result;
 }
 
