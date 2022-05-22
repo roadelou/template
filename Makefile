@@ -29,6 +29,9 @@ INCLUDE = -I $(HEAD_DIR)
 # Flag to trigger compiler warnings
 WARN = -Wall -pedantic
 
+# The command used to format a C source file.
+FORMAT = clang-format -i --style="{BasedOnStyle: llvm, IndentWidth: 4}" 
+
 # Pinning the C standard used for the compilation of the code.
 #
 # NOTE
@@ -98,7 +101,7 @@ include $(DOC_DIR)/Makefile
 
 ################################### SPECIAL ####################################
 
-.PHONY: debug all clean install uninstall fedora test debian
+.PHONY: debug all clean install uninstall fedora test debian format
 
 #################################### RULES #####################################
 
@@ -106,6 +109,11 @@ include $(DOC_DIR)/Makefile
 all: elfs manpages | $(BUILD_DIR)
 
 # The test rule lives inside of test/Makefile
+
+# PHONY rule to automatically format the codebase.
+format:
+	find $(TOP) -type f -name '*.h' | xargs $(FORMAT)
+	find $(TOP) -type f -name '*.c' | xargs $(FORMAT)
 
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
