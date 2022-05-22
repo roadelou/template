@@ -38,7 +38,7 @@ Description
 ===========
 Looks in the filesystem for the appropriate format string to use for the given
 extension. The template file for the extension <ext> will be searched first in
-the user speicfic location $(HOME)/.config/roadelou_template/<ext>.template, and
+the user specific location $(HOME)/.config/roadelou_template/<ext>.template, and
 if no suitable template is found then the system-wide location
 /etc/roadelou_template/<etc>.template will be used.
 

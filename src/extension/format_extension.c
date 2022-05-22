@@ -12,6 +12,9 @@
 /* The header containing the functions we are trying to implement. */
 #include <template/extension/format_extension.h>
 
+/* Used for the logging functions. */
+#include <template/util.h>
+
 /* Used for realloc and free. */
 #include <stdlib.h>
 
@@ -70,7 +73,17 @@ char *format_extension(const struct List *list, const char *extension) {
     /* The length of the entire template string, used for memory allocation. */
     size_t format_string_length;
     /* The handle to the format file, once we will have opened it. */
-    FILE *format_file;
+    FILE *format_file = NULL;
+
+	/* EDGE CASE
+	 * =========
+	 * The arguments could be NULL and we have to handle this correctly. */
+	if (list == NULL || extension == NULL) {
+		/* We log a warining for the user. */
+		log_message(WARNING_MSG, "Internal function `%s` received a null pointer as argument and fails.\n", __func__);
+		/* we fail to provide a valid template string. */
+		return NULL;
+	}
 
     /* We go through all the provided paths in order until we find one where
      * the extension matches what we have been given. */
