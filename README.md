@@ -1,6 +1,6 @@
 # TEMPLATE
 
-`template` is a collection of tools used to create templated file from the command line.
+`template` is a collection of tools used to create templated files from the command line.
 
 ## Usage
 
