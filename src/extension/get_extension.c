@@ -12,8 +12,8 @@
 /* The header with the function we are trying to implement. */
 #include <template/extension/get_extension.h>
 
-/* Used for the occurence function. */
-#include <template/util/base.h>
+/* Used for the occurence and log_message functions. */
+#include <template/util.h>
 
 /********************************* PROTOYPES **********************************/
 
@@ -26,6 +26,18 @@
 /********************************* FUNCTIONS **********************************/
 
 const char *get_extension(const char *path) {
+    /* EDGE CASE
+     * =========
+     * The input pointer could be NULL. */
+    if (path == NULL) {
+        /* We log a warning before failing. */
+        log_message(WARNING_MSG,
+                    "Internal function `%s` received a null pointer as "
+                    "argument and fails.\n",
+                    __func__);
+        /* We fail as gracefully as we can. */
+        return NULL;
+    }
     /* The integer we will use to build the returned pointer. */
     size_t cursor;
     /* We try to get the position of the first dot in the path. */
