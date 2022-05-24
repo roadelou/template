@@ -196,14 +196,14 @@ void append_list(struct List *list, char *element) {
 
 int move_into_list(struct List *list, size_t index, char *element) {
     // We start by performing some sanity checks.
-    if (list == NULL || element == NULL) {
+    if (list == NULL) {
         //
         // We fail here since there is no way to perform the substitution.
         return ERROR;
     }
     //
     // We check if the index is within the bounds of the list.
-    if (index < list->length) {
+    if (index >= list->length) {
         //
         // We fail here since their is no spot to move the element into.
         return ERROR;
@@ -217,7 +217,8 @@ int move_into_list(struct List *list, size_t index, char *element) {
     }
     //
     // We insert the provided string into the list. It will be freed when the
-    // destructor of the list is called.
+    // destructor of the list is called. This will work as expected even if
+    // element == NULL.
     *(list->strings + index) = element;
     return SUCCESS;
 }
