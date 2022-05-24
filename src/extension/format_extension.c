@@ -84,7 +84,7 @@ char *format_extension(const struct List *list, const char *extension) {
                     "Internal function `%s` received a null pointer as "
                     "argument and fails.\n",
                     __func__);
-        /* we fail to provide a valid template string. */
+        /* We fail to provide a valid template string. */
         return NULL;
     }
 
