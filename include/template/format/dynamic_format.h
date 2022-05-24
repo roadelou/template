@@ -23,7 +23,7 @@
 #define MATCH_LIST_CHUNK_SIZE 32
 #endif
 
-/* The cunk size used when copying the output of a command to the target file.
+/* The chunk size used when copying the output of a command to the target file.
  */
 #ifndef COMMAND_OUTPUT_CHUNK_SIZE
 #define COMMAND_OUTPUT_CHUNK_SIZE 1024
@@ -83,7 +83,7 @@ ERROR or WARNING.
 
 Side-effects
 ============
-If a format specifier isn't well formed (like a trailing '%' or a "%$" without
+If a format specifier isn't well formed, like a trailing '%' or a "%$" without
 the closing '$', a warning will be logged, and the malformed format specifier
 will not be part of the returned MatchList.
 
