@@ -16,8 +16,14 @@
 /* The library under test. */
 #include <template/util/list.h>
 
+/* Used for the SUCCESS and ERROR values. */
+#include <template/util/base.h>
+
 /* Used for the EXIT_SUCCESS value. */
 #include <stdlib.h>
+
+/* Used for strncpy. */
+#include <string.h>
 
 /********************************* SINGLETONS *********************************/
 
@@ -33,11 +39,15 @@ void test_new_list(void);
 /* Testing the append_list function. */
 void test_append_list(void);
 
+/* Testing the move_into_list method. */
+void test_move_into_list(void);
+
 /************************************ MAIN ************************************/
 
 int main(int argc, const char **argv) {
     test_new_list();
     test_append_list();
+    test_move_into_list();
 }
 
 /********************************* FUNCTIONS **********************************/
@@ -109,6 +119,52 @@ void test_append_list(void) {
 
     /* Freing the memory. */
     delete_list(test_list);
+}
+
+void test_move_into_list(void) {
+    /* Defining our variables. */
+    struct List *test_list;
+    /* Setting the heap-allocated string for the tests. */
+    char *buffer = malloc(6 * sizeof(char));
+    strncpy(buffer, "rouge", 6);
+
+    /* Test moving into NULL. */
+    test_list = NULL;
+    TEST_INTEGER(ERROR, move_into_list(test_list, 0, buffer));
+
+    /* Test moving into an empty list. */
+    test_list = new_list(0);
+    TEST_INTEGER(ERROR, move_into_list(test_list, 0, buffer));
+    delete_list(test_list);
+
+    /* Test moving into a list of 1 element. */
+    test_list = new_list(1, NULL);
+    /* Trying to move within the bounds of the List. */
+    TEST_INTEGER(SUCCESS, move_into_list(test_list, 0, buffer));
+    TEST_STRING(buffer, *(test_list->strings + 0));
+    /* Trying to move outside the bounds of the List. */
+    TEST_INTEGER(ERROR, move_into_list(test_list, 1, buffer));
+    /* Manually overwriting the list content to avoid freeing the test buffer
+     * when delete_list will be called. */
+    *(test_list->strings + 0) = NULL;
+    delete_list(test_list);
+
+    /* Test moving into a bigger list. */
+    test_list = new_list(3, NULL, NULL, NULL);
+    /* Trying to move within the bounds of the List. */
+    TEST_INTEGER(SUCCESS, move_into_list(test_list, 1, buffer));
+    TEST_NULL(*(test_list->strings + 0));
+    TEST_STRING(buffer, *(test_list->strings + 1));
+    TEST_NULL(*(test_list->strings + 2));
+    /* Trying to move outside the bounds of the List. */
+    TEST_INTEGER(ERROR, move_into_list(test_list, 3, buffer));
+    /* Manually overwriting the list content to avoid freeing the test buffer
+     * when delete_list will be called. */
+    *(test_list->strings + 1) = NULL;
+    delete_list(test_list);
+
+    /* Freeing the test buffer. */
+    free(buffer);
 }
 
 /************************************ EOF *************************************/
