@@ -65,8 +65,8 @@ files:
 Then the behavior for this function will be:
 get_format_extension("example.foo") -> NULL
 get_format_extension("txt") -> "txt"
-get_format_extension("foo.gplv3.c") -> "gplv3.c"
-get_format_extension("foo_v3.c") -> ".c"	// Because "gplv3" isn't a whole
+get_format_extension("foo.gplv3.c") -> "c.gplv3"
+get_format_extension("foo_v3.c") -> "c"		// Because "gplv3" isn't a whole
 match.
 */
 char *get_format_extension(const struct List *list, const char *path);
