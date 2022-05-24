@@ -45,7 +45,7 @@ int main(int argc, char **argv) {
 
 void test_get_extension(void) {
     /* Test with NULL. */
-    TEST_NULL(get_extension(NULL));
+    TEST_NULL((void *)get_extension(NULL));
 
     /* Test with empty string. */
     TEST_STRING("", get_extension(""));
