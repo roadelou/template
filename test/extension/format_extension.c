@@ -201,6 +201,9 @@ static void test_format_extension(void) {
     /* Test with a complex extension. */
     extension = format_extension(test_search_path, "bar.foo");
     TEST_STRING("TEST_BAR_FOO_STRING", extension);
+
+	/* We free the memory associated with our List. */
+	delete_list(test_search_path);
 }
 
 /************************************ EOF *************************************/
