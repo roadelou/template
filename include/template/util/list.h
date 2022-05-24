@@ -95,6 +95,35 @@ void delete_list(struct List *list);
 //
 void append_list(struct List *list, char *element);
 
+// Description
+// ===========
+// Replaces the element of the list at the given index with a new string. The
+// string isn't copied and MUST be heap-allocated. The caller loses ownership
+// of the string which will be freed when the destructor of the list is called.
+//
+// Arguments
+// =========
+//  - list: A pointer to the list to which the element should be set.
+//  - index: The index at which the provided string should be placed. It must be
+//  smaller than the size of the string, otherwise the replacement won't happen.
+//  - element: The heap-allocated string we want to insert in our list.
+//
+// Returns
+// =======
+// SUCCESS if the operation worked, ERROR otherwise. In particular, this method
+// will fail if the list is too short for the provided index.
+//
+// Side-effects
+// ============
+// If the call succeeds, the element is inserted in the string at the provided
+// index, replacing any existing string, which is in turn freed. If the call
+// fails, the list is left untouched.
+//
+// Note
+// ====
+// This function is optimized for performance and shouldn't be used carelessly.
+int move_into_list(struct List *list, size_t index, char *element);
+
 /* End of include once header guard */
 #endif
 
