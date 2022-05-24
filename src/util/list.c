@@ -12,6 +12,9 @@
 // The header we are trying to implement.
 #include <template/util/list.h>
 
+// Used for the ERROR and SUCCESS values.
+#include <template/util/base.h>
+
 // Used for malloc, free and realloc.
 #include <stdlib.h>
 
@@ -66,6 +69,19 @@ struct List *new_list(size_t length, ...) {
         // We first get the next variadic argument.
         argument = va_arg(strings_argument, char *);
         //
+        // EDGE CASE
+        // =========
+        // If an argument is NULL, we still add it but without going through the
+        // string operations.
+        if (argument == NULL) {
+            //
+            // We set NULL for the element.
+            *(list->strings + i) = NULL;
+            //
+            // We move to the next element directly.
+            continue;
+        }
+        //
         // We compute the length of the argument.
         argument_length = strlen(argument);
         //
@@ -79,6 +95,7 @@ struct List *new_list(size_t length, ...) {
         // string.
         *(*(list->strings + i) + argument_length) = '\0';
     }
+    //
     // We close the variadic macro.
     va_end(strings_argument);
     //
@@ -87,9 +104,34 @@ struct List *new_list(size_t length, ...) {
 }
 
 void delete_list(struct List *list) {
+    // Sanity checks, if the provided pointer is NULL we do nothing.
+    if (list == NULL) {
+        //
+        // Assembly-style return, we do nothing here.
+        return;
+    }
+    //
+    // EDGE CASE
+    // =========
+    // If the strings pointer is NULL, probably because the list has already
+    // been freed once, we don't attempt to free it again.
+    if (list->strings == NULL) {
+        //
+        // Just in case, we set the lenght of the list to 0.
+        list->length = 0;
+        //
+        // Assembly-style return.
+        return;
+    }
+    //
     // We free all the strings owned by this list.
     for (int i = 0; i < list->length; i++) {
-        free(*(list->strings + i));
+        //
+        // If an element of the list is NULL, we skip it and don't attempt to
+        // free it.
+        if (*(list->strings + i) != NULL) {
+            free(*(list->strings + i));
+        }
     }
     //
     // We free the allocated memory for the pointer to the strings of the list.
@@ -106,9 +148,16 @@ void delete_list(struct List *list) {
 }
 
 void append_list(struct List *list, char *element) {
-    // A variable used to store the length of the element. We add 1 for the NULL
-    // terminating byte.
-    size_t element_length = strlen(element) + 1;
+    //
+    // A variable used to store the length of the new element.
+    size_t element_length;
+    //
+    // Sanity checks, if the list is NULL we don't do anything.
+    if (list == NULL) {
+        //
+        // Assembly-style return.
+        return;
+    }
     //
     // We increment the size of the list for the reallocation.
     list->length++;
@@ -117,6 +166,22 @@ void append_list(struct List *list, char *element) {
     // is quite reasonable given the memory used by the program compared to that
     // of a Linux-capable host.
     list->strings = realloc(list->strings, list->length * sizeof(char *));
+    //
+    // EDGE CASE
+    // =========
+    // If the element is NULL, we still add it to the list, but without the
+    // complex operations.
+    if (element == NULL) {
+        *(list->strings + list->length - 1) = NULL;
+        //
+        // Assembly-style return.
+        return;
+    }
+    //
+    // else...
+    //
+    // We add 1 for the NULL terminating byte.
+    element_length = strlen(element) + 1;
     //
     // We allocate some memory to hold the copy of the element.
     *(list->strings + list->length - 1) = malloc(element_length * sizeof(char));
@@ -127,6 +192,34 @@ void append_list(struct List *list, char *element) {
     // We add the trailing newline character at the end of the list-owned
     // string.
     *(*(list->strings + list->length - 1) + element_length) = '\0';
+}
+
+int move_into_list(struct List *list, size_t index, char *element) {
+    // We start by performing some sanity checks.
+    if (list == NULL || element == NULL) {
+        //
+        // We fail here since there is no way to perform the substitution.
+        return ERROR;
+    }
+    //
+    // We check if the index is within the bounds of the list.
+    if (index < list->length) {
+        //
+        // We fail here since their is no spot to move the element into.
+        return ERROR;
+    }
+    //
+    // If we reach this line, the move should be possible. We start by freeing
+    // the old element from the list. an edge case appears if the element was
+    // NULL, (which is likely given where this function is called in template).
+    if (*(list->strings + index) != NULL) {
+        free(*(list->strings + index));
+    }
+    //
+    // We insert the provided string into the list. It will be freed when the
+    // destructor of the list is called.
+    *(list->strings + index) = element;
+    return SUCCESS;
 }
 
 /************************************ EOF *************************************/
