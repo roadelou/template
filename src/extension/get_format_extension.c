@@ -15,8 +15,8 @@
 /* Used for the implementation of the extension matching. */
 #include <template/extension/extension_match.h>
 
-/* Used for the ERROR and SUCCESS values. */
-#include <template/util/base.h>
+/* Used for the ERROR and SUCCESS values as well as the log functions. */
+#include <template/util.h>
 
 /* Used for strlen and strncmp. */
 #include <string.h>
@@ -74,6 +74,20 @@ char *get_format_extension(const struct List *list, const char *path) {
     size_t best_score = 0;
     /* The current search path. */
     char *search_path;
+
+    /* EDGE CASE
+     * =========
+     * If we received a NULL pointer for the list or the path we exit here as
+     * gracefully as we can.
+     * */
+    if (list == NULL || path == NULL) {
+        log_message(WARNING_MSG,
+                    "Internal function `%s` received a null pointer as "
+                    "argument and fails.\n",
+                    __func__);
+        /* We fail to provide a valid matched extension. */
+        return NULL;
+    }
 
     /* We go through all the provided candidates in order. */
     for (size_t i = 0; i < list->length; i++) {
