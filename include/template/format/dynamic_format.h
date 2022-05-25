@@ -141,34 +141,6 @@ struct List *get_commands_output_match_list(char *text,
 /*
 Description
 ===========
-This function is used to write the output of the provided (shell) command to the
-specified open file.
-
-Arguments
-=========
- - command: The shell command whise output shall be written to the provided
- file. This command will be executed in a subprocess using popen.
- - output_file: The file to which the output of the command will be written. It
- should of course be opened in write mode, otherwise the function will fail.
-
-Returns
-=======
-This function will return SUCCESS if no problem was encountered, or ERROR if:
- - The output file could not be written to.
- - The shell command could not be executed.
-
-Side-effects
-============
-Any side-effect of the provided command will take place. The provided file will
-be written to, and if the command outputs something to stderr, it will be
-visible on the stderr of the main parent process. Warning and error messages can
-also be emitted.
-*/
-int write_command_output(const char *command, FILE *output_file);
-
-/*
-Description
-===========
 This function is used to get the output of the provided (shell) command to a
 heap-allocated string.
 

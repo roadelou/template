@@ -182,65 +182,6 @@ int append_match_list(struct MatchList *match_list, size_t head, size_t tail) {
     return SUCCESS;
 }
 
-/* Will be deleted once get_command_output is used. */
-int write_command_output(const char *command, FILE *output_file) {
-    /* The number of characters copied in the current loop iteration. */
-    size_t buffered_bytes;
-    /* We start by allocating some memory for the copy buffer.
-     *
-     * NOTE
-     * ====
-     * We assume that malloc doesn't fail here.
-     * */
-    char *copy_buffer = malloc(COMMAND_OUTPUT_CHUNK_SIZE * sizeof(char));
-    /* We use popen to get the output of the provided command. */
-    FILE *command_output = popen(command, "r");
-    /* Checking for errors. */
-    if (command_output == NULL) {
-        /* Note that although the function encountered an error, the failure to
-         * run a single command is only considered a warning for the whole
-         * execution. */
-        log_message(WARNING_MSG, "Command \"%s\" failed.\n", command);
-        /* We free the allocated memory. */
-        free(copy_buffer);
-        return WARNING;
-    }
-
-    /* NOTE
-     * ====
-     * The handling of the trailing newline might be buggy when the output of
-     * the subcommand yields exactly COMMAND_OUTPUT_CHUNK_SIZE bytes.
-     * */
-
-    /* We consume the output of the shell command. */
-    while (!feof(command_output) && !ferror(command_output)) {
-        /* We copy the output of the command by chunks. */
-        buffered_bytes = fread(copy_buffer, sizeof(char),
-                               COMMAND_OUTPUT_CHUNK_SIZE, command_output);
-
-        /* We check wether the EOF has been reached, in which case a trailing
-         * '\n' should be removed. */
-        if (feof(command_output) &&
-            (*(copy_buffer + buffered_bytes - 1) == '\n')) {
-            /* We simply won't be copying this last byte. */
-            buffered_bytes--;
-        }
-        /* We copy the buffered bytes. */
-        if (fwrite(copy_buffer, sizeof(char), buffered_bytes, output_file) !=
-            buffered_bytes * sizeof(char)) {
-            log_message(ERROR_MSG, "%s\n",
-                        "Could not write command output to the provided file.");
-            free(copy_buffer);
-            pclose(command_output);
-            return ERROR;
-        }
-    }
-    /* If we reach this line, the execution was a success. We end the child
-     * process. */
-    pclose(command_output);
-    return SUCCESS;
-}
-
 char *get_command_output(const char *command) {
     /* The number of characters copied in the current loop iteration. */
     size_t buffered_bytes;
