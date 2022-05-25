@@ -103,7 +103,7 @@ struct List *new_list(size_t length, ...) {
     return list;
 }
 
-struct List *null_list(size_t length, ...) {
+struct List *null_list(size_t length) {
     // We first create the list we are going to return.
     struct List *list = malloc(sizeof(struct List));
     //
