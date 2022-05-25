@@ -185,6 +185,7 @@ int append_match_list(struct MatchList *match_list, size_t head, size_t tail) {
     return SUCCESS;
 }
 
+/* Will be deleted once get_command_output is used. */
 int write_command_output(const char *command, FILE *output_file) {
     /* The number of characters copied in the current loop iteration. */
     size_t buffered_bytes;
@@ -241,6 +242,142 @@ int write_command_output(const char *command, FILE *output_file) {
      * process. */
     pclose(command_output);
     return SUCCESS;
+}
+
+char *get_command_output(const char *command) {
+    /* The number of characters copied in the current loop iteration. */
+    size_t buffered_bytes;
+    /* We start by allocating some memory for the copy buffer. */
+    char *copy_buffer = malloc(COMMAND_OUTPUT_CHUNK_SIZE * sizeof(char));
+    /* A pointer used to check for errors in realloc. */
+    char *next_copy_buffer;
+    /* The current size of the string in the buffer. */
+    size_t copied_bytes = 0;
+    /* Error checking. */
+    if (copy_buffer == NULL) {
+        /* We print a warning to the user and return NULL. The output of this
+         * command will not be written to the output file. */
+        log_message(WARNING_MSG,
+                    "Out of memory, output of command \"%s\" will be skipped\n",
+                    command);
+        return NULL;
+    }
+    /* We use popen to get the output of the provided command. */
+    FILE *command_output = popen(command, "r");
+    /* Checking for errors. */
+    if (command_output == NULL) {
+        /* Note that although the function encountered an error, the failure to
+         * run a single command is only considered a warning for the whole
+         * execution. */
+        log_message(WARNING_MSG, "Command \"%s\" failed.\n", command);
+        /* We free the allocated memory. */
+        free(copy_buffer);
+        return NULL;
+    }
+
+    /* NOTE
+     * ====
+     * The handling of the trailing newline might be buggy when the output of
+     * the subcommand yields exactly COMMAND_OUTPUT_CHUNK_SIZE bytes.
+     * */
+
+    /* We consume the output of the shell command. */
+    while (!feof(command_output) && !ferror(command_output)) {
+        /* We copy the output of the command by chunks. */
+        buffered_bytes = fread(copy_buffer + copied_bytes, sizeof(char),
+                               COMMAND_OUTPUT_CHUNK_SIZE, command_output);
+        /* We increment the count of copied bytes according to what fwrite
+         * returned. */
+        copied_bytes += buffered_bytes;
+
+        /* We check wether the EOF has been reached, in which case a trailing
+         * '\n' should be replaced by a '\0' to end the string. */
+        if (feof(command_output) &&
+            (*(copy_buffer + buffered_bytes - 1) == '\n')) {
+            /* We simply won't be copying this last byte. */
+            *(copy_buffer + buffered_bytes - 1) = '\0';
+            /* The loop ends here, we don't allocate more memory for the next
+             * iteration. */
+            break;
+        }
+        /* else... */
+
+        /* We allocate more memory for the next iteration. */
+        next_copy_buffer =
+            realloc(copy_buffer, copied_bytes + COMMAND_OUTPUT_CHUNK_SIZE);
+
+        /* Error checking */
+        if (next_copy_buffer == NULL) {
+            /* We print a warning to the user and return NULL. The output of
+             * this command will not be written to the output file. */
+            log_message(
+                WARNING_MSG,
+                "Out of memory, output of command \"%s\" will be skipped\n",
+                command);
+            /* We free the memory we had previously allocated. */
+            free(copy_buffer);
+            return NULL;
+        }
+        /* else... */
+
+        /* We update the copy_buffer pointer to point to the new allocated
+         * space. */
+        copy_buffer = next_copy_buffer;
+    }
+
+    /* If we reach this line, the execution was a success. We end the child
+     * process. */
+    pclose(command_output);
+    return SUCCESS;
+}
+
+struct List *
+get_commands_output_match_list(char *text, const struct MatchList *match_list) {
+    /* Sanity check, we fail if a NULL argument is provided. */
+    if (text == NULL || match_list == NULL) {
+        log_message(WARNING_MSG,
+                    "The internal function %s received a NULL pointer as "
+                    "argument and will fail.\n",
+                    __func__);
+        /* We fail as gracefully as we can. */
+        return NULL;
+    }
+
+    /* Since we know how many commands there are, we create the entire List at
+     * once to use it at an array later. This will enable multithreading since
+     * each thread accesses a different part of the List. */
+    struct List *output_list = null_list(match_list->count);
+
+    /* We go over each format specifier. */
+    for (specifier = 0; specifier < match_list->count; specifier++) {
+        /* A pointer to the output of the command corresponding to the match
+         * of this iteration. */
+        char *command_output;
+        /* We modify the template string in order to isolate the format
+         * specifier command. This little trick is the reason why we want the
+         * input text to be mutable. */
+        *(text + *(match_list->tail + specifier)) = '\0';
+
+        /* We use the substring from the original text to run the command see
+         * the comment in find_format to see where the +2 comes from. */
+        command_output =
+            get_command_output(text + *(match_list->head + specifier) + 2);
+        /* Error checking. */
+        if (command_output == NULL) {
+            /* We propagate the error. */
+            delete_list(output_list);
+            return NULL;
+        }
+        /* else... */
+
+        /* We move the command_output into the List. It will be freed by the
+         * destructor of the List. */
+        move_into_list(output_list, specifier, command_output);
+    }
+
+    /* If we reach this line, the execution was a success and we return the
+     * expected List. */
+    return output_list;
 }
 
 int dynamic_format(char *text, FILE *output_file) {
