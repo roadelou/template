@@ -65,6 +65,21 @@ struct List *new_list(size_t length, ...);
 
 // Description
 // ===========
+// Creates a list made of `length` NULL elements. This is used to initialize
+// lists of know sizes which are meant to be used with `move_into_list`.
+//
+// Arguments
+// =========
+//  - length: The number of elements to build the list with.
+//
+// Returns
+// =======
+// A new List of length elements all set to NULL.
+//
+struct List *null_list(size_t length);
+
+// Description
+// ===========
 // Destructor for the list struct. Will free the memory associated with the
 // given list.
 //
