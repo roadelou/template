@@ -13,11 +13,8 @@
 #include <template/format/dynamic_format.h>
 
 /* Used for the SUCCESS, WARNING and ERROR constants as well as the occurence
- * function. */
-#include <template/util/base.h>
-
-/* Used to log warnings about incomplete format specifiers. */
-#include <template/util/log.h>
+ * function, the logging functions and the List type. */
+#include <template/util.h>
 
 /* Used for malloc and free. */
 #include <stdlib.h>
@@ -275,12 +272,6 @@ char *get_command_output(const char *command) {
         return NULL;
     }
 
-    /* NOTE
-     * ====
-     * The handling of the trailing newline might be buggy when the output of
-     * the subcommand yields exactly COMMAND_OUTPUT_CHUNK_SIZE bytes.
-     * */
-
     /* We consume the output of the shell command. */
     while (!feof(command_output) && !ferror(command_output)) {
         /* We copy the output of the command by chunks. */
@@ -289,18 +280,6 @@ char *get_command_output(const char *command) {
         /* We increment the count of copied bytes according to what fwrite
          * returned. */
         copied_bytes += buffered_bytes;
-
-        /* We check wether the EOF has been reached, in which case a trailing
-         * '\n' should be replaced by a '\0' to end the string. */
-        if (feof(command_output) &&
-            (*(copy_buffer + buffered_bytes - 1) == '\n')) {
-            /* We simply won't be copying this last byte. */
-            *(copy_buffer + buffered_bytes - 1) = '\0';
-            /* The loop ends here, we don't allocate more memory for the next
-             * iteration. */
-            break;
-        }
-        /* else... */
 
         /* We allocate more memory for the next iteration. */
         next_copy_buffer =
@@ -325,6 +304,49 @@ char *get_command_output(const char *command) {
         copy_buffer = next_copy_buffer;
     }
 
+    /* We have copied the output of the command into memory, we need to ensure
+     * that it is null-terminated. We if a trailing '\n' should be replaced by a
+     * '\0' to end the string. */
+    if ((*(copy_buffer + copied_bytes - 1) == '\n')) {
+        /* We simply overwrite this last byte. */
+        *(copy_buffer + copied_bytes - 1) = '\0';
+        /* NOTE
+         * ====
+         * The handling of the trailing newline might be buggy when the output
+         * of the subcommand yields exactly COMMAND_OUTPUT_CHUNK_SIZE bytes. */
+
+    } else {
+        /* EDGE CASE
+         * =========
+         * If the maximum amount of bytes has been read into the buffer,
+         * we can't write the null-byte without overflowing. We have to
+         * resize the memory in order to have that last byte fit. We
+         * will only request a single byte, but the allocator may send
+         * more for various reasons. */
+        if (copied_bytes % COMMAND_OUTPUT_CHUNK_SIZE == 0) {
+            /* resize the memory in order to have that last byte fit. We will
+             * only request a single byte, but the allocator may send more for
+             * various reasons. */
+            next_copy_buffer = realloc(copy_buffer, copied_bytes + 1);
+            /* Error checking */
+            if (next_copy_buffer == NULL) {
+                /* We print a warning to the user and return NULL. The output of
+                 * this command will not be written to the output file. */
+                log_message(
+                    WARNING_MSG,
+                    "Out of memory, output of command \"%s\" will be skipped\n",
+                    command);
+                /* We free the memory we had previously allocated. */
+                free(copy_buffer);
+                return NULL;
+            }
+            /* else... */
+        }
+
+        /* We write the terminating null-byte to the buffer. */
+        *(copy_buffer + copied_bytes) = '\0';
+    }
+
     /* If we reach this line, the execution was a success. We end the child
      * process. */
     pclose(command_output);
@@ -333,6 +355,9 @@ char *get_command_output(const char *command) {
 
 struct List *
 get_commands_output_match_list(char *text, const struct MatchList *match_list) {
+    /* The index of the format specifier we are currently working on. */
+    size_t specifier;
+
     /* Sanity check, we fail if a NULL argument is provided. */
     if (text == NULL || match_list == NULL) {
         log_message(WARNING_MSG,
@@ -385,22 +410,37 @@ int dynamic_format(char *text, FILE *output_file) {
     int status;
     /* The cursor to our current location in the template file. */
     size_t cursor = 0;
-    /* The number of the format specifier we are currently working on. */
-    size_t specifier = 0;
+    /* The index of the format specifier we are currently working on. */
+    size_t specifier;
     /* Used to check errors from fwrite. */
     size_t copy_count;
     /* The length of the entire text, computed at the end for a small
      * optimization. */
     size_t text_length;
+    /* The list used to store the output of every shell command. */
+    struct List *output_list;
     /* Our first task is to find all of the format specifiers. */
     struct MatchList match_list;
 
+    /* We find the format specifiers in the text to locate the subcommands. */
     status = find_format(text, &match_list);
     /* Error checking. */
     if (status == ERROR) {
         /* A bug was encountered when parsing the template file, there is no
          * need to go any further as the execution will fail regardless. We free
          * the memory used for the MatchList. */
+        delete_match_list(&match_list);
+        return ERROR;
+    }
+
+    /* We run every subcommand and store their outputs in a List. */
+    output_list = get_commands_output_match_list(text, &match_list);
+    /* Error checking. */
+    if (output_list == NULL) {
+        /* We have failed to call the function and will no write the expected
+         * file at all. Failure to run even every command would not trigger
+         * this, one of the inputs must be invalid... We exit as gracefully
+         * as we can. */
         delete_match_list(&match_list);
         return ERROR;
     }
@@ -422,18 +462,20 @@ int dynamic_format(char *text, FILE *output_file) {
             return ERROR;
         }
 
-        /* We modify the template string in order to isolate the format
-         * specifier command. This little trick is the reason why we want the
-         * input text to be mutable. */
-        *(text + *(match_list.tail + specifier)) = '\0';
-        /* We use the substring from the original text to run the command see
-         * the comment in find_format to see where the +2 comes from. */
-        status |= write_command_output(
-            text + *(match_list.head + specifier) + 2, output_file);
+        /* We then write the output of the command to the file. Since the output
+         * of the command is NULL-terminated, we can just use fputs here. */
+        status = fputs(*(output_list->strings + specifier), output_file);
         /* Error checking. */
-        if (status == ERROR) {
-            /* We propagate the error. */
+        if (status == EOF) {
+            /* Note that the command string (which is a substring of text) will
+             * be null-ter;inated because of the manipulations done in
+             * get_commands_output_match_list. */
+            log_message(
+                ERROR_MSG,
+                "Could not write output of command %s to the output file.\n",
+                *(match_list.head + specifier));
             delete_match_list(&match_list);
+            delete_list(output_list);
             return ERROR;
         }
 
