@@ -56,7 +56,7 @@ struct List *new_list(size_t length, ...) {
     // We set the length of the list.
     list->length = length;
     //
-    // We allocate the memory for the pointers held in the string.
+    // We allocate the memory for the pointers held in the List.
     list->strings = malloc(length * sizeof(char *));
     //
     // We start going through the variadic arguments by providing the address of
@@ -100,6 +100,25 @@ struct List *new_list(size_t length, ...) {
     va_end(strings_argument);
     //
     // We return the built list.
+    return list;
+}
+
+struct List *null_list(size_t length, ...) {
+    // We first create the list we are going to return.
+    struct List *list = malloc(sizeof(struct List));
+    //
+    // We set the length of the string as indicated.
+    list->length = length;
+    //
+    // We allocate the memory for the pointers held in the List.
+    list->strings = malloc(length * sizeof(char *));
+    //
+    // We set every pointer to NULL.
+    for (size_t i = 0; i < length; i++) {
+        *(list->strings + i) = NULL;
+    }
+    //
+    // We return the built List.
     return list;
 }
 
