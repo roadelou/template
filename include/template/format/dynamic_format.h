@@ -107,6 +107,38 @@ For the text "Today is the %$date +%F/.", the corresponding MatchList should be
 int find_format(const char *text, struct MatchList *match_list);
 
 /*
+This function gathers every command described in match_list from text, executes
+them and gathers their outputs into the returned list. Note that the text
+argument will be mutated by the function to take advantage of slight
+optimizations.
+
+Arguments
+=========
+ - text: The text from which the commands should be extracted.
+ - match_list: A MatchList pointer describing the commands found in the text..
+
+Returns
+=======
+A heap-allocated list of copies of the outputs from the commands which were
+described in the match_list.
+
+Side-effects
+============
+Any side-effect of the provided command will take place. The provided file will
+be written to, and if the command outputs something to stderr, it will be
+visible on the stderr of the main parent process. Warning and error messages can
+also be emitted. The provided text argument will also be mutated.
+
+Examples
+========
+For the text "Today is the %/echo foo/.", and the match_list
+{count=1; head=[13]; tail=[23]}, the returned list would be:
+{length=1, strings=["foo"]}.
+*/
+struct List *get_commands_output_match_list(char *text,
+                                            const struct MatchList *match_list);
+
+/*
 Description
 ===========
 This function is used to write the output of the provided (shell) command to the
@@ -137,6 +169,35 @@ int write_command_output(const char *command, FILE *output_file);
 /*
 Description
 ===========
+This function is used to get the output of the provided (shell) command to a
+heap-allocated string.
+
+Arguments
+=========
+ - command: The shell command whise output shall be written to the provided
+ file. This command will be executed in a subprocess using popen.
+
+Returns
+=======
+This function will return the output of the command in a memory allocated string
+if it can, otherwise NULL will be returned. In particular, this code can fail
+if:
+ - The output file could not be written to.
+ - The shell command could not be executed.
+ - The application runs out of memory.
+
+Side-effects
+============
+Any side-effect of the provided command will take place. The provided file will
+be written to, and if the command outputs something to stderr, it will be
+visible on the stderr of the main parent process. Warning and error messages can
+also be emitted.
+*/
+char *get_command_output(const char *command);
+
+/*
+Description
+===========
 High-level function used to fill the provided output_file according to the
 template provided in the text. Note that the text argument will be mutated by
 the function to take advantage of slight optimizations. The commands required by
@@ -144,7 +205,7 @@ the dynamic format specifiers will also be executed.
 
 Arguments
 =========
- - text: The text conatining the format string and specifying how the
+ - text: The text containing the format string and specifying how the
  output_file should be filled.
  - output_file: The file to which the template result should be written.
 
