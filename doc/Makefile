@@ -46,6 +46,5 @@ $(DOC_BUILD_DIR)/%.1.gz: $(DOC_BUILD_DIR)/%.1
 #
 # PHONY rule to build every man page.
 manpages: $(MAN_PAGE_LIST) | $(DOC_BUILD_DIR)
-	echo $(MAN_PAGE_LIST)
 
 ##################################### EOF ######################################
