@@ -291,7 +291,8 @@ char *get_command_output(const char *command) {
     /* If we reach this line, the execution was a success. We end the child
      * process. */
     pclose(command_output);
-    return SUCCESS;
+    /* We return the output of the shell command. */
+    return copy_buffer;
 }
 
 struct List *
@@ -332,6 +333,9 @@ get_commands_output_match_list(char *text, const struct MatchList *match_list) {
         if (command_output == NULL) {
             /* We propagate the error. */
             delete_list(output_list);
+            log_message(WARNING_MSG,
+                        "Could not get the output of shell command %s.\n",
+                        text + *(match_list->head + specifier) + 2);
             return NULL;
         }
         /* else... */
@@ -383,6 +387,8 @@ int dynamic_format(char *text, FILE *output_file) {
          * this, one of the inputs must be invalid... We exit as gracefully
          * as we can. */
         delete_match_list(&match_list);
+        log_message(ERROR_MSG, "%s\n",
+                    "Could not get the output of shell commands.\n");
         return ERROR;
     }
 
