@@ -13,6 +13,9 @@
 // The library we are implementing.
 #include <template/util/thread_pool.h>
 
+// Used for the TemplateRoutine definition.
+#include <template/util/template_routine.h>
+
 // Used for nanosleep.
 #include <time.h>
 
@@ -21,14 +24,20 @@
 
 /********************************* SINGLETONS *********************************/
 
-/* The static global variables for your code goe here. */
+// The global thread pool instance provided for convenience.
+struct ThreadPool *GLOBAL_THREAD_POOL;
 
 /********************************* PROTOYPES **********************************/
 
 // Description
 // ===========
-// The main function of the threads in the ThreaPool.
+// The main function of the threads in the ThreaPool. It instructs the thread to
+// run any job submitted to the pool.
 //
+// Arguments
+// =========
+//  - thread_pool_ptr: Apointer to the threadpool itself, which contains the
+//  queue of jobs which should be run.
 static void *thread_main(void *thread_pool_ptr);
 
 /************************************ MAIN ************************************/
@@ -101,10 +110,7 @@ static void *thread_main(void *thread_pool_ptr) {
     struct ThreadPool *pool = thread_pool_ptr;
     //
     // The current routine we are running.
-    template_routine routine;
-    //
-    // The argument for the current routine.
-    void *argument;
+    struct TemplateRoutine *routine;
     //
     // The time we will wait before polling the JobQueue again if it was empty.
     // We wait for 10k ns, i.e. 10 us.
@@ -120,14 +126,14 @@ static void *thread_main(void *thread_pool_ptr) {
         if (pool->queue->pending > 0) {
             //
             // We grab the routine and its argument.
-            pop_job_queue(pool->queue, &routine, &argument);
+            pop_job_queue(pool->queue, &routine);
             //
             // We release the queue before starting the computation for the
             // next threads.
             pthread_mutex_unlock(pool->queue->lock);
             //
             // We call the provided routine.
-            (*routine)(argument);
+            run_template_routine(routine);
             //
             // We assume that the ThreadPool is quite busy, hence we don't wait
             // here and try polling the JobQueue immediately.

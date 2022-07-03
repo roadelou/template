@@ -43,6 +43,12 @@ struct ThreadPool {
 
 /* The typedefs of your header go here */
 
+// Description
+// ===========
+// This is the global threadpool made available during the execution. It should
+// be initialized before its use.
+extern struct ThreadPool *GLOBAL_THREAD_POOL;
+
 /********************************* PROTOTYPES *********************************/
 
 // Description
