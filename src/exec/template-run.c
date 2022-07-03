@@ -25,6 +25,14 @@
 /* Used for malloc. */
 #include <stdlib.h>
 
+/* Used for error handling of strtoul. */
+#include <errno.h>
+
+/* The default number of threads needed to run this application. In the case of
+ * template-run this would be 1:
+ *  - One to run the execution of the commands for each file. */
+#define APPLICATION_MINIMUM_THREADS 1
+
 /*
 Description
 ===========
@@ -96,6 +104,15 @@ int main(int argc, const char **argv) {
     const char *author = NULL;
     /* Sme for the contact, we will also get it from the environment. */
     const char *contact = NULL;
+    /* A variable containing the number of threads, used to create the
+     * threadpool. */
+    size_t job_count = APPLICATION_MINIMUM_THREADS;
+    /* The number of threads specified by the user, if any. */
+    char *job_count_string = NULL;
+    /* Used for error checking of strtoul on job_count_string. */
+    char *unparsed_job_count_string;
+    /* A pointer used to tell why the parsing of job_count_string_failed. */
+    char *reason_job_count_string;
     /* A pointer used to store the format string from the provided file. */
     char *buffer;
     /* The format specifyer syntax, defaults to the new dynamic one. */
@@ -105,6 +122,7 @@ int main(int argc, const char **argv) {
     static struct option long_options[] = {
         {"author", required_argument, NULL, 'a'},
         {"contact", required_argument, NULL, 'c'},
+        {"jobs", required_argument, NULL, 'j'},
         {"verbose", no_argument, NULL, 'v'},
         {"quiet", no_argument, NULL, 'q'},
         {"static", no_argument, NULL, 's'},
@@ -118,7 +136,7 @@ int main(int argc, const char **argv) {
 
     /* Handling getopt arguments. */
     while ((getopt_option = getopt_long(argc, (char *const *)argv,
-                                        "+a:c:hlvqsd", long_options, NULL)) !=
+                                        "+a:c:j:hlvqsd", long_options, NULL)) !=
            -1) {
         switch (getopt_option) {
         case 'a':
@@ -130,6 +148,11 @@ int main(int argc, const char **argv) {
             /* A new value for the contact was supplied, it overwrites the
                environment one. */
             contact = optarg;
+            break;
+        case 'j':
+            /* The user specified a number of jobs to run the application with.
+             * For now we accept it, but we will need to check it later. */
+            job_count_string = optarg;
             break;
         case 'h':
             /* Printing help for the user and exiting. */
@@ -225,6 +248,70 @@ int main(int argc, const char **argv) {
     /* Adding a debug message. */
     log_message(INFO_MSG, "%s\n",
                 "TEMPLATE_USER and TEMPLATE_CONTACT have been set");
+
+    /* Setting up the global threadpool. We start by parsing the value defined
+     * on the command line. */
+    if (job_count_string != NULL) {
+        /* To distinguish between success and failure. */
+        errno = 0;
+        /* We parse the user-provided value. */
+        job_count = strtoul(job_count_string, &unparsed_job_count_string, 10);
+        /* Error checking. */
+        if (errno != 0 || *unparsed_job_count_string != '\0') {
+            /* The value provided by the user was not a valid integer. Even
+             * though we could recover by using the default value, this likely
+             * would not be the expected behavior, so instead we raise an
+             * error. The reason why the error triggered depends on how we got
+             * here. */
+            if (errno != 0) {
+                reason_job_count_string = strerror(errno);
+            } else {
+                reason_job_count_string = "Value contains non digit characters";
+            }
+            log_message(ERROR_MSG,
+                        "Requested number of jobs '%s' is not a valid number "
+                        "of threads since %s\n",
+                        job_count_string, reason_job_count_string);
+            /* We exit the process here before doing any real work. */
+            exit(EXIT_FAILURE);
+        }
+    }
+    /* The job_count value has been updated, we now check whether it is valid.
+     */
+    if (job_count < APPLICATION_MINIMUM_THREADS) {
+        /* The user requested less threads than the application needs to run
+         * correctly. If we move forward with that value the code will deadlock,
+         * so instead we reset to the minimum allowed value. This likely happens
+         * because the end user gave -j 1 without knowing that the application
+         * has this limitation. */
+        log_message(WARNING_MSG,
+                    "Application %s requires at least %lu threads to run "
+                    "correctly, but user requested %lu threads be used. "
+                    "Defaulting to minimal value %lu to avoid deadlocks\n",
+                    *argv, APPLICATION_MINIMUM_THREADS, job_count,
+                    APPLICATION_MINIMUM_THREADS);
+        /* Resetting to the smallest possible value. */
+        job_count = APPLICATION_MINIMUM_THREADS;
+    }
+    /* We initialize the threadpool with the required amount of threads. */
+    GLOBAL_THREAD_POOL = new_thread_pool(job_count);
+    /* Error checking. */
+    if (GLOBAL_THREAD_POOL == NULL) {
+        /* The thread pool could not be initialized, probably because too many
+         * threads were requested. */
+        log_message(ERROR_MSG,
+                    "The GLOBAL_THREAD_POOL could not be initialized with %lu "
+                    "threads. Please check that your system is able to handle "
+                    "your requirements\n",
+                    job_count);
+        exit(EXIT_FAILURE);
+    } else {
+        /* Adding a debug message. */
+        log_message(
+            INFO_MSG,
+            "The GLOBAL_THREAD_POOL has been initialized with %lu thread(s)\n",
+            GLOBAL_THREAD_POOL->size);
+    }
 
     /* We check that a template file has been provided as argument. */
     if (optind == argc) {
