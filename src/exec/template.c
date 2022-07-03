@@ -149,6 +149,12 @@ int main(int argc, const char **argv) {
     char *unparsed_job_count_string;
     /* A pointer used to tell why the parsing of job_count_string_failed. */
     char *reason_job_count_string;
+    /* A queue dedicated to creating the file using several threads, used to
+     * avoid creating a deadlock with the queue running the commands. The issue
+     * could be that the queue is full gets filled with calls to template_file,
+     * every one of which is waiting for the commands they submitted to the same
+     * queue to execute. */
+    struct ThreadPool *template_file_thread_pool;
     /* The list of the path to search the template files through. */
     struct List *list = default_search_paths();
     /* The return code of the process, will rise by 1 each time we fail to build
@@ -346,6 +352,10 @@ int main(int argc, const char **argv) {
     }
     /* We initialize the threadpool with the required amount of threads. */
     GLOBAL_THREAD_POOL = new_thread_pool(job_count);
+    /* We also initialize the template_file_thread_pool with the same number of
+     * jobs. Since only long-running low compute jobs are submitted to that
+     * pool, the number of new threads shouldn't be an issue. */
+    template_file_thread_pool = new_thread_pool(job_count);
     /* Error checking. */
     if (GLOBAL_THREAD_POOL == NULL) {
         /* The thread pool could not be initialized, probably because too many
@@ -362,6 +372,23 @@ int main(int argc, const char **argv) {
             INFO_MSG,
             "The GLOBAL_THREAD_POOL has been initialized with %lu thread(s)\n",
             GLOBAL_THREAD_POOL->size);
+    }
+    if (template_file_thread_pool == NULL) {
+        /* The thread pool could not be initialized, probably because too many
+         * threads were requested. */
+        log_message(
+            ERROR_MSG,
+            "The template_file_thread_pool could not be initialized with %lu "
+            "threads. Please check that your system is able to handle "
+            "your requirements\n",
+            job_count);
+        exit(EXIT_FAILURE);
+    } else {
+        /* Adding a debug message. */
+        log_message(INFO_MSG,
+                    "The template_file_thread_pool has been initialized with "
+                    "%lu thread(s)\n",
+                    template_file_thread_pool->size);
     }
 
     /* We create an array to hold every thread we will have to way for. */
@@ -392,8 +419,8 @@ int main(int argc, const char **argv) {
         /* We initialize the routine to create the current file. */
         *(routines + cursor - optind) = new_template_routine(
             (raw_routine *)&template_file, (void *)template_file_arguments);
-        /* We submit the subroutine to the threadpool. */
-        push_job_queue(GLOBAL_THREAD_POOL->queue,
+        /* We submit the subroutine to the dedicated threadpool. */
+        push_job_queue(template_file_thread_pool->queue,
                        *(routines + cursor - optind));
     }
     /* We log a message to help debugging, in particular to help find if a
@@ -427,6 +454,10 @@ int main(int argc, const char **argv) {
 
     /* We free the memory associated with the array of subroutines. */
     free(routines);
+
+    /* We free the memory associated with our threadpools. */
+    delete_thread_pool(GLOBAL_THREAD_POOL);
+    delete_thread_pool(template_file_thread_pool);
 
     /* We exit and end the process. */
     return status;
