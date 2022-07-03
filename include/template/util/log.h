@@ -56,7 +56,7 @@ void set_log_level(enum LOG_LEVEL level);
 /* Description
  * ===========
  * Logs a message for the user to stderr. INFO is logged in white, WARNING is
- * logged in orange and ERROR is logged in red.
+ * logged in orange and ERROR is logged in red. This function is thread safe.
  *
  * Arguments
  * =========

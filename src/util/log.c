@@ -16,10 +16,18 @@
 #include <stdarg.h>
 #include <stdio.h>
 
+// Used to ensure that only a single thread will print at once.
+#include <pthread.h>
+
 /********************************* SINGLETONS *********************************/
 
 // The current log level. Default value is WARNING.
 static enum LOG_LEVEL LEVEL = WARNING_MSG;
+
+// The global mutex used to ensure that only a single thread can log at once.
+// We use the default attributes to initialize the mutex, hence why this static
+// initialization is possible.
+static pthread_mutex_t LOG_MUTEX = PTHREAD_MUTEX_INITIALIZER;
 
 /********************************* PROTOYPES **********************************/
 
@@ -84,6 +92,9 @@ int log_message(enum LOG_LEVEL importance, const char *format, ...) {
     }
     // else...
     //
+    // We acquire the logging mutex.
+    pthread_mutex_lock(&LOG_MUTEX);
+    //
     // We create the variadic list to handle variadic arguments.
     va_list variadic_list;
     //
@@ -111,6 +122,9 @@ int log_message(enum LOG_LEVEL importance, const char *format, ...) {
     //
     // Finally we end the ASCII color sequence.
     fprintf(stderr, "%s", "\033[m");
+    //
+    // We release the logging mutex.
+    pthread_mutex_unlock(&LOG_MUTEX);
     //
     // We return the expected value.
     return return_value;
