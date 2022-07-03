@@ -20,6 +20,9 @@
 /* Used for error handling of strtoul. */
 #include <errno.h>
 
+/* Used for uintptr_t. */
+#include <stdint.h>
+
 /* The default number of threads needed to run this application. In the case of
  * template this would be 2:
  *  - One to run the execution of each file.
@@ -59,6 +62,43 @@ enum FormatStyle {
 /*
 Description
 ===========
+Arguments for the template_file function, we use a struct to pass them as a
+single pointer, which is needed for a template_routine thread.
+*/
+struct TemplateFileArguments {
+    const char *path;    // The path of the file which should be created.
+    const char *author;  // The author, used for the old format style.
+    const char *contact; // The contact, used for the old format style.
+    const char
+        *current_date; // The current date, used for the old format style.
+    const enum ExtensionMatchAlgorithm
+        match_algorithm; // The match algorithm to use for the extension.
+    const enum FormatStyle
+        format_style;        // The formatting style to apply to the file.
+    const struct List *list; // The list of paths in which the template files
+                             // should be searched.
+};
+
+/*
+Description
+===========
+Routine used to create a single templated file. This routine will be used to
+create a single file from its template. It always returns NULL.
+
+Arguments
+=========
+ - template_file_arguments: The struct of arguments needed to create the new
+ file.
+
+Returns
+=======
+ERROR if the execution failed, SUCCESS otherwise.
+*/
+int template_file(const struct TemplateFileArguments *template_arguments);
+
+/*
+Description
+===========
 Prints help for the user on stdout.
 
 Returns
@@ -94,8 +134,6 @@ int main(int argc, const char **argv) {
     int cursor;
     /* A variable used to hold the getopt option. */
     int getopt_option;
-    /* The current path on which we are working. */
-    const char *path;
     /* The buffer used to hold the current date. */
     char current_date[11];
     /* We get the user name from, the environment. */
@@ -111,12 +149,6 @@ int main(int argc, const char **argv) {
     char *unparsed_job_count_string;
     /* A pointer used to tell why the parsing of job_count_string_failed. */
     char *reason_job_count_string;
-    /* Used to store the extension of the file we will be creating. */
-    char *extension;
-    /* A pointer used to store the format string for the given extension. */
-    char *buffer;
-    /* The file handle used to create the template files. */
-    FILE *created_file;
     /* The list of the path to search the template files through. */
     struct List *list = default_search_paths();
     /* The return code of the process, will rise by 1 each time we fail to build
@@ -332,143 +364,70 @@ int main(int argc, const char **argv) {
             GLOBAL_THREAD_POOL->size);
     }
 
+    /* We create an array to hold every thread we will have to way for. */
+    struct TemplateRoutine **routines =
+        malloc((argc - optind) * sizeof(struct TemplateRoutine *));
+
     /* We simply loop over the given paths and create them all. */
     for (cursor = optind; cursor < argc; cursor++) {
-        /* We get the new file to create. */
-        path = *(argv + cursor);
-        /* Adding a debug message. */
-        log_message(INFO_MSG, "Working on path \"%s\"\n", path);
-
-        /* We first get the extension of our file. The algorithm used can be
-         * overriden by the user. */
-        switch (match_algorithm) {
-        case OLD:
-            /* We have to discard the const here, but it is important to not
-             * attempt to free that string. */
-            extension = (char *)get_extension(path);
-            break;
-        default:
-            /* If we received a garbage value, we print a warning to the
-             * user and default to the default new algorithm. */
-            log_message(WARNING_MSG,
-                        "Invalid algorithm \"%X\", defaulted to NEW (%X)\n",
-                        match_algorithm, NEW);
-        case NEW:
-            extension = get_format_extension(list, path);
-            break;
-        }
-        /* Adding a debug message. */
-        log_message(INFO_MSG, "Matched extension \"%s\"\n", extension);
-
-        /* If we found no valid extension, we use .txt instead. */
-        if (extension == NULL) {
-            /* We log a warning for the user. */
-            log_message(INFO_MSG,
-                        "Could not fetch template for extension of \"%s\", "
-                        "using default template instead\n",
-                        path);
-            /* We try to fill the buffer with the default template. */
-            buffer = format_extension(list, "txt");
-            /* If our buffer is still NULL, then we just skip creating this
-             * file and move on to the next one. */
-            if (buffer == NULL) {
-                /* We log an error to the user. */
-                log_message(ERROR_MSG, "%s\n",
-                            "Could not fetch default template, installation "
-                            "may be broken");
-                status += 1;
-                continue;
-            }
-        } else {
-            /* We get the format string for our extension type. */
-            buffer = format_extension(list, extension);
-            /* If we can't grab a format for this extension, we try again with
-             * the default txt format. */
-            if (buffer == NULL) {
-                /* We log an error for the user. */
-                log_message(
-                    ERROR_MSG,
-                    "Could not use found template for (reversed) extension "
-                    "\"%s\" of \"%s\", template file might be broken\n",
-                    extension, path);
-                /* We try to fill the buffer with the default template. */
-                buffer = format_extension(list, "txt");
-                /* If our buffer is still NULL, then we just skip creating this
-                 * file and move on to the next one. */
-                if (buffer == NULL) {
-                    /* We log an error to the user. */
-                    log_message(ERROR_MSG, "%s\n",
-                                "Could not fetch default template, "
-                                "installation may be broken");
-                    status += 1;
-                    continue;
-                }
-            }
-        }
-        /* Adding a debug message. */
-        log_message(INFO_MSG,
-                    "Fetched the format for the extension \"%s\", it has %ld "
-                    "characters\n",
-                    extension, strlen(buffer));
-
-        /* We open the file we are going to create. */
-        created_file = fopen(path, "w");
-        if (created_file == NULL) {
-            /* We could not open this file for some reason, we skip it and raise
-             * the error code. We also log an error for the user. */
-            log_message(ERROR_MSG,
-                        "Could not open file \"%s\" to write template, you may "
-                        "not have the necessary permissions\n",
-                        path);
-            status += 1;
-            free(buffer);
-            continue;
-        }
-        /* Adding a debug message. */
-        log_message(INFO_MSG, "Opened the file at path \"%s\"\n", path);
-
-        /* We print our formatted content to the file. */
-        switch (format_style) {
-        case STATIC:
-            safe_format(created_file, buffer, author, contact, current_date);
-            break;
-        default:
-            log_message(
-                WARNING_MSG,
-                "Invalid formatting style \"%X\", defaulted to DYNAMIC (%X)\n",
-                format_style, DYNAMIC);
-            /* No break, we fall through to the dynamic case. */
-        case DYNAMIC:
-            dynamic_format(buffer, created_file);
-            break;
-        }
-        /* Adding a debug message. */
-        log_message(INFO_MSG,
-                    "Filled target file \"%s\" with templated content\n", path);
-
-        /* We flush the file by closing it. */
-        fclose(created_file);
-
-        /* We free the buffer used for our format string. */
-        free(buffer);
-
-        /* We no longer need the dynamically allocated extension either. */
-        switch (match_algorithm) {
-        case OLD:
-            /* If we used the OLD matching algorithm, no memory was
-             * allocated for the extension hence we shouldn't attempt to
-             * free it. */
-            break;
-        default:
-            /* The other algorithms do allocate some memory that we have to
-             * free. */
-            free(extension);
-            break;
-        }
-        /* Adding a debug message. */
-        log_message(INFO_MSG,
-                    "Cleaned ressources for creation of file \"%s\"\n", path);
+        /* We prepare the arguments for the template_file subroutine. We
+         * allocate the memory on the heap so that it won't be shared between
+         * the threads. */
+        struct TemplateFileArguments *template_file_arguments =
+            malloc(sizeof(struct TemplateFileArguments));
+        /* To preserve the const attributes we have to create a copy of the
+         * arguments that we are going to put on the heap. */
+        struct TemplateFileArguments const_args = {
+            .path = *(argv + cursor),
+            .author = author,
+            .contact = contact,
+            .current_date = current_date,
+            .match_algorithm = match_algorithm,
+            .format_style = format_style,
+            .list = list,
+        };
+        /* We copy the arguments to the heap. */
+        memcpy(template_file_arguments, &const_args,
+               sizeof(struct TemplateFileArguments));
+        /* We initialize the routine to create the current file. */
+        *(routines + cursor - optind) = new_template_routine(
+            (raw_routine *)&template_file, (void *)template_file_arguments);
+        /* We submit the subroutine to the threadpool. */
+        push_job_queue(GLOBAL_THREAD_POOL->queue,
+                       *(routines + cursor - optind));
     }
+    /* We log a message to help debugging, in particular to help find if a
+     * file takes forever to execute. */
+    log_message(INFO_MSG, "Waiting for %d files to be created\n",
+                argc - optind);
+
+    /* We wait for every subroutine to return. */
+    join_template_routines(argc - optind, routines);
+
+    /* We log a message to help debugging, in particular to help find if a
+     * command takes forever to execute. */
+    log_message(INFO_MSG, "Done waiting for %llu files to be created\n",
+                argc - optind);
+
+    /* We check the return code for every file. */
+    for (cursor = 0; cursor < argc - optind; cursor++) {
+        if ((uintptr_t)(*(routines + cursor))->result == ERROR) {
+            /* We propagate the error. */
+            status += 1;
+            /* We also log an error message. */
+            log_message(ERROR_MSG, "Failed to create file \"%s\"\n",
+                        *(argv + optind + cursor));
+        }
+        /* We free the memory associated with the arguments of the subroutine.
+         */
+        free((*(routines + cursor))->argument);
+        /* We free the memory associated with the subroutine itself. */
+        free(*(routines + cursor));
+    }
+
+    /* We free the memory associated with the array of subroutines. */
+    free(routines);
+
     /* We exit and end the process. */
     return status;
 }
@@ -547,4 +506,157 @@ struct List *default_search_paths(void) {
              home_path);
     /* We use the variadic constructor to return the expected list. */
     return new_list(2, search_path, "/etc/roadelou_template");
+}
+
+int template_file(const struct TemplateFileArguments *template_arguments) {
+    /* We unwrap our arguments for the sake of convenience. */
+    const char *path = template_arguments->path;
+    const char *author = template_arguments->author;
+    const char *contact = template_arguments->contact;
+    const char *current_date = template_arguments->current_date;
+    const enum ExtensionMatchAlgorithm match_algorithm =
+        template_arguments->match_algorithm;
+    const enum FormatStyle format_style = template_arguments->format_style;
+    const struct List *list = template_arguments->list;
+    /* Used to store the extension of the file we will be creating. */
+    char *extension;
+    /* A pointer used to store the format string for the given extension. */
+    char *buffer;
+    /* The file handle used to create the template files. */
+    FILE *created_file;
+
+    /* Adding a debug message. */
+    log_message(INFO_MSG, "Working on path \"%s\"\n", path);
+
+    /* We first get the extension of our file. The algorithm used can be
+     * overriden by the user. */
+    switch (match_algorithm) {
+    case OLD:
+        /* We have to discard the const here, but it is important to not
+         * attempt to free that string. */
+        extension = (char *)get_extension(path);
+        break;
+    default:
+        /* If we received a garbage value, we print a warning to the
+         * user and default to the default new algorithm. */
+        log_message(WARNING_MSG,
+                    "Invalid algorithm \"%X\", defaulted to NEW (%X)\n",
+                    match_algorithm, NEW);
+    case NEW:
+        extension = get_format_extension(list, path);
+        break;
+    }
+    /* Adding a debug message. */
+    log_message(INFO_MSG, "Matched extension \"%s\"\n", extension);
+
+    /* If we found no valid extension, we use .txt instead. */
+    if (extension == NULL) {
+        /* We log a warning for the user. */
+        log_message(INFO_MSG,
+                    "Could not fetch template for extension of \"%s\", "
+                    "using default template instead\n",
+                    path);
+        /* We try to fill the buffer with the default template. */
+        buffer = format_extension(list, "txt");
+        /* If our buffer is still NULL, then we just skip creating this
+         * file and move on to the next one. */
+        if (buffer == NULL) {
+            /* We log an error to the user. */
+            log_message(ERROR_MSG, "%s\n",
+                        "Could not fetch default template, installation "
+                        "may be broken");
+            /* The execution failed. */
+            return ERROR;
+        }
+    } else {
+        /* We get the format string for our extension type. */
+        buffer = format_extension(list, extension);
+        /* If we can't grab a format for this extension, we try again with
+         * the default txt format. */
+        if (buffer == NULL) {
+            /* We log an error for the user. */
+            log_message(ERROR_MSG,
+                        "Could not use found template for (reversed) extension "
+                        "\"%s\" of \"%s\", template file might be broken\n",
+                        extension, path);
+            /* We try to fill the buffer with the default template. */
+            buffer = format_extension(list, "txt");
+            /* If our buffer is still NULL, then we just skip creating this
+             * file and move on to the next one. */
+            if (buffer == NULL) {
+                /* We log an error to the user. */
+                log_message(ERROR_MSG, "%s\n",
+                            "Could not fetch default template, "
+                            "installation may be broken");
+                /* The execution failed. */
+                return ERROR;
+            }
+        }
+    }
+    /* Adding a debug message. */
+    log_message(INFO_MSG,
+                "Fetched the format for the extension \"%s\", it has %ld "
+                "characters\n",
+                extension, strlen(buffer));
+
+    /* We open the file we are going to create. */
+    created_file = fopen(path, "w");
+    if (created_file == NULL) {
+        /* We could not open this file for some reason, we skip it and raise
+         * the error code. We also log an error for the user. */
+        log_message(ERROR_MSG,
+                    "Could not open file \"%s\" to write template, you may "
+                    "not have the necessary permissions\n",
+                    path);
+        free(buffer);
+        /* The execution failed. */
+        return ERROR;
+    }
+    /* Adding a debug message. */
+    log_message(INFO_MSG, "Opened the file at path \"%s\"\n", path);
+
+    /* We print our formatted content to the file. */
+    switch (format_style) {
+    case STATIC:
+        safe_format(created_file, buffer, author, contact, current_date);
+        break;
+    default:
+        log_message(
+            WARNING_MSG,
+            "Invalid formatting style \"%X\", defaulted to DYNAMIC (%X)\n",
+            format_style, DYNAMIC);
+        /* No break, we fall through to the dynamic case. */
+    case DYNAMIC:
+        dynamic_format(buffer, created_file);
+        break;
+    }
+    /* Adding a debug message. */
+    log_message(INFO_MSG, "Filled target file \"%s\" with templated content\n",
+                path);
+
+    /* We flush the file by closing it. */
+    fclose(created_file);
+
+    /* We free the buffer used for our format string. */
+    free(buffer);
+
+    /* We no longer need the dynamically allocated extension either. */
+    switch (match_algorithm) {
+    case OLD:
+        /* If we used the OLD matching algorithm, no memory was
+         * allocated for the extension hence we shouldn't attempt to
+         * free it. */
+        break;
+    default:
+        /* The other algorithms do allocate some memory that we have to
+         * free. */
+        free(extension);
+        break;
+    }
+    /* Adding a debug message. */
+    log_message(INFO_MSG, "Cleaned ressources for creation of file \"%s\"\n",
+                path);
+
+    /* If we reach this line, the execution was a success. */
+    return SUCCESS;
 }
