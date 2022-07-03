@@ -28,11 +28,6 @@
 /* Used for error handling of strtoul. */
 #include <errno.h>
 
-/* The default number of threads needed to run this application. In the case of
- * template-run this would be 1:
- *  - One to run the execution of the commands for each file. */
-#define APPLICATION_MINIMUM_THREADS 1
-
 /*
 Description
 ===========
@@ -105,8 +100,8 @@ int main(int argc, const char **argv) {
     /* Sme for the contact, we will also get it from the environment. */
     const char *contact = NULL;
     /* A variable containing the number of threads, used to create the
-     * threadpool. */
-    size_t job_count = APPLICATION_MINIMUM_THREADS;
+     * threadpool. Default is to be single-threaded. */
+    size_t job_count = 1;
     /* The number of threads specified by the user, if any. */
     char *job_count_string = NULL;
     /* Used for error checking of strtoul on job_count_string. */
@@ -275,23 +270,6 @@ int main(int argc, const char **argv) {
             /* We exit the process here before doing any real work. */
             exit(EXIT_FAILURE);
         }
-    }
-    /* The job_count value has been updated, we now check whether it is valid.
-     */
-    if (job_count < APPLICATION_MINIMUM_THREADS) {
-        /* The user requested less threads than the application needs to run
-         * correctly. If we move forward with that value the code will deadlock,
-         * so instead we reset to the minimum allowed value. This likely happens
-         * because the end user gave -j 1 without knowing that the application
-         * has this limitation. */
-        log_message(WARNING_MSG,
-                    "Application %s requires at least %lu threads to run "
-                    "correctly, but user requested %lu threads be used. "
-                    "Defaulting to minimal value %lu to avoid deadlocks\n",
-                    *argv, APPLICATION_MINIMUM_THREADS, job_count,
-                    APPLICATION_MINIMUM_THREADS);
-        /* Resetting to the smallest possible value. */
-        job_count = APPLICATION_MINIMUM_THREADS;
     }
     /* We initialize the threadpool with the required amount of threads. */
     GLOBAL_THREAD_POOL = new_thread_pool(job_count);
