@@ -63,6 +63,13 @@ struct ThreadPool *new_thread_pool(size_t threads_count) {
     // We allocate the memory for the threads themselves.
     pool->threads = malloc(threads_count * sizeof(pthread_t));
     //
+    // We check for a malloc fail here since threads_count is provided by the
+    // user.
+    if (pool->threads == NULL) {
+        free(pool);
+        return NULL;
+    }
+    //
     // We build the JobQueue before the threads are started.
     pool->queue = new_job_queue();
     //
