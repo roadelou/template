@@ -17,8 +17,11 @@
 /* Included the utilities declarations. */
 #include <template/util/base.h>
 #include <template/util/date_now.h>
+#include <template/util/job_queue.h>
 #include <template/util/list.h>
 #include <template/util/log.h>
+#include <template/util/template_routine.h>
+#include <template/util/thread_pool.h>
 
 /*********************************** MACROS ***********************************/
 
