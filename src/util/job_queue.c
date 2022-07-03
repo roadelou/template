@@ -59,7 +59,6 @@ struct JobQueue *new_job_queue(void) {
     queue->pending = 0;
     queue->allocated = 0;
     queue->routines = NULL;
-    queue->arguments = NULL;
     //
     // We return the initialized JobQueue.
     return queue;
@@ -78,7 +77,6 @@ void delete_job_queue(struct JobQueue *queue) {
     //
     // We free any memory associated with the pending routines and arguments.
     free(queue->routines);
-    free(queue->arguments);
     //
     // One we have the mutex available, we release it and destroy it.
     pthread_mutex_unlock(queue->lock);
@@ -88,8 +86,7 @@ void delete_job_queue(struct JobQueue *queue) {
     free(queue);
 }
 
-void push_job_queue(struct JobQueue *queue, template_routine routine,
-                    void *argument) {
+void push_job_queue(struct JobQueue *queue, struct TemplateRoutine *routine) {
     //
     // We first acquire the lock to the queue.
     pthread_mutex_lock(queue->lock);
@@ -110,17 +107,14 @@ void push_job_queue(struct JobQueue *queue, template_routine routine,
         //
         // We assume that realloc doesn't fail here since this requires very
         // little memory.
-        queue->routines = realloc(queue->routines,
-                                  queue->allocated * sizeof(template_routine));
-        queue->arguments =
-            realloc(queue->arguments, queue->allocated * sizeof(void *));
+        queue->routines = realloc(
+            queue->routines, queue->allocated * sizeof(struct TemplateRoutine));
     }
     //
     // else...
     //
     // We add the new routine and argument in the queue.
     *(queue->routines + queue->head + queue->pending) = routine;
-    *(queue->arguments + queue->head + queue->pending) = argument;
     //
     // We raise the number of pending jobs.
     queue->pending++;
@@ -129,24 +123,25 @@ void push_job_queue(struct JobQueue *queue, template_routine routine,
     pthread_mutex_unlock(queue->lock);
 }
 
-void pop_job_queue(struct JobQueue *queue, template_routine *routine,
-                   void **argument) {
+void pop_job_queue(struct JobQueue *queue, struct TemplateRoutine **routine) {
     //
-    // Since we are going to modify the JobQueue, we have to acquire the lock.
-    pthread_mutex_lock(queue->lock);
+    // In a threadpool context, it only makes sense to call this function after
+    // the lock has been acquired, hence we cannot re-aquire it here, otherwise
+    // the program reaches a deadlock.
+    // pthread_mutex_lock(queue->lock);
     //
     // We set the routine and the argument tot he value specified in the
     // JobQueue.
     *routine = *(queue->routines + queue->head);
-    *argument = *(queue->arguments + queue->head);
     //
     // There is one less pending job in the queue, and the head moves to the
     // next pending job.
     queue->pending--;
     queue->head++;
     //
-    // We are done here, we free the lock.
-    pthread_mutex_unlock(queue->lock);
+    // We don't free the lock since we didn't need to acquire it in the first
+    // place.
+    // pthread_mutex_unlock(queue->lock);
 }
 
 static int should_clean_queue(struct JobQueue *queue) {
@@ -161,9 +156,7 @@ static void clean_queue(struct JobQueue *queue) {
     // We assume that we already have the lock to the queue at this point. We
     // are simply going to move the head of the queues back to 0.
     memmove(queue->routines, queue->routines + queue->head,
-            queue->pending * sizeof(template_routine));
-    memmove(queue->arguments, queue->arguments + queue->head,
-            queue->pending * sizeof(void *));
+            queue->pending * sizeof(struct TemplateRoutine));
     //
     // We reset the head of the JobQueue back to 0 to point to the oldest job.
     queue->head = 0;

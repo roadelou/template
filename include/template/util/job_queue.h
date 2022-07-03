@@ -14,6 +14,9 @@
 
 /********************************** INCLUDES **********************************/
 
+/* Used for the TemplateRoutine definition, */
+#include <template/util/template_routine.h>
+
 /* Used for the threading types. */
 #include <pthread.h>
 
@@ -25,10 +28,6 @@
 #endif
 
 /********************************** STRUCTS ***********************************/
-
-/* We define the type for functions accepted by the threadpool, namely functions
- * which take a pointer as input and return nothing. */
-typedef void (*template_routine)(void *);
 
 /* The enums of your header go here */
 
@@ -43,9 +42,8 @@ struct JobQueue {
     size_t pending;        // The number of pending jobs in the ThreadPool.
     size_t allocated; // The number of elements allocated for the routines and
                       // the arguments.
-    template_routine *routines; // The functions which should be called for the
-                                // next jobs.
-    void **arguments; // Pointers to the arguments used for the next jobs.
+    struct TemplateRoutine **routines; // The functions which should be called
+                                       // for the next jobs.
 };
 
 /* The unions of your header go here */
@@ -110,19 +108,17 @@ void delete_job_queue(struct JobQueue *queue);
 // if the JobQueue has drifted in memory because of too many push/pop, a
 // clean-up may be initiated.
 //
-void push_job_queue(struct JobQueue *queue, template_routine routine,
-                    void *argument);
+void push_job_queue(struct JobQueue *queue, struct TemplateRoutine *routine);
 
 // Description
 // ===========
-// Removes the oldest job from the JobQueue.
+// Removes the oldest job from the JobQueue. The lock to the queue MUST have
+// been acquired BEFORE calling this function.
 //
 // Arguments
 // =========
 //  - routine: A pointer to a pointer of a routine, a side-effect will set it to
 //  the routine of the old job.
-//  - argument: A pointer to a pointer, will be set by side-effect to the
-//  argument which should be used for the job.
 //
 // Returns
 // =======
@@ -133,8 +129,7 @@ void push_job_queue(struct JobQueue *queue, template_routine routine,
 // The old job is removed from the JobQueue and routine and argument are set to
 // the expected values.
 //
-void pop_job_queue(struct JobQueue *queue, template_routine *routine,
-                   void **argument);
+void pop_job_queue(struct JobQueue *queue, struct TemplateRoutine **routine);
 
 /* End of include once header guard */
 #endif
