@@ -107,10 +107,15 @@ For the text "Today is the %$date +%F/.", the corresponding MatchList should be
 int find_format(const char *text, struct MatchList *match_list);
 
 /*
+Description
+===========
 This function gathers every command described in match_list from text, executes
 them and gathers their outputs into the returned list. Note that the text
 argument will be mutated by the function to take advantage of slight
 optimizations.
+
+The GLOBAL_THREAD_POOL must have been initialized before this function is
+called, since it is multithreaded.
 
 Arguments
 =========

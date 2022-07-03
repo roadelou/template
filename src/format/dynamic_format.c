@@ -300,6 +300,9 @@ get_commands_output_match_list(char *text, const struct MatchList *match_list) {
     /* The index of the format specifier we are currently working on. */
     size_t specifier;
 
+    /* A variable used for the propagation of errors. */
+    size_t status = 0;
+
     /* Sanity check, we fail if a NULL argument is provided. */
     if (text == NULL || match_list == NULL) {
         log_message(WARNING_MSG,
@@ -315,34 +318,80 @@ get_commands_output_match_list(char *text, const struct MatchList *match_list) {
      * each thread accesses a different part of the List. */
     struct List *output_list = null_list(match_list->count);
 
+    /* We also create a subroutine for the asynchronous execution of each
+     * command. */
+    struct TemplateRoutine **routines =
+        malloc(match_list->count * sizeof(struct TemplateRoutine *));
+
     /* We go over each format specifier. */
     for (specifier = 0; specifier < match_list->count; specifier++) {
-        /* A pointer to the output of the command corresponding to the match
-         * of this iteration. */
-        char *command_output;
         /* We modify the template string in order to isolate the format
          * specifier command. This little trick is the reason why we want the
          * input text to be mutable. */
         *(text + *(match_list->tail + specifier)) = '\0';
 
+        /* We initialize the routine which is going to be used for the execution
+         * of the shell command. */
+        *(routines + specifier) =
+            new_template_routine((raw_routine *)get_command_output,
+                                 text + *(match_list->head + specifier) + 2);
+
+        /* We queue the routine for execution. */
+        push_job_queue(GLOBAL_THREAD_POOL->queue, *(routines + specifier));
+    }
+
+    /* We log a message to help debugging, in particular to help find if a
+     * command takes forever to execute. */
+    log_message(INFO_MSG, "Waiting for %llu shell commands to complete\n",
+                match_list->count);
+
+    /* We wait for every subroutine to return. */
+    join_template_routines(match_list->count, routines);
+
+    /* We log a message to help debugging, in particular to help find if a
+     * command takes forever to execute. */
+    log_message(INFO_MSG, "Done waiting for %llu shell commands\n",
+                match_list->count);
+
+    /* Now that every shell command has been run, we gather their results. */
+    for (specifier = 0; specifier < match_list->count; specifier++) {
+        /* A pointer to the output of the command corresponding to the match
+         * of this iteration. */
+        char *command_output;
+
         /* We use the substring from the original text to run the command see
          * the comment in find_format to see where the +2 comes from. */
-        command_output =
-            get_command_output(text + *(match_list->head + specifier) + 2);
+        command_output = (*(routines + specifier))->result;
         /* Error checking. */
         if (command_output == NULL) {
             /* We propagate the error. */
-            delete_list(output_list);
-            log_message(WARNING_MSG,
+            status += 1;
+            log_message(ERROR_MSG,
                         "Could not get the output of shell command %s.\n",
-                        text + *(match_list->head + specifier) + 2);
+                        (*(routines + specifier))->argument);
             return NULL;
+        } else {
+            /* We move the command_output into the List. It will be freed by the
+             * destructor of the List. */
+            move_into_list(output_list, specifier, command_output);
         }
-        /* else... */
 
-        /* We move the command_output into the List. It will be freed by the
-         * destructor of the List. */
-        move_into_list(output_list, specifier, command_output);
+        /* Finally, we free the memory associated with the subroutine itself. */
+        delete_template_routine(*(routines + specifier));
+    }
+
+    /* We free the memory that we had needed to hold the pointer of the
+     * subroutines. */
+    free(routines);
+
+    /* Error checking. */
+    if (status != 0) {
+        /* We log an error message. */
+        log_message(ERROR_MSG, "%llu shell commands failed to run.\n", status);
+        /* We free the memory that we had allocated. */
+        delete_list(output_list);
+        /* We propagate the error. */
+        return NULL;
     }
 
     /* If we reach this line, the execution was a success and we return the
