@@ -248,7 +248,7 @@ char *get_command_output(const char *command) {
     /* We have copied the output of the command into memory, we need to ensure
      * that it is null-terminated. We if a trailing '\n' should be replaced by a
      * '\0' to end the string. */
-    if ((*(copy_buffer + copied_bytes - 1) == '\n')) {
+    if (*(copy_buffer + copied_bytes - 1) == '\n') {
         /* We simply overwrite this last byte. */
         *(copy_buffer + copied_bytes - 1) = '\0';
         /* NOTE
