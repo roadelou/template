@@ -44,6 +44,9 @@ TEST_MAKEFILE = $(SRC_DIR)/test/Makefile
 # Flags used to compile the objects for the template library.
 C_LIB_OBJ_FLAGS = $(C_FLAGS) -fPIC
 #
+# Flags used to compile the the template executables.
+C_EXEC_OBJ_FLAGS = $(C_FLAGS) -pthread
+#
 # The list of objects and debug objects to build, which will be populated by the
 # included leaf Makefiles.
 OBJ_LIST =
@@ -118,7 +121,7 @@ $(TEST_LIB): $(TEST_OBJ) | $(LIB_BUILD_DIR)
 #######################
 # Rules to build the executables and link them against the libraries.
 $(ELF_BUILD_DIR)/%.elf: $(EXEC_BUILD_DIR)/%.o $(TEMPLATE_LIB) | $(ELF_BUILD_DIR)
-	$(CC) $(C_FLAGS) -L$(LIB_BUILD_DIR) -o $@ $< -ltemplate
+	$(CC) $(C_EXEC_OBJ_FLAGS) -L$(LIB_BUILD_DIR) -o $@ $< -ltemplate
 
 #
 # PHONY rule to build every elf at once.
