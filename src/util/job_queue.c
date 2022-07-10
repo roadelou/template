@@ -81,6 +81,9 @@ void delete_job_queue(struct JobQueue *queue) {
     // One we have the mutex available, we release it and destroy it.
     pthread_mutex_unlock(queue->lock);
     pthread_mutex_destroy(queue->lock);
+	//
+	// We free the memory associated with the lock itself.
+	free(queue->lock);
     //
     // Finally, we release the memory associated with the JobQueue itself.
     free(queue);
