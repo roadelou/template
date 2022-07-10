@@ -98,7 +98,6 @@ void join_template_routines(size_t count, struct TemplateRoutine **routines) {
     // Until all the routines have returned, we wait for them.
     do {
         all_joined = 1;
-        size_t pending = 0;
         //
         // We go over each subroutine.
         for (cursor = 0; cursor < count; cursor++) {
@@ -106,7 +105,6 @@ void join_template_routines(size_t count, struct TemplateRoutine **routines) {
             // We check if the routine has returned and update the loop variable
             // in consequence.
             all_joined &= (*(routines + cursor))->done;
-            pending += !(*(routines + cursor))->done;
         }
         //
         // We wait a little while before the next iteration.
