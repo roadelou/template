@@ -29,6 +29,15 @@ TEST_LIST =
 #
 # The log file for the tests.
 TEST_LOG = $(TEST_CSV_DIR)/log.csv
+#
+# The list of template files we can try the executable against.
+ETC_LIST = $(wildcard etc/*.template)
+#
+# The directory where the vagrind resuts will be held.
+TEST_VALGRIND_DIR = $(BUILD_DIR)/testing/valgrind
+#
+# The fix valgrind arguments for valgring.
+VALGRIND_ARGS = --tool=memcheck --show-error-list=yes --leak-check=full --error-exitcode=1
 
 # TEST ELFS
 ###########
@@ -53,7 +62,7 @@ TO_CLEAN += $(TEST_LIST) $(TEST_LOG)
 ################################### SPECIAL ####################################
 
 # The special rule modifiers (.PHONY etc...) go here
-.PHONY: $(TEST_CSV)
+.PHONY: $(TEST_CSV) valgrind
 
 #################################### RULES #####################################
 
@@ -63,10 +72,18 @@ tests: $(TEST_LIST) | $(TEST_CSV_DIR)
 	@echo "STATUS;FILE;FUNCTION;LINE;EXPECTED;COMPUTED" | tee $(TEST_LOG)
 	@$(foreach TEST,$(TEST_LIST),$(SET_LD) $(TEST) | tee -a $(TEST_LOG);)
 
+# Testing the code against valgrind. Note that we use the
+# $(VAR:PATTERN=REPLACEMENT) syntax here.
+valgrind: elfs | $(TEST_VALGRIND_DIR)
+	@$(foreach ETC_FILE,$(ETC_LIST),echo [valgrind] $(ETC_FILE); $(SET_LD) valgrind $(VALGRIND_ARGS) --log-file=$(TEST_VALGRIND_DIR)/$(notdir $(ETC_FILE)).log $(ELF_BUILD_DIR)/template-run.elf $(ETC_FILE) > /dev/null;)
+
 $(TEST_CSV_DIR):
 	mkdir -p $(TEST_CSV_DIR)
 
 $(TEST_BIN_DIR):
 	mkdir -p $(TEST_BIN_DIR)
+
+$(TEST_VALGRIND_DIR):
+	mkdir -p $(TEST_VALGRIND_DIR)
 
 ##################################### EOF ######################################
