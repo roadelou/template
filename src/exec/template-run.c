@@ -282,6 +282,7 @@ int main(int argc, const char **argv) {
                     "threads. Please check that your system is able to handle "
                     "your requirements\n",
                     job_count);
+        delete_thread_pool(GLOBAL_THREAD_POOL);
         exit(EXIT_FAILURE);
     } else {
         /* Adding a debug message. */
@@ -295,6 +296,7 @@ int main(int argc, const char **argv) {
     if (optind == argc) {
         log_message(WARNING_MSG, "%s\n",
                     "No template file provided, nothing to do.");
+        delete_thread_pool(GLOBAL_THREAD_POOL);
         /* This is not an error, although it is a bit odd. */
         return SUCCESS;
     }
@@ -306,6 +308,7 @@ int main(int argc, const char **argv) {
     buffer = read_file(*(argv + optind));
     /* Error checking. */
     if (buffer == NULL) {
+        delete_thread_pool(GLOBAL_THREAD_POOL);
         /* Some error message has already been logged, we just need to exit. */
         return ERROR;
     }
@@ -342,6 +345,7 @@ int main(int argc, const char **argv) {
                 "Cleaned ressources for execution of template \"%s\"\n",
                 *(argv + optind));
 
+    delete_thread_pool(GLOBAL_THREAD_POOL);
     /* If we reach this line, the execution was a success. */
     return SUCCESS;
 }
