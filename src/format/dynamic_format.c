@@ -436,6 +436,7 @@ int dynamic_format(char *text, FILE *output_file) {
          * this, one of the inputs must be invalid... We exit as gracefully
          * as we can. */
         delete_match_list(&match_list);
+        delete_list(output_list);
         log_message(ERROR_MSG, "%s\n",
                     "Could not get the output of shell commands.\n");
         return ERROR;
@@ -455,6 +456,7 @@ int dynamic_format(char *text, FILE *output_file) {
                         "Could not write %ld characters to the output file.\n",
                         *(match_list.head + specifier) - cursor);
             delete_match_list(&match_list);
+            delete_list(output_list);
             return ERROR;
         }
 
@@ -491,12 +493,14 @@ int dynamic_format(char *text, FILE *output_file) {
                     "Could not write %ld characters to the output file.\n",
                     text_length);
         delete_match_list(&match_list);
+        delete_list(output_list);
         return ERROR;
     }
 
     /* If we reach this line, the execution was a success, maybe with some
      * warnings. */
     delete_match_list(&match_list);
+    delete_list(output_list);
     return status;
 }
 
