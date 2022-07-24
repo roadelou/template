@@ -319,8 +319,8 @@ int main(int argc, const char **argv) {
             } else {
                 reason_job_count_string = "Value contains non digit characters";
             }
-			/* We free the memory associated with the search path. */
-			delete_list(list);
+            /* We free the memory associated with the search path. */
+            delete_list(list);
             log_message(ERROR_MSG,
                         "Requested number of jobs '%s' is not a valid number "
                         "of threads since %s\n",
@@ -337,8 +337,8 @@ int main(int argc, const char **argv) {
     template_file_thread_pool = new_thread_pool(job_count);
     /* Error checking. */
     if (GLOBAL_THREAD_POOL == NULL) {
-		/* We free the memory associated with the search path. */
-		delete_list(list);
+        /* We free the memory associated with the search path. */
+        delete_list(list);
         /* The thread pool could not be initialized, probably because too many
          * threads were requested. */
         log_message(ERROR_MSG,
@@ -355,8 +355,8 @@ int main(int argc, const char **argv) {
             GLOBAL_THREAD_POOL->size);
     }
     if (template_file_thread_pool == NULL) {
-		/* We free the memory associated with the search path. */
-		delete_list(list);
+        /* We free the memory associated with the search path. */
+        delete_list(list);
         /* The thread pool could not be initialized, probably because too many
          * threads were requested. */
         log_message(
@@ -442,8 +442,8 @@ int main(int argc, const char **argv) {
     delete_thread_pool(GLOBAL_THREAD_POOL);
     delete_thread_pool(template_file_thread_pool);
 
-	/* We free the memory associated with the search path. */
-	delete_list(list);
+    /* We free the memory associated with the search path. */
+    delete_list(list);
 
     /* We exit and end the process. */
     return status;
