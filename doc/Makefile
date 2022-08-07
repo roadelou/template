@@ -26,7 +26,7 @@ TO_CLEAN += $(MAN_PAGE_LIST)
 
 #
 # Phony rule to build every man page.
-.PHONY: manpages
+.PHONY: manpages doxygen
 
 #################################### RULES #####################################
 
@@ -46,5 +46,10 @@ $(DOC_BUILD_DIR)/%.1.gz: $(DOC_BUILD_DIR)/%.1
 #
 # PHONY rule to build every man page.
 manpages: $(MAN_PAGE_LIST) | $(DOC_BUILD_DIR)
+
+#
+# PHONY rule to build the doxygen documentation.
+doxygen:
+	doxygen $(TOP)/Doxyfile
 
 ##################################### EOF ######################################
