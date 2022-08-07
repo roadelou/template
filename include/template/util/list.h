@@ -29,14 +29,9 @@
 /// A structure used to represent a list of strings. This is used at various
 /// points in the template codebase, for instance to handle the search path.
 ///
-/// Fields
-/// ======
-///  - length: The number of strings currently present in the list.
-///  - strings: The array of null-terminated string held in the list.
-///
 struct List {
-    size_t length;
-    char **strings;
+    size_t length; ///< The number of strings currently present in the list.
+    char **strings; ///< The array of null-terminated string held in the list.
 };
 
 /* The unions of your header go here */

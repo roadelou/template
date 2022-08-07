@@ -39,21 +39,12 @@ Description
 ===========
 This struct holds a list of positions within a specific text where a dynamic
 format specifier has been found. A format specifier looks like %$ [...] $ where
-'$' can be any ASCII character.
-
-Fields
-======
- - count: The number of format specifiers found in the given text.
- - head: The array of start positions of the format specifier in the text. This
- will be the position of the intial '%'.
- - tail: Tha array of last positions of the format specifier in the text. This
- will be the position of the terminating '$', where '$' is the character which
- followed the leading '%'.
+`$` can be any ASCII character.
 */
 struct MatchList {
-    size_t count;
-    size_t *head;
-    size_t *tail;
+    size_t count; ///< The number of format specifiers found in the given text.
+    size_t *head; ///< The array of start positions of the format specifier in the text. This will be the position of the intial `%`.
+    size_t *tail; ///< The array of last positions of the format specifier in the text. This will be the position of the terminating `$`, where `$` is the character which followed the leading `%`.
 };
 
 /* The unions of your header go here */

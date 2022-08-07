@@ -28,21 +28,12 @@
 /** Description
  * ===========
  * A subroutine which can be run asynchronously by the thread pool.
- *
- * Fields
- * ======
- *  - inner: A pointer to the C function which should be run in this routine.
- *  - argument: The argument which should be provided to the function when it
- *  runs.
- *  - result: A pointer which will be populated with the result of the function
- *  once it has been run.
- *  - done: A boolean telling whether the execution of the routine is over.
  * */
 struct TemplateRoutine {
-    void *(*inner)(void *);
-    void *argument;
-    void *result;
-    int done;
+    void *(*inner)(void *); ///< A pointer to the C function which should be run in this routine.
+    void *argument; ///< The argument which should be provided to the function when it runs.
+    void *result; ///< A pointer which will be populated with the result of the function once it has been run.
+    int done; ///< A boolean telling whether the execution of the routine is over.
 };
 
 /* The unions of your header go here */
