@@ -30,7 +30,7 @@
 /// points in the template codebase, for instance to handle the search path.
 ///
 struct List {
-    size_t length; ///< The number of strings currently present in the list.
+    size_t length;  ///< The number of strings currently present in the list.
     char **strings; ///< The array of null-terminated string held in the list.
 };
 
