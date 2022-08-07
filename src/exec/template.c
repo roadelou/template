@@ -70,7 +70,8 @@ struct TemplateFileArguments {
         match_algorithm; ///< The match algorithm to use for the extension.
     const enum FormatStyle
         format_style;        ///< The formatting style to apply to the file.
-    const struct List *list; ///< The list of paths in which the template files should be searched.
+    const struct List *list; ///< The list of paths in which the template files
+                             ///< should be searched.
 };
 
 /**

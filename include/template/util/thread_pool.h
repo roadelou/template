@@ -30,7 +30,8 @@
 
 /// Description
 /// ===========
-/// This struct is used to create a threadpool and run several tasks in parallel.
+/// This struct is used to create a threadpool and run several tasks in
+/// parallel.
 ///
 struct ThreadPool {
     size_t size;            ///< The amount of threads in the pool.
@@ -84,8 +85,8 @@ struct ThreadPool *new_thread_pool(size_t threads_count);
 ///
 /// Side-effects
 /// ============
-/// The threads will be joined and the memory associated with the ThreadPool will
-/// be freed.
+/// The threads will be joined and the memory associated with the ThreadPool
+/// will be freed.
 ///
 void delete_thread_pool(struct ThreadPool *pool);
 

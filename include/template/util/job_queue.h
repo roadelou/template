@@ -36,11 +36,14 @@
 /// This structure is used to describe a queue of jobs which should be executed
 /// by a ThreadPool.
 struct JobQueue {
-    pthread_mutex_t *lock; ///< A lock to ensure that multiple threads aren't writing to the queue of jobs at once.
+    pthread_mutex_t *lock; ///< A lock to ensure that multiple threads aren't
+                           ///< writing to the queue of jobs at once.
     size_t head;           ///< The index of the next job to run in the queue.
     size_t pending;        ///< The number of pending jobs in the ThreadPool.
-    size_t allocated; ///< The number of elements allocated for the routines and the arguments.
-    struct TemplateRoutine **routines; ///< The functions which should be called for the next jobs.
+    size_t allocated; ///< The number of elements allocated for the routines and
+                      ///< the arguments.
+    struct TemplateRoutine *
+        *routines; ///< The functions which should be called for the next jobs.
 };
 
 /* The unions of your header go here */
@@ -101,8 +104,8 @@ void delete_job_queue(struct JobQueue *queue);
 ///
 /// Side-effects
 /// ============
-/// This functions will hang until it can acquire the lock to the JobQueue. Also,
-/// if the JobQueue has drifted in memory because of too many push/pop, a
+/// This functions will hang until it can acquire the lock to the JobQueue.
+/// Also, if the JobQueue has drifted in memory because of too many push/pop, a
 /// clean-up may be initiated.
 ///
 void push_job_queue(struct JobQueue *queue, struct TemplateRoutine *routine);
@@ -114,8 +117,8 @@ void push_job_queue(struct JobQueue *queue, struct TemplateRoutine *routine);
 ///
 /// Arguments
 /// =========
-///  - routine: A pointer to a pointer of a routine, a side-effect will set it to
-///  the routine of the old job.
+///  - routine: A pointer to a pointer of a routine, a side-effect will set it
+///  to the routine of the old job.
 ///
 /// Returns
 /// =======

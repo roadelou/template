@@ -90,8 +90,8 @@ struct List *null_list(size_t length);
 ///
 /// Side-effects
 /// ============
-/// All the strings held by the list are freed, and the memory for list itself is
-/// also collected.
+/// All the strings held by the list are freed, and the memory for list itself
+/// is also collected.
 ///
 void delete_list(struct List *list);
 
@@ -119,8 +119,9 @@ void append_list(struct List *list, char *element);
 /// Arguments
 /// =========
 ///  - list: A pointer to the list to which the element should be set.
-///  - index: The index at which the provided string should be placed. It must be
-///  smaller than the size of the string, otherwise the replacement won't happen.
+///  - index: The index at which the provided string should be placed. It must
+///  be smaller than the size of the string, otherwise the replacement won't
+///  happen.
 ///  - element: The heap-allocated string we want to insert in our list.
 ///
 /// Returns

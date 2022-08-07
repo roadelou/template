@@ -18,7 +18,8 @@
 
 /*********************************** MACROS ***********************************/
 
-/** The chunk size used to bulk allocate space for the MatchList field arrays. */
+/** The chunk size used to bulk allocate space for the MatchList field arrays.
+ */
 #ifndef MATCH_LIST_CHUNK_SIZE
 #define MATCH_LIST_CHUNK_SIZE 32
 #endif

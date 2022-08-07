@@ -31,8 +31,8 @@ struct ThreadPool *GLOBAL_THREAD_POOL;
 
 /// Description
 /// ===========
-/// The main function of the threads in the ThreaPool. It instructs the thread to
-/// run any job submitted to the pool.
+/// The main function of the threads in the ThreaPool. It instructs the thread
+/// to run any job submitted to the pool.
 ///
 /// Arguments
 /// =========

@@ -28,7 +28,8 @@
  * */
 enum LOG_LEVEL {
     INFO_MSG,    ///< No problem occured, not intervention is required.
-    WARNING_MSG, ///< A recoverable problem occured, no intervention is required.
+    WARNING_MSG, ///< A recoverable problem occured, no intervention is
+                 ///< required.
     ERROR_MSG,   ///< An irrecoverable problem occured, needs user intervention.
 };
 
