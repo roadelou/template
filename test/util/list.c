@@ -34,6 +34,9 @@
 /* Testing the new_list function. */
 void test_new_list(void);
 
+/* Testing the null_list function. */
+void test_null_list(void);
+
 /* Testing the delete_list function is not possible, it acts by side-effect. */
 
 /* Testing the append_list function. */
@@ -46,6 +49,7 @@ void test_move_into_list(void);
 
 int main(int argc, const char **argv) {
     test_new_list();
+	test_null_list();
     test_append_list();
     test_move_into_list();
 }
@@ -58,7 +62,7 @@ void test_new_list(void) {
 
     TEST_INTEGER(0, test_list->length);
 
-    /* Freing the memory. */
+    /* Freeing the memory. */
     delete_list(test_list);
 
     /* Testing normal list. */
@@ -68,7 +72,7 @@ void test_new_list(void) {
     TEST_STRING("rouge", *(test_list->strings + 0));
     TEST_STRING("bleu", *(test_list->strings + 1));
 
-    /* Freing the memory. */
+    /* Freeing the memory. */
     delete_list(test_list);
 
     /* Testing list with empty string. */
@@ -78,7 +82,27 @@ void test_new_list(void) {
     TEST_STRING("rouge", *(test_list->strings + 0));
     TEST_STRING("", *(test_list->strings + 1));
 
-    /* Freing the memory. */
+    /* Freeing the memory. */
+    delete_list(test_list);
+}
+
+void test_null_list(void) {
+    /* Testing empty list creation. */
+    struct List *test_list = null_list(0);
+
+    TEST_INTEGER(0, test_list->length);
+
+    /* Freeing the memory. */
+    delete_list(test_list);
+
+    /* Testing normal list. */
+    test_list = null_list(2);
+
+    TEST_INTEGER(2, test_list->length);
+    TEST_NULL(*(test_list->strings + 0));
+    TEST_NULL(*(test_list->strings + 1));
+
+    /* Freeing the memory. */
     delete_list(test_list);
 }
 
@@ -91,7 +115,7 @@ void test_append_list(void) {
     TEST_INTEGER(1, test_list->length);
     TEST_STRING("rouge", *(test_list->strings + 0));
 
-    /* Freing the memory. */
+    /* Freeing the memory. */
     delete_list(test_list);
 
     /* Testing normal list. */
@@ -104,7 +128,7 @@ void test_append_list(void) {
     TEST_STRING("bleu", *(test_list->strings + 1));
     TEST_STRING("vert", *(test_list->strings + 2));
 
-    /* Freing the memory. */
+    /* Freeing the memory. */
     delete_list(test_list);
 
     /* Testing append list with empty string. */
@@ -117,7 +141,7 @@ void test_append_list(void) {
     TEST_STRING("bleu", *(test_list->strings + 1));
     TEST_STRING("", *(test_list->strings + 2));
 
-    /* Freing the memory. */
+    /* Freeing the memory. */
     delete_list(test_list);
 }
 
