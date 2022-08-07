@@ -6,8 +6,8 @@
 
 There are currently 2 executables provided by this project:
 
- - [template](doc/TEMPLATE.md) which is used to create files from templates chosen based on the extension.
- - [template-run](doc/TEMPLATE-RUN.md) which is used to print the result of the execution of a provided template file.
+ - [template](doc/template.md) which is used to create files from templates chosen based on the extension.
+ - [template-run](doc/template-run.md) which is used to print the result of the execution of a provided template file.
 
 Rudimentary man pages are also provided, check `man 1 template` and `man 1 template-run`.
 
