@@ -25,7 +25,7 @@
 
 /* The enums of your header go here */
 
-/* Description
+/** Description
  * ===========
  * A subroutine which can be run asynchronously by the thread pool.
  *
@@ -47,12 +47,12 @@ struct TemplateRoutine {
 
 /* The unions of your header go here */
 
-/* this template provides a more readable way to cast functions for routines. */
+/** This typedef provides a more readable way to cast functions for routines. */
 typedef void *raw_routine(void *);
 
 /********************************* PROTOTYPES *********************************/
 
-/* Description
+/** Description
  * ===========
  * Constructor of the TemplateRoutine struct.
  *
@@ -69,7 +69,7 @@ typedef void *raw_routine(void *);
 struct TemplateRoutine *new_template_routine(void *(*inner)(void *),
                                              void *argument);
 
-/* Description
+/** Description
  * ===========
  * Destructor of the TemplateRoutine struct.
  *
@@ -83,7 +83,7 @@ struct TemplateRoutine *new_template_routine(void *(*inner)(void *),
  * */
 void delete_template_routine(struct TemplateRoutine *routine);
 
-/* Description
+/** Description
  * ===========
  * Runs the provided routine, if it hasn't been marked as done already.
  *
@@ -99,7 +99,7 @@ void delete_template_routine(struct TemplateRoutine *routine);
  * */
 void run_template_routine(struct TemplateRoutine *routine);
 
-/* Description
+/** Description
  * ===========
  * Blocks until every provided routine has been executed.
  *

@@ -18,7 +18,7 @@
 
 /*********************************** MACROS ***********************************/
 
-/*
+/**
 Description
 ===========
 Tests that the computed pointer value is NULL. Returns the result of the
@@ -52,7 +52,7 @@ Prints the information about the test in the expected CSV format.
 
 /********************************* PROTOTYPES *********************************/
 
-/*
+/**
 Description
 ===========
 Tests that the computed pointer value is NULL. Returns the result of the

@@ -21,17 +21,17 @@
 
 /********************************* SINGLETONS *********************************/
 
-// The current log level. Default value is WARNING.
+/// The current log level. Default value is WARNING.
 static enum LOG_LEVEL LEVEL = WARNING_MSG;
 
-// The global mutex used to ensure that only a single thread can log at once.
-// We use the default attributes to initialize the mutex, hence why this static
-// initialization is possible.
+/// The global mutex used to ensure that only a single thread can log at once.
+/// We use the default attributes to initialize the mutex, hence why this static
+/// initialization is possible.
 static pthread_mutex_t LOG_MUTEX = PTHREAD_MUTEX_INITIALIZER;
 
 /********************************* PROTOYPES **********************************/
 
-/* Description
+/** Description
  * ===========
  * Tells whether a message should be displyed depending on the log level.
  *
@@ -44,15 +44,11 @@ static pthread_mutex_t LOG_MUTEX = PTHREAD_MUTEX_INITIALIZER;
  * =======
  * A boolean value based of the following table:
  *
- * |====================|======|=========|=======|
- * | importance \ LEVEL | INFO | WARNING | ERROR |
- * |====================|======|=========|=======|
- * |       INFO         |   1  |    0    |   0   |
- * |====================|======|=========|=======|
- * |       WARNING      |   1  |    1    |   0   |
- * |====================|======|=========|=======|
- * |       ERROR        |   1  |    1    |   1   |
- * |====================|======|=========|=======|
+ * Importance / LEVEL | INFO | WARNING | ERROR
+ * -------------------|------|---------|-------
+ * INFO               |    1 |       0 |    0 |
+ * WARNING            |    1 |       1 |    0 |
+ * ERROR              |    1 |       1 |    1 |
  *
  * */
 static int should_log(enum LOG_LEVEL importance);

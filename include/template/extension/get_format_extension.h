@@ -33,7 +33,7 @@
 
 /********************************* PROTOTYPES *********************************/
 
-/*
+/**
 Description
 ===========
 Returns the extension of the template file which has the largest common suffix

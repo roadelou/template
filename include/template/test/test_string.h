@@ -18,7 +18,7 @@
 
 /*********************************** MACROS ***********************************/
 
-/*
+/**
 Description
 ===========
 Tests that the computed string value matches the expected one. Returns the
@@ -53,7 +53,7 @@ Prints the information about the test in the expected CSV format.
 
 /********************************* PROTOTYPES *********************************/
 
-/*
+/**
 Description
 ===========
 Tests that the computed string value matches the expected one. Returns the

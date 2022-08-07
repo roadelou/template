@@ -18,12 +18,12 @@
 
 /*********************************** MACROS ***********************************/
 
-/* The chunk size used to bulk allocate space for the MatchList field arrays. */
+/** The chunk size used to bulk allocate space for the MatchList field arrays. */
 #ifndef MATCH_LIST_CHUNK_SIZE
 #define MATCH_LIST_CHUNK_SIZE 32
 #endif
 
-/* The chunk size used when copying the output of a command to the target file.
+/** The chunk size used when copying the output of a command to the target file.
  */
 #ifndef COMMAND_OUTPUT_CHUNK_SIZE
 #define COMMAND_OUTPUT_CHUNK_SIZE 1024
@@ -33,7 +33,7 @@
 
 /* The enums of your header go here */
 
-/*
+/**
 Description
 ===========
 This struct holds a list of positions within a specific text where a dynamic
@@ -61,7 +61,7 @@ struct MatchList {
 
 /********************************* PROTOTYPES *********************************/
 
-/*
+/**
 Description
 ===========
 This function is used to locate the format specifiers in the provided string
@@ -106,7 +106,7 @@ For the text "Today is the %$date +%F/.", the corresponding MatchList should be
 */
 int find_format(const char *text, struct MatchList *match_list);
 
-/*
+/**
 Description
 ===========
 This function gathers every command described in match_list from text, executes
@@ -143,7 +143,7 @@ For the text "Today is the %/echo foo/.", and the match_list
 struct List *get_commands_output_match_list(char *text,
                                             const struct MatchList *match_list);
 
-/*
+/**
 Description
 ===========
 This function is used to get the output of the provided (shell) command to a
@@ -172,7 +172,7 @@ also be emitted.
 */
 char *get_command_output(const char *command);
 
-/*
+/**
 Description
 ===========
 High-level function used to fill the provided output_file according to the
@@ -197,7 +197,7 @@ See write_commad_output. Also, the provided text file will be overwritten.
 */
 int dynamic_format(char *text, FILE *output_file);
 
-/*
+/**
 Description
 ===========
 Destructor for the MatchList struct.

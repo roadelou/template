@@ -32,7 +32,7 @@
 
 /********************************* PROTOTYPES *********************************/
 
-/*
+/**
 Deprecated
 ==========
 Use get_format_extension instead.

@@ -26,7 +26,7 @@
 
 /********************************* PROTOYPES **********************************/
 
-/*
+/**
 Description
 ===========
 Used to get the size of the provided file.

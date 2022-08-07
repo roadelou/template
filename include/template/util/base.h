@@ -18,7 +18,7 @@
 
 /*********************************** MACROS ***********************************/
 
-/* We define SUCCESS and ERROR that will be used to make our return codes more
+/** We define SUCCESS and ERROR that will be used to make our return codes more
  * explicit. */
 #ifndef SUCCESS
 #define SUCCESS 0
@@ -32,7 +32,7 @@
 #define WARNING -2
 #endif
 
-/* We define some constant for the use of the occurence function. */
+/** We define some constant for the use of the occurence function. */
 #ifndef FIRST_OCCURENCE
 #define FIRST_OCCURENCE 1
 #endif
@@ -53,7 +53,7 @@
 
 /********************************* PROTOTYPES *********************************/
 
-/*
+/**
 Description
 ===========
 Returns the index of the first or last occurence of a character in a string.

@@ -18,7 +18,7 @@
 
 /*********************************** MACROS ***********************************/
 
-/*
+/**
 Description
 ===========
 Tests that the computed integer value matches the expected one. Returns the

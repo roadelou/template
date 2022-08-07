@@ -21,15 +21,15 @@
 
 /********************************** STRUCTS ***********************************/
 
-/* Desription
- * ==========
+/** Desription
+ *  ==========
  * An enum used to quantify the importance of a message. Used to determine
  * whether the message will be shown to the user or not.
  * */
 enum LOG_LEVEL {
-    INFO_MSG,    // No problem occured, not intervention is required.
-    WARNING_MSG, // A recoverable problem occured, no intervention is required.
-    ERROR_MSG,   // An irrecoverable problem occured, needs user intervention.
+    INFO_MSG,    ///< No problem occured, not intervention is required.
+    WARNING_MSG, ///< A recoverable problem occured, no intervention is required.
+    ERROR_MSG,   ///< An irrecoverable problem occured, needs user intervention.
 };
 
 /* The structs of your header go here */
@@ -40,7 +40,7 @@ enum LOG_LEVEL {
 
 /********************************* PROTOTYPES *********************************/
 
-/* Description
+/** Description
  * ===========
  * Sets the log level to the desired value. Message with an importance lower
  * than the log level will not be printed to the user.
@@ -53,7 +53,7 @@ enum LOG_LEVEL {
  * */
 void set_log_level(enum LOG_LEVEL level);
 
-/* Description
+/** Description
  * ===========
  * Logs a message for the user to stderr. INFO is logged in white, WARNING is
  * logged in orange and ERROR is logged in red. This function is thread safe.

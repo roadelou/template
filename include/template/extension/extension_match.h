@@ -22,7 +22,7 @@
 
 /********************************** STRUCTS ***********************************/
 
-/*
+/**
 Description
 ===========
 Used to specify the direction to use when matching extensions.
@@ -45,7 +45,7 @@ enum Direction {
 
 /********************************* PROTOTYPES *********************************/
 
-/*
+/**
 Description
 ===========
 Returns the number of characters of the longest matching whole extension
@@ -67,7 +67,7 @@ extension.
 */
 size_t extension_match_size(const char *path, const char *template_path);
 
-/*
+/**
 Description
 ===========
 Provides the index of the next chunk of extension from the provided path.
@@ -128,21 +128,21 @@ or FORWARDS.
 size_t next_extension_part(const char *path, size_t *cursor,
                            enum Direction direction);
 
-/*
+/**
 Description
 ===========
 Implementation of next_extension_part, BACKWARDS case.
 */
 size_t next_extension_part_backwards(const char *path, size_t *cursor);
 
-/*
+/**
 Description
 ===========
 Implementation of next_extension_part, FORWARDS case.
 */
 size_t next_extension_part_forwards(const char *path, size_t *cursor);
 
-/*
+/**
 Description
 ===========
 Finds the length of the directory part of the string, i.e. everything up until
@@ -165,7 +165,7 @@ directory_part_size("foo.bar.baz") -> 0
 */
 size_t directory_part_size(const char *path);
 
-/*
+/**
 Description
 ===========
 Returns 1 if the path ends with ".template", 0 otherwise.

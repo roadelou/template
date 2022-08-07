@@ -29,15 +29,15 @@ struct ThreadPool *GLOBAL_THREAD_POOL;
 
 /********************************* PROTOYPES **********************************/
 
-// Description
-// ===========
-// The main function of the threads in the ThreaPool. It instructs the thread to
-// run any job submitted to the pool.
-//
-// Arguments
-// =========
-//  - thread_pool_ptr: Apointer to the threadpool itself, which contains the
-//  queue of jobs which should be run.
+/// Description
+/// ===========
+/// The main function of the threads in the ThreaPool. It instructs the thread to
+/// run any job submitted to the pool.
+///
+/// Arguments
+/// =========
+///  - thread_pool_ptr: Apointer to the threadpool itself, which contains the
+///  queue of jobs which should be run.
 static void *thread_main(void *thread_pool_ptr);
 
 /************************************ MAIN ************************************/

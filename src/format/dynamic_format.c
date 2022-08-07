@@ -31,7 +31,7 @@
 
 /********************************* PROTOYPES **********************************/
 
-/*
+/**
 Description
 ===========
 Helper function used to append a match to the MatchList with an automatic

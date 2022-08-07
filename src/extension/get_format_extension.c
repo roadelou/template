@@ -36,7 +36,7 @@
 
 /********************************* PROTOYPES **********************************/
 
-/* Description
+/** Description
  * ===========
  * Improves the provided extension match by searching for a template file in the
  * provided directory.

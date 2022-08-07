@@ -32,7 +32,7 @@
 
 /********************************* PROTOTYPES *********************************/
 
-/*
+/**
 Description
 ===========
 Stores a string representation of the current date in the provided buffer. The

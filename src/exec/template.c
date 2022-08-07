@@ -23,7 +23,7 @@
 /* Used for uintptr_t. */
 #include <stdint.h>
 
-/* Description
+/** Description
  * ===========
  * An enum type used to specify the matching algorithm to use for the
  * extensions.
@@ -38,10 +38,11 @@ enum ExtensionMatchAlgorithm {
     NEW,
 };
 
-/*
+/**
 Description
 ===========
-Choice for the formatting style. Static uses the old , while dynamic will
+Choice for the formatting style. Static uses the old formatting syntax, while
+dynamic will use the newer shell-based commands.
 
 Values
 ======
@@ -53,27 +54,26 @@ enum FormatStyle {
     DYNAMIC,
 };
 
-/*
+/**
 Description
 ===========
 Arguments for the template_file function, we use a struct to pass them as a
 single pointer, which is needed for a template_routine thread.
 */
 struct TemplateFileArguments {
-    const char *path;    // The path of the file which should be created.
-    const char *author;  // The author, used for the old format style.
-    const char *contact; // The contact, used for the old format style.
+    const char *path;    ///< The path of the file which should be created.
+    const char *author;  ///< The author, used for the old format style.
+    const char *contact; ///< The contact, used for the old format style.
     const char
-        *current_date; // The current date, used for the old format style.
+        *current_date; ///< The current date, used for the old format style.
     const enum ExtensionMatchAlgorithm
-        match_algorithm; // The match algorithm to use for the extension.
+        match_algorithm; ///< The match algorithm to use for the extension.
     const enum FormatStyle
-        format_style;        // The formatting style to apply to the file.
-    const struct List *list; // The list of paths in which the template files
-                             // should be searched.
+        format_style;        ///< The formatting style to apply to the file.
+    const struct List *list; ///< The list of paths in which the template files should be searched.
 };
 
-/*
+/**
 Description
 ===========
 Routine used to create a single templated file. This routine will be used to
@@ -90,7 +90,7 @@ ERROR if the execution failed, SUCCESS otherwise.
 */
 int template_file(const struct TemplateFileArguments *template_arguments);
 
-/*
+/**
 Description
 ===========
 Prints help for the user on stdout.
@@ -101,7 +101,7 @@ The return value of the printf call.
 */
 int print_help(void);
 
-/*
+/**
 Description
 ===========
 Prints the GPL license message.
@@ -112,7 +112,7 @@ The return value of the printf call.
 */
 int print_license(void);
 
-/*
+/**
 Description
 ===========
 A small helper function which returns the List holding the default search paths.

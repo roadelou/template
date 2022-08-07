@@ -33,7 +33,7 @@
 
 /********************************* PROTOTYPES *********************************/
 
-/*
+/**
 Description
 ===========
 Safe implementation of a format function for the template files.

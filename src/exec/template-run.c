@@ -28,10 +28,11 @@
 /* Used for error handling of strtoul. */
 #include <errno.h>
 
-/*
+/**
 Description
 ===========
-Choice for the formatting style. Static uses the old , while dynamic will
+Choice for the formatting style. Static uses the old formatting syntax, while
+dynamic will use the newer shell-based commands.
 
 Values
 ======
@@ -49,7 +50,7 @@ enum FormatStyle {
 
 /********************************* PROTOYPES **********************************/
 
-/*
+/**
 Description
 ===========
 Prints help for the user on stdout.
@@ -60,7 +61,7 @@ The return value of the printf call.
 */
 int print_help(void);
 
-/*
+/**
 Description
 ===========
 Prints the GPL license message.
@@ -71,7 +72,7 @@ The return value of the printf call.
 */
 int print_license(void);
 
-/*
+/**
 Description
 ===========
 Reads the file at the provided path and returns it content as a string. The

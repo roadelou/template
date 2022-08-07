@@ -25,17 +25,17 @@
 
 /********************************* PROTOYPES **********************************/
 
-// Description
-// ===========
-// Helper function, returns 1 if an automatic clean-up of the JobQueue should
-// take place.
-//
+/// Description
+/// ===========
+/// Helper function, returns 1 if an automatic clean-up of the JobQueue should
+/// take place.
+///
 static int should_clean_queue(struct JobQueue *queue);
 
-// Description
-// ===========
-// Helper function whic performs an automatic cleanup of the provided queue.
-//
+/// Description
+/// ===========
+/// Helper function whic performs an automatic cleanup of the provided queue.
+///
 static void clean_queue(struct JobQueue *queue);
 
 /************************************ MAIN ************************************/

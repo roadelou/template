@@ -32,7 +32,7 @@
 
 /********************************* PROTOTYPES *********************************/
 
-/*
+/**
 Description
 ===========
 Helper function used to print the header for the CSV file containing the test
