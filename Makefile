@@ -61,8 +61,18 @@ BIN_DIR = $(DESTDIR)/usr/bin
 # The location where the man pages should be installed.
 MAN_DIR = $(DESTDIR)/usr/share/man
 #
-# The location where the shared library should be installed.
+# The location where the shared library should be installed. Can be overriden
+# because not all Linux distributions put the libraaries in the same directory.
+# Redhat puts them in /usr/lib64 while debian puts them in /usr/lib.
+ifeq ($(DEBIAN),TRUE)
+#
+# Meant for Debian
+LIB_DIR = $(DESTDIR)/usr/lib
+else
+#
+# Meant for Redhat
 LIB_DIR = $(DESTDIR)/usr/lib64
+endif
 #
 # The directory where the header file should be installed on the target system.
 INCLUDE_DIR = $(DESTDIR)/usr/include
@@ -152,7 +162,7 @@ debian:
 	# We compile the source code.
 	make -j12
 	# We install the code in the fakeroot.
-	DESTDIR=$(FAKEROOT_DEBIAN) make install
+	DESTDIR=$(FAKEROOT_DEBIAN) DEBIAN=TRUE make install
 	# We copy the package metadata inside the fakeroot.
 	mkdir -p $(FAKEROOT_DEBIAN)/DEBIAN
 	install -m 664 DEBIAN.control $(FAKEROOT_DEBIAN)/DEBIAN/control
