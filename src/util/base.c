@@ -32,19 +32,33 @@
 size_t occurence(const char *string, char letter, int first) {
     /* The length of the string, we shouldn't try to look any further. */
     size_t length = strlen(string);
+    /* Now that we know the exact length we call the optimized variant of the 
+	 * routine. */
+	return occurence_fast(string, letter, first, length);
+}
+
+size_t occurence_fast(
+	const char *string,
+	char letter,
+	int first,
+	size_t length
+) {
     /* The result we will return, it will be set once we find a match. */
     size_t result = -1;
+	/* If we search for the first occurence we search forward, otherwise we will
+	 * search backwards. This done to avoid branching everytime on first. */
+	int increment = first? 1 : -1;
     /* The cursor that we use to go through the string. */
-    size_t cursor;
+    size_t cursor = first? 0 : length - 1;
 
-    /* We look for a match. */
-    for (cursor = 0; cursor < length; cursor++) {
+    /* We look for a match. As a small optimization, we directly decrement
+	 * length (local to this function) to count iterations. */
+    for (; length > 0; length--) {
         if (*(string + cursor) == letter) {
-            result = cursor;
-            if (first) {
-                break;
-            }
+            return cursor;
         }
+		/* else... */
+		cursor += increment;
     }
     return result;
 }

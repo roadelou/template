@@ -71,6 +71,31 @@ The index of the occurence if the letter was found, -1 otherwise.
 */
 size_t occurence(const char *string, char letter, int first);
 
+/**
+Description
+===========
+Same as occurence, but knowing the size of the string speeds up the search for
+the last occurence of a character.
+
+Arguments
+=========
+ - string: The string in which we are looking for the character.
+ - letter: The character we are looking for.
+ - first: If set to 0, we return the last occurence. Else we return the first
+ occurence.
+ - length: The length of the string in which we are looking for the character.
+
+Returns
+=======
+The index of the occurence if the letter was found, -1 otherwise.
+*/
+size_t occurence_fast(
+	const char *string,
+	char letter,
+	int first,
+	size_t length
+);
+
 /* End of include once header guard */
 #endif
 
