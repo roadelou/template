@@ -35,9 +35,4 @@ TEST_LIST += $(TEST_EXTENSION_ELF)
 $(TEST_BIN_DIR)/%.o: $(TEST_DIR)/extension/%.c | $(TEST_BIN_DIR)
 	$(CC) $(C_FLAGS) -c -o $@ $<
 
-#
-# Generic rule to build the test elf from its object file.
-$(TEST_BIN_DIR)/%.elf: $(TEST_BIN_DIR)/%.o $(TEMPLATE_LIB) $(TEST_LIB) | $(TEST_BIN_DIR)
-	$(CC) $(C_TEST_ELF_FLAGS) -o $@ $<
-
 ##################################### EOF ######################################

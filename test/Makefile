@@ -43,7 +43,7 @@ VALGRIND_ARGS = --tool=memcheck --show-error-list=yes --leak-check=full --error-
 ###########
 #
 # Flags used to compile the executables for the tests.
-C_TEST_ELF_FLAGS = $(C_FLAGS) -L$(LIB_BUILD_DIR) -ltemplate -ltemplate_test
+C_TEST_ELF_LINK_FLAGS = -L$(LIB_BUILD_DIR) -ltemplate -ltemplate_test
 
 # This short macro is used to set the LD_LIBRARY_PATH to use the compiled
 # library for debugging purposes.
@@ -76,6 +76,10 @@ tests: $(TEST_LIST) | $(TEST_CSV_DIR)
 # $(VAR:PATTERN=REPLACEMENT) syntax here.
 valgrind: elfs | $(TEST_VALGRIND_DIR)
 	@$(foreach ETC_FILE,$(ETC_LIST),echo [valgrind] $(ETC_FILE); $(SET_LD) valgrind $(VALGRIND_ARGS) --log-file=$(TEST_VALGRIND_DIR)/$(notdir $(ETC_FILE)).log $(ELF_BUILD_DIR)/template-run.elf $(ETC_FILE) > /dev/null;)
+
+# Generic rule to build the test elf from its object file.
+$(TEST_BIN_DIR)/%.elf: $(TEST_BIN_DIR)/%.o $(TEMPLATE_LIB) $(TEST_LIB) | $(TEST_BIN_DIR)
+	$(CC) $(C_FLAGS) -o $@ $< $(C_TEST_ELF_LINK_FLAGS)
 
 $(TEST_CSV_DIR):
 	mkdir -p $(TEST_CSV_DIR)
