@@ -35,8 +35,10 @@
 
 int test_string_function(const char *expected, const char *computed, int line,
                          const char *file, const char *function) {
+	/* The length of the string we expect. */
+	size_t length = strlen(expected);
     /* The result of the equality test. */
-    int result = strcmp(expected, computed) == 0;
+    int result = strncmp(expected, computed, length) == 0;
     /* A string telling whether the test failed or not. */
     char *status;
     if (result) {
