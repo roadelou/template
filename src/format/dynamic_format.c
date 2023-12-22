@@ -62,12 +62,27 @@ int find_format(const char *text, struct MatchList *match_list) {
     size_t cursor = 0;
     /* The next value for the cursor. */
     size_t next_cursor;
+	/* The return status, can be upgraded to WARNING if we find broken
+	 * matches. */
+	int status = SUCCESS;
+
+	/* Error checking. */
+	if (text == NULL || match_list == NULL) {
+        /* We log an error message. */
+        log_message(WARNING_MSG,
+                    "Internal function `%s` received a null pointer as "
+                    "argument and fails.\n",
+                    __func__);
+		return ERROR;
+	}
+
     /* The total size of the text we are working on. */
     size_t text_length = strlen(text);
     /* We start by resetting the provided MatchList to avoid bugs. */
     match_list->count = 0;
     match_list->head = NULL;
     match_list->tail = NULL;
+
     /* We start looking for the leading character of the format specifier. */
     while ((cursor < text_length) &&
            ((next_cursor = occurence(text + cursor, '%', FIRST_OCCURENCE)) !=
@@ -136,6 +151,8 @@ int find_format(const char *text, struct MatchList *match_list) {
              * again. We know that is possible since there is more than one
              * character after the '%'. */
             cursor++;
+			/* the function will now return as WARNING. */
+			status = WARNING;
             continue;
         }
         /* else... */
@@ -154,7 +171,7 @@ int find_format(const char *text, struct MatchList *match_list) {
     }
     /* If we reach this line, we have found and registered all the possible
      * format specifiers, hence the execution is a success. */
-    return SUCCESS;
+    return status;
 }
 
 int append_match_list(struct MatchList *match_list, size_t head, size_t tail) {
@@ -415,6 +432,8 @@ int dynamic_format(char *text, FILE *output_file) {
     struct List *output_list;
     /* Our first task is to find all of the format specifiers. */
     struct MatchList match_list;
+	/* The status of fputs, distinct from the status of this call. */
+	int fputs_status;
 
 	/* Error checking. */
 	if (text == NULL || output_file == NULL) {
@@ -472,11 +491,11 @@ int dynamic_format(char *text, FILE *output_file) {
 
         /* We then write the output of the command to the file. Since the output
          * of the command is NULL-terminated, we can just use fputs here. */
-        status = fputs(*(output_list->strings + specifier), output_file);
+        fputs_status = fputs(*(output_list->strings + specifier), output_file);
         /* Error checking. */
-        if (status == EOF) {
+        if (fputs_status == EOF) {
             /* Note that the command string (which is a substring of text) will
-             * be null-ter;inated because of the manipulations done in
+             * be null-terminated because of the manipulations done in
              * get_commands_output_match_list. */
             log_message(
                 ERROR_MSG,
