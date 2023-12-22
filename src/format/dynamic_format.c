@@ -416,6 +416,16 @@ int dynamic_format(char *text, FILE *output_file) {
     /* Our first task is to find all of the format specifiers. */
     struct MatchList match_list;
 
+	/* Error checking. */
+	if (text == NULL || output_file == NULL) {
+        /* We log an error message. */
+        log_message(WARNING_MSG,
+                    "Internal function `%s` received a null pointer as "
+                    "argument and fails.\n",
+                    __func__);
+		return ERROR;
+	}
+
     /* We find the format specifiers in the text to locate the subcommands. */
     status = find_format(text, &match_list);
     /* Error checking. */

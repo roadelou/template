@@ -52,6 +52,7 @@ SET_LD = LD_LIBRARY_PATH=$(LIB_BUILD_DIR):$(LD_LIBRARY_PATH)
 # Sourcing all of the unit tests for the project.
 include $(TEST_DIR)/util/Makefile
 include $(TEST_DIR)/extension/Makefile
+include $(TEST_DIR)/format/Makefile
 
 #
 # TO CLEAN

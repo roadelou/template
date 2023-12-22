@@ -19,6 +19,7 @@
 #include <template/test/test_integer.h>
 #include <template/test/test_null.h>
 #include <template/test/test_string.h>
+#include <template/test/test_file.h>
 
 /*********************************** MACROS ***********************************/
 
